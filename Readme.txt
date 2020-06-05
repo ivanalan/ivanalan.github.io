@@ -1,5 +1,7 @@
-Thanks for downloading this template!
+My Personal Portfolio
 
+
+I used and customized the following Bootstrap template:
 Template Name: MyResume
 Template URL: https://bootstrapmade.com/free-html-bootstrap-template-my-resume/
 Author: BootstrapMade.com
