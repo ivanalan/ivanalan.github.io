@@ -1106,6 +1106,12 @@ section {
 .portfolio-details .portfolio-details-carousel .owl-dot.active {
   background-color: #0563bb !important;
 }
+.downsize img {
+  max-width: 400px !important;
+  max-height: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 .portfolio-details .portfolio-info {
   padding-top: 45px;
@@ -1140,6 +1146,27 @@ section {
 .portfolio-details .portfolio-info p {
   font-size: 15px;
   padding: 15px 0 0 0;
+}
+
+.extended-info {
+  max-width: 80%;
+  margin-left: auto;
+  padding: 60px 0 0 0;
+  margin-right: auto;
+}
+.extended-info h4 {
+  font-size: 22px;
+  font-weight: 400;
+  padding: 0 0 20px 0;
+}
+.extended-info ol {
+  font-size: 15px;
+  text-align: left;
+  list-style-position: inside;
+}
+
+.extended-info li + li {
+  margin-top: 10px;
 }
 
 @media (max-width: 992px) {
