@@ -1117,6 +1117,16 @@ section {
   margin-bottom: 20px;
 }
 
+#subtitle {
+  margin-bottom: 2px;
+}
+
+.portfolio-details .portfolio-info h4 {
+  font-size: 18px;
+  font-weight: 200;
+  margin-bottom: 15px;
+}
+
 .portfolio-details .portfolio-info ul {
   list-style: none;
   padding: 0;
