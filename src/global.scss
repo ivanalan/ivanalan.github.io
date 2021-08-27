@@ -1,0 +1,10 @@
+$mainColor: #404955;
+$accentGreen: #00ce8f;
+
+$width: 768px;
+
+@mixin mobile {
+  @media (max-width: #{$width}) {
+    @content;
+  }
+}

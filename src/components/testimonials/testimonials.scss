@@ -1,0 +1,89 @@
+@import "../../global.scss";
+
+.testimonials {
+  background-color: $mainColor;
+  display: flex;
+
+  @include mobile {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .left {
+    flex: 0.5;
+    position: relative;
+
+    @include mobile {
+      flex: 1;
+    }
+
+    .wrapper {
+      width: 92%;
+      height: 100%;
+      padding-left: 50px;
+
+      @include mobile {
+        width: 90%;
+        height: 100%;
+        padding-left: 5%;
+        padding-right: 5%;
+      }
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      h2 {
+        font-size: 50px;
+        color: $accentGreen;
+
+        @include mobile {
+          font-size: 40px;
+        }
+      }
+
+      h3 {
+        margin-top: 40px;
+        font-size: 20px;
+        color: white;
+        line-height: 30px;
+        font-weight: 300;
+
+        span {
+          font-weight: 800;
+          color: #b3a369;
+        }
+
+        a {
+          text-decoration: none;
+          font-size: inherit;
+          color: #b3a369;
+        }
+      }
+    }
+  }
+
+  .right {
+    flex: 0.5;
+
+    @include mobile {
+      display: none;
+    }
+
+    .imgContainer {
+      height: 100%;
+      width: 100%;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      img {
+        height: 75%;
+        width: 70%;
+      }
+    }
+  }
+}

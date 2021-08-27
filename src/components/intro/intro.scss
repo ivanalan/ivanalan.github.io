@@ -1,0 +1,135 @@
+@import "../../global.scss";
+
+.intro {
+  background-color: white;
+  display: flex;
+
+  @include mobile {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .left {
+    flex: 0.45;
+    overflow: hidden;
+
+    .imgContainer {
+      width: 700px;
+      height: 700px;
+      background-color: $accentGreen;
+
+      border-radius: 80%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      float: right;
+      position: relative;
+      top: 15px;
+
+      @include mobile {
+        align-items: flex-start;
+        border-radius: 80%;
+      }
+
+      img {
+        width: 50%;
+        height: 65%;
+        position: relative;
+        top: -200px;
+        left: 22px;
+
+        @include mobile {
+          top: 0px;
+          height: 40%;
+          width: 36%;
+          left: 0px;
+        }
+      }
+    }
+  }
+
+  .right {
+    flex: 0.52;
+    position: relative;
+
+    .wrapper {
+      width: 93%;
+      height: 95%;
+      padding-left: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      @include mobile {
+        padding-left: 0;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+      }
+
+      h1 {
+        font-size: 60px;
+        margin-bottom: 50px;
+        color: $mainColor;
+      }
+
+      h2 {
+        font-size: 50px;
+        color: $mainColor;
+
+        @include mobile {
+          font-size: 25px;
+        }
+      }
+
+      .pronouns {
+        font-size: 22px;
+      }
+
+      span {
+        font-size: inherit;
+        color: $accentGreen;
+      }
+
+      h3 {
+        margin-top: 40px;
+        font-size: 26px;
+        color: $mainColor;
+        line-height: 50px;
+        font-weight: 400;
+
+        span {
+          font-size: inherit;
+          color: $accentGreen;
+        }
+
+        @include mobile {
+          padding-left: 32px;
+          padding-right: 32px;
+          padding-bottom: 40px;
+          font-size: 15px;
+          line-height: 24px;
+        }
+      }
+    }
+
+    a {
+      position: absolute;
+      bottom: 10px;
+      left: 35%;
+      text-decoration: none;
+      color: inherit;
+
+      .icon {
+        font-size: 80px;
+        animation: arrowBlink 2s infinite;
+      }
+
+      @keyframes arrowBlink {
+        100% {
+          opacity: 0;
+        }
+      }
+    }
+  }
+}
