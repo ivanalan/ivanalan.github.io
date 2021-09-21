@@ -27,7 +27,7 @@ export default function Intro() {
                 <div className="wrapper">
                     <h2>Hey! I'm Alan <span className="pronouns"> (he/him)</span></h2>
                     <h2>I am a <span ref={textRef}></span></h2>
-                    <h3>Currently a Masters student at Georgia Tech studying Computer Science / HCI and looking for a 2022 summer internship in <span>UX Design.</span></h3>
+                    <h3>Currently a Masters student at Georgia Tech studying Computer Science / HCI and looking for a 2022 full time role in <span>UX Design.</span></h3>
                 </div>
                 <a href="#portfolio">                    
                     <ExpandMoreIcon className="icon"/>
