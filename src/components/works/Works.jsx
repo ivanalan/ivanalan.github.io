@@ -8,11 +8,13 @@ export default function works() {
 
             <div className="container"> 
 
-                <a href="https://medium.com/@alan.matias/humanitech-kenyan-crop-prices-23617882fe9b" target="_blank">
+                <a href="https://medium.com/@alan.matias/pinfo-georgia-tech-humanitech-570ce5f84333" target="_blank">
                     <div className="item">
-                        <img src="assets/6.png" alt="" />
-                        <h3>Humanitech - Crop Pricing</h3>
-                        <h4>A react web app helping Kenyan farmers accurately price their crops</h4>
+                        <img src="assets/PINFO.png" alt="" />
+                        <h3>Pinfo - Georgia Tech Research</h3>
+                        <h4>A simple, visual app to communicate how and when to take medication (and its purpose) 
+                            as an alternative to text-heavy instructions. 
+                            Designed in Adobe Xd and developed in React Native</h4>
                     </div>  
                 </a>
 
