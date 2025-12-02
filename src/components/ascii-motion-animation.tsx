@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 
 type CellData = {
   x: number;
@@ -12548,8 +12548,8 @@ const AsciiMotionAnimation = (props: AsciiMotionComponentProps = {}) => {
   const lastTimestampRef = useRef<number>(0);
   const restartRef = useRef<() => void>(() => {});
   const isPlayingRef = useRef<boolean>(initialAutoPlay);
-  const [isPlaying, setIsPlaying] = useState<boolean>(initialAutoPlay);
-  const [activeFrame, setActiveFrame] = useState<number>(0);
+  const [_isPlaying, setIsPlaying] = useState<boolean>(initialAutoPlay);
+  const [_activeFrame, setActiveFrame] = useState<number>(0);
   const updatePlayingState = useCallback((value: boolean) => {
     isPlayingRef.current = value;
     setIsPlaying(value);
