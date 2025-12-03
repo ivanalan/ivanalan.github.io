@@ -18,6 +18,13 @@ export default defineConfig({
           copyFileSync('public/.nojekyll', 'dist/.nojekyll')
         }
       }
+    },
+    {
+      name: 'remove-crossorigin',
+      transformIndexHtml(html) {
+        // Remove crossorigin attribute which can cause MIME type issues on GitHub Pages
+        return html.replace(/\s+crossorigin/g, '')
+      }
     }
   ],
   resolve: {
