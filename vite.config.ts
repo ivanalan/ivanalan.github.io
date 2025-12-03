@@ -13,6 +13,10 @@ export default defineConfig({
         if (existsSync('CNAME')) {
           copyFileSync('CNAME', 'dist/CNAME')
         }
+        // Ensure .nojekyll is copied
+        if (existsSync('public/.nojekyll')) {
+          copyFileSync('public/.nojekyll', 'dist/.nojekyll')
+        }
       }
     }
   ],
@@ -22,5 +26,15 @@ export default defineConfig({
     },
   },
   base: '/',
+  build: {
+    rollupOptions: {
+      output: {
+        // Ensure proper file extensions
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
+      }
+    }
+  }
 })
 

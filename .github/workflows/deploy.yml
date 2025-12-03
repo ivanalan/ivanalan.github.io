@@ -35,10 +35,13 @@ jobs:
       - name: Build
         run: npm run build
       
-      - name: Copy CNAME
+      - name: Copy CNAME and .nojekyll
         run: |
           if [ -f CNAME ]; then
             cp CNAME dist/
+          fi
+          if [ -f public/.nojekyll ]; then
+            cp public/.nojekyll dist/
           fi
       
       - name: Setup Pages
