@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - portfolio
   workflow_dispatch:
 
 permissions:
@@ -18,6 +17,7 @@ concurrency:
 
 jobs:
   build:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout your repository using git
@@ -28,6 +28,7 @@ jobs:
           node-version: 22
 
   deploy:
+    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     environment:
