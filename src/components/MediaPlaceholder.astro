@@ -1,0 +1,15 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<div
+  class:list={[
+    "w-full rounded-xl bg-muted",
+    className,
+  ]}
+  aria-hidden="true"
+></div>

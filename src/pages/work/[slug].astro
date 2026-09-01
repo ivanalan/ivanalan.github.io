@@ -1,0 +1,54 @@
+---
+import BackLink from "@/components/BackLink.astro";
+import Layout from "@/layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const [projects, playground] = await Promise.all([
+    getCollection("projects"),
+    getCollection("playground"),
+  ]);
+
+  return [...projects, ...playground].map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+---
+
+<Layout title={entry.data.title} description={entry.data.summary} type="article">
+  <article id="main" class="flex flex-col">
+    <BackLink />
+    <header class="mb-10 flex flex-col gap-3">
+      <h1
+        class="reveal text-4xl leading-tight text-foreground md:text-5xl"
+        style="--reveal-index: 1"
+      >
+        {entry.data.title}
+      </h1>
+      <p
+        class="reveal text-base text-muted-foreground"
+        style="--reveal-index: 2"
+      >
+        {entry.data.summary}
+      </p>
+    </header>
+    <div class="case-study flex flex-col gap-6">
+      <p class="font-heading text-2xl text-foreground">
+        Write-up in progress
+      </p>
+      <p class="max-w-prose text-base leading-7 text-muted-foreground">
+        The full case study is being written. It will cover the problem, the
+        decisions that mattered, and what shipped.
+      </p>
+      <div class="flex flex-col gap-3" aria-hidden="true">
+        <div class="h-3 w-full rounded-full bg-muted"></div>
+        <div class="h-3 w-11/12 rounded-full bg-muted"></div>
+        <div class="h-3 w-4/5 rounded-full bg-muted"></div>
+        <div class="mt-3 h-40 w-full rounded-lg bg-muted"></div>
+      </div>
+    </div>
+  </article>
+</Layout>

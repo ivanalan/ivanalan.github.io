@@ -1,0 +1,56 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import SiteIntro from "@/components/SiteIntro.astro";
+import { WorkTabs } from "@/components/WorkTabs";
+import type { WorkCard } from "@/components/work-tabs.types";
+import { getImage } from "astro:assets";
+import { getCollection } from "astro:content";
+
+const projects = (await getCollection("projects")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const playground = (await getCollection("playground")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const toCard = async (
+  entry: (typeof projects)[number] | (typeof playground)[number],
+  featured = false,
+): Promise<WorkCard> => {
+  const cover = entry.data.cover
+    ? await getImage({ src: entry.data.cover, width: 1280 })
+    : undefined;
+
+  return {
+    href: `/work/${entry.id}`,
+    title: entry.data.title,
+    summary: entry.data.summary,
+    status: entry.data.status,
+    coverSrc: cover?.src,
+    coverWidth: cover?.attributes.width,
+    coverHeight: cover?.attributes.height,
+    coverShader: entry.data.coverShader,
+    fetchPriority: featured ? "high" : undefined,
+  };
+};
+
+const projectCards = await Promise.all(
+  projects.map((entry, index) => toCard(entry, index === 0)),
+);
+const playgroundCards = await Promise.all(playground.map((entry) => toCard(entry)));
+
+const view = Astro.url.searchParams.get("view");
+const defaultTab = view === "playground" ? "playground" : "projects";
+---
+
+<Layout>
+  <main id="main" class="flex flex-col gap-12">
+    <SiteIntro />
+    <WorkTabs
+      client:load
+      projects={projectCards}
+      playground={playgroundCards}
+      defaultTab={defaultTab}
+    />
+  </main>
+</Layout>

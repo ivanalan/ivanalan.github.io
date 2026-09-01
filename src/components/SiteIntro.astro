@@ -1,0 +1,20 @@
+---
+import { site } from "@/lib/site";
+---
+
+<header class="flex flex-col gap-4">
+  <div class="flex flex-col gap-1">
+    <h1 class="reveal text-name text-foreground" style="--reveal-index: 0">
+      {site.name}
+    </h1>
+    <p class="reveal text-base text-muted-foreground" style="--reveal-index: 1">
+      {site.role}
+    </p>
+  </div>
+  <p
+    class="reveal max-w-xl text-base leading-relaxed text-foreground"
+    style="--reveal-index: 2"
+  >
+    {site.description}
+  </p>
+</header>

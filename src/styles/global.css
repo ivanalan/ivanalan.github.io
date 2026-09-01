@@ -1,0 +1,111 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/fustat";
+@import "@fontsource/gentium-book-basic";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-heading: "Gentium Book Basic", ui-serif, Georgia, "Times New Roman",
+    serif;
+  --font-sans: "Fustat Variable", ui-sans-serif, system-ui, sans-serif;
+  --text-name: 1.5rem;
+  --text-name--line-height: 1.25;
+  --text-work-title: 1.25rem;
+  --text-work-title--line-height: 1.35;
+  --color-background: var(--background);
+  --color-secondary: var(--secondary);
+  --color-muted: var(--muted);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+}
+
+/* Cursor "Dark Anysphere" palette, reduced to two text tones and three
+   surfaces off one #E4E4E4 base, plus the #228df2 accent for focus. */
+:root,
+.dark {
+  --background: oklch(18.54% 0.02509 272.976);
+  --secondary: oklch(23.316% 0.00736 248.23);
+  --muted: oklch(0.311 0 0);
+  --foreground: oklch(94.611% 0.00011 271.152);
+  --muted-foreground: oklch(86.995% 0.0001 271.152);
+  --border: oklch(0.919 0 0 / 7%);
+  --ring: oklch(0.638 0.177 252.2);
+  --radius: 0.625rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(var(--reveal-distance, 1rem));
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal,
+  .case-study > * {
+    animation: reveal-up var(--reveal-duration, 1.2s)
+      cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--reveal-index, 0) * var(--reveal-step, 70ms));
+  }
+
+  /* Continue the article cascade after back (0), title (1), summary (2). */
+  .case-study > * {
+    --reveal-index: 3;
+  }
+
+  @supports (animation-delay: calc(sibling-index() * 1s)) {
+    .case-study > * {
+      --reveal-index: calc(2 + sibling-index());
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:focus-within {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

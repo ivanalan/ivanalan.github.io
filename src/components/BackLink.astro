@@ -1,0 +1,17 @@
+---
+import { Icon } from "astro-icon/components";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+---
+
+<a
+  href="/"
+  class={cn(
+    buttonVariants({ variant: "ghost", size: "icon-lg" }),
+    "reveal -ml-2 mb-8 size-11 text-foreground",
+  )}
+  style="--reveal-index: 0"
+>
+  <Icon name="ion:arrow-back" class="size-5" aria-hidden="true" />
+  <span class="sr-only">Back to home</span>
+</a>
