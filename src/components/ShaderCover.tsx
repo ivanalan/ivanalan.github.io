@@ -1,25 +1,40 @@
 import { useEffect, useState } from "react";
-import { GrainGradient, MeshGradient } from "@paper-design/shaders-react";
+import {
+  GrainGradient,
+  type GrainGradientParams,
+} from "@paper-design/shaders-react";
 import type { CoverShader } from "./work-tabs.types";
 import qualtricsLogoUrl from "@/assets/QualtricsXM Logo.svg?url";
 import r5LogoUrl from "@/assets/R5_Logo.svg?url";
 import { cn } from "@/lib/utils";
 
-/** Gentle hue drift toward teal, narrow luminance band: value contrast reads as depth. */
-const R5_COLORS = ["#3d36c4", "#2b288f", "#243a8c", "#1f5578"];
-const QUALTRICS_BACK = "#0a2740";
-const QUALTRICS_COLORS = ["#12557a", "#1b8ca8", "#2fc0c8"];
-
-const LOGOS: Record<CoverShader, { src: string; className: string }> = {
-  r5: { src: r5LogoUrl, className: "h-12 w-12" },
-  qualtrics: { src: qualtricsLogoUrl, className: "w-2/5" },
+/** Dark base plus a brightening ramp in the brand hue: value contrast reads as depth.
+ *  Both covers run the wave, so r5 starts 9s in: the crests beat as well as travel,
+ *  so a time offset lands on a different form rather than the same one shifted
+ *  sideways. It also keeps the two apart when reduced motion freezes both. */
+const COVERS: Record<CoverShader, GrainGradientParams> = {
+  r5: {
+    colorBack: "#1C1641",
+    colors: ["#2b288f", "#3d36c4", "#6A78E6"],
+    shape: "wave",
+    softness: 0.2,
+    intensity: 0.35,
+    speed: 1.2,
+    frame: 9000,
+  },
+  qualtrics: {
+    colorBack: "#0a2740",
+    colors: ["#12557a", "#1b8ca8", "#2fc0c8"],
+    shape: "wave",
+    softness: 0.85,
+    intensity: 0.35,
+    speed: 1.4,
+  },
 };
 
-/** Painted behind the canvas so the card reads the same before hydration and
- *  on devices without WebGL 2, which Paper Shaders requires. */
-const FALLBACKS: Record<CoverShader, string> = {
-  r5: `linear-gradient(160deg, ${R5_COLORS.join(", ")})`,
-  qualtrics: `linear-gradient(160deg, ${QUALTRICS_BACK}, ${QUALTRICS_COLORS.join(", ")})`,
+const LOGOS: Record<CoverShader, { src: string; className: string }> = {
+  r5: { src: r5LogoUrl, className: "w-1/6" },
+  qualtrics: { src: qualtricsLogoUrl, className: "w-2/5" },
 };
 
 const SHADER_STYLE = { position: "absolute", inset: 0 } as const;
@@ -43,34 +58,23 @@ export function ShaderCover({
   }, []);
 
   const logo = LOGOS[variant];
+  const cover = COVERS[variant];
 
   return (
+    /* The gradient is painted behind the canvas so the card reads the same before
+       hydration and on devices without WebGL 2, which Paper Shaders requires. */
     <div
       className={cn("relative overflow-hidden rounded-xl", className)}
-      style={{ background: FALLBACKS[variant] }}
+      style={{
+        background: `linear-gradient(160deg, ${cover.colorBack}, ${cover.colors!.join(", ")})`,
+      }}
     >
-      {variant === "r5" ? (
-        <MeshGradient
-          colors={R5_COLORS}
-          distortion={0.2}
-          swirl={0}
-          grainMixer={0.45}
-          grainOverlay={0.28}
-          speed={animated ? 0.12 : 0}
-          style={SHADER_STYLE}
-        />
-      ) : (
-        <GrainGradient
-          colorBack={QUALTRICS_BACK}
-          colors={QUALTRICS_COLORS}
-          shape="wave"
-          softness={0.85}
-          intensity={0.35}
-          noise={0.3}
-          speed={animated ? 0.5 : 0}
-          style={SHADER_STYLE}
-        />
-      )}
+      <GrainGradient
+        {...cover}
+        noise={0.3}
+        speed={animated ? cover.speed : 0}
+        style={SHADER_STYLE}
+      />
       <img
         src={logo.src}
         alt=""
