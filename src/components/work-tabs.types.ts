@@ -13,7 +13,7 @@ export type WorkCard = {
 };
 
 export type WorkTabsProps = {
-  projects: WorkCard[];
-  playground: WorkCard[];
-  defaultTab?: "projects" | "playground";
+  work: WorkCard[];
+  sideProjects: WorkCard[];
+  defaultTab?: "work" | "side-projects";
 };

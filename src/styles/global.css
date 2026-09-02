@@ -48,6 +48,7 @@
   html {
     @apply font-sans;
     color-scheme: dark;
+    scrollbar-gutter: stable;
   }
 
   body {

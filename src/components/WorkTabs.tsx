@@ -47,46 +47,46 @@ function Card({ item, index }: { item: WorkCard; index: number }) {
 }
 
 export function WorkTabs({
-  projects,
-  playground,
-  defaultTab = "projects",
+  work,
+  sideProjects,
+  defaultTab = "work",
 }: WorkTabsProps) {
   return (
-    <Tabs defaultValue={defaultTab} className="gap-8">
+    <Tabs defaultValue={defaultTab} className="gap-4">
       <TabsList
         aria-label="Work collections"
         style={{ "--reveal-index": 3 } as CSSProperties}
         className="reveal h-auto gap-2 bg-transparent p-0 group-data-horizontal/tabs:h-auto"
       >
         <TabsTrigger
-          value="projects"
+          value="work"
           className={cn(
             "h-auto cursor-pointer rounded-lg p-2 text-sm",
             "hover:not-data-active:bg-muted",
             "dark:data-active:border-transparent dark:data-active:bg-muted",
           )}
         >
-          Projects
+          Work
         </TabsTrigger>
         <TabsTrigger
-          value="playground"
+          value="side-projects"
           className={cn(
             "h-auto cursor-pointer rounded-lg p-2 text-sm",
             "hover:not-data-active:bg-muted",
             "dark:data-active:border-transparent dark:data-active:bg-muted",
           )}
         >
-          Playground
+          Side projects
         </TabsTrigger>
       </TabsList>
-      <TabsContent value="projects" className="flex flex-col gap-12">
-        {projects.map((item, index) => (
+      <TabsContent value="work" className="flex flex-col gap-12">
+        {work.map((item, index) => (
           <Card key={item.href} item={item} index={CARD_REVEAL_OFFSET + index} />
         ))}
       </TabsContent>
-      <TabsContent value="playground" className="flex flex-col gap-12">
-        {playground.length > 0 ? (
-          playground.map((item, index) => (
+      <TabsContent value="side-projects" className="flex flex-col gap-12">
+        {sideProjects.length > 0 ? (
+          sideProjects.map((item, index) => (
             <Card key={item.href} item={item} index={CARD_REVEAL_OFFSET + index} />
           ))
         ) : (

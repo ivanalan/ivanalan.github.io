@@ -2,10 +2,10 @@ import { defineCollection } from "astro:content";
 import { z } from "astro/zod";
 import { glob } from "astro/loaders";
 
-const projects = defineCollection({
+const work = defineCollection({
   loader: glob({
     pattern: "**/[^_]*.{md,mdx}",
-    base: "./src/content/projects",
+    base: "./src/content/work",
   }),
   schema: ({ image }) =>
     z.object({
@@ -22,10 +22,10 @@ const projects = defineCollection({
     }),
 });
 
-const playground = defineCollection({
+const sideProjects = defineCollection({
   loader: glob({
     pattern: "**/[^_]*.{md,mdx}",
-    base: "./src/content/playground",
+    base: "./src/content/side-projects",
   }),
   schema: ({ image }) =>
     z.object({
@@ -42,4 +42,4 @@ const playground = defineCollection({
     }),
 });
 
-export const collections = { projects, playground };
+export const collections = { work, sideProjects };
