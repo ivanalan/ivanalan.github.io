@@ -6,15 +6,15 @@ import type { WorkCard } from "@/components/work-tabs.types";
 import { getImage } from "astro:assets";
 import { getCollection } from "astro:content";
 
-const projects = (await getCollection("projects")).sort(
+const work = (await getCollection("work")).sort(
   (a, b) => a.data.order - b.data.order,
 );
-const playground = (await getCollection("playground")).sort(
+const sideProjects = (await getCollection("sideProjects")).sort(
   (a, b) => a.data.order - b.data.order,
 );
 
 const toCard = async (
-  entry: (typeof projects)[number] | (typeof playground)[number],
+  entry: (typeof work)[number] | (typeof sideProjects)[number],
   featured = false,
 ): Promise<WorkCard> => {
   const cover = entry.data.cover
@@ -34,22 +34,22 @@ const toCard = async (
   };
 };
 
-const projectCards = await Promise.all(
-  projects.map((entry, index) => toCard(entry, index === 0)),
+const workCards = await Promise.all(
+  work.map((entry, index) => toCard(entry, index === 0)),
 );
-const playgroundCards = await Promise.all(playground.map((entry) => toCard(entry)));
+const sideProjectCards = await Promise.all(sideProjects.map((entry) => toCard(entry)));
 
 const view = Astro.url.searchParams.get("view");
-const defaultTab = view === "playground" ? "playground" : "projects";
+const defaultTab = view === "side-projects" ? "side-projects" : "work";
 ---
 
 <Layout>
-  <main id="main" class="flex flex-col gap-12">
+  <main id="main" class="flex flex-col gap-8">
     <SiteIntro />
     <WorkTabs
       client:load
-      projects={projectCards}
-      playground={playgroundCards}
+      work={workCards}
+      sideProjects={sideProjectCards}
       defaultTab={defaultTab}
     />
   </main>

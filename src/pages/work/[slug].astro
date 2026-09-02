@@ -4,12 +4,12 @@ import Layout from "@/layouts/Layout.astro";
 import { getCollection } from "astro:content";
 
 export async function getStaticPaths() {
-  const [projects, playground] = await Promise.all([
-    getCollection("projects"),
-    getCollection("playground"),
+  const [work, sideProjects] = await Promise.all([
+    getCollection("work"),
+    getCollection("sideProjects"),
   ]);
 
-  return [...projects, ...playground].map((entry) => ({
+  return [...work, ...sideProjects].map((entry) => ({
     params: { slug: entry.id },
     props: { entry },
   }));
