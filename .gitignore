@@ -6,6 +6,9 @@ dist/
 # dependencies
 node_modules/
 
+# source recordings, kept out of the build; public/media holds the encoded ones
+/media/
+
 # logs
 npm-debug.log*
 yarn-debug.log*

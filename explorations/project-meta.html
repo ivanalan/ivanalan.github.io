@@ -1,0 +1,1124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project metadata exploration</title>
+
+    <!-- The same font packages the site imports in global.css, read straight
+         out of node_modules so this file needs no build step. -->
+    <link
+      rel="stylesheet"
+      href="../node_modules/@fontsource-variable/fustat/index.css"
+    />
+    <link
+      rel="stylesheet"
+      href="../node_modules/@fontsource/gentium-book-basic/400.css"
+    />
+
+    <style>
+      /* ---------------------------------------------------------------
+         Tokens, copied from src/styles/global.css
+         --------------------------------------------------------------- */
+      :root {
+        --font-heading: "Gentium Book Basic", ui-serif, Georgia,
+          "Times New Roman", serif;
+        --font-sans: "Fustat Variable", ui-sans-serif, system-ui, sans-serif;
+        --background: oklch(18.561% 0.00161 197.742);
+        --secondary: oklch(24.705% 0.01511 285.224);
+        --muted: oklch(0.311 0 0);
+        --foreground: oklch(94.611% 0.00011 271.152);
+        --muted-foreground: oklch(62.193% 0.00737 274.859);
+        --border: oklch(0.919 0 0 / 7%);
+        --ring: oklch(0.638 0.177 252.2);
+        --radius: 0.625rem;
+        --radius-md: calc(var(--radius) * 0.8);
+        --radius-lg: var(--radius);
+        --radius-xl: calc(var(--radius) * 1.4);
+        /* Tailwind neutral-950, the tile colour BrandChip uses. */
+        --tile: oklch(0.145 0 0);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        color-scheme: dark;
+        font-family: var(--font-sans);
+      }
+
+      body {
+        margin: 0;
+        background: var(--background);
+        color: var(--foreground);
+        font-size: 1rem;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: var(--font-heading);
+        font-weight: 400;
+        margin: 0;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      :focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: 2px;
+      }
+
+      /* ---------------------------------------------------------------
+         Exploration chrome. Deliberately quieter than the demos so the
+         variants are what the eye lands on.
+         --------------------------------------------------------------- */
+      .page {
+        max-width: 108rem;
+        margin: 0 auto;
+        padding: 4rem 2rem 8rem;
+      }
+
+      .page-head {
+        max-width: 60ch;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .page-head h1 {
+        font-size: 2.25rem;
+        line-height: 1.2;
+      }
+
+      .page-head p {
+        color: var(--muted-foreground);
+      }
+
+      .toc {
+        margin-top: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 0;
+        list-style: none;
+        font-size: 0.875rem;
+      }
+
+      .toc a {
+        display: inline-block;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        background: var(--secondary);
+        padding: 0.25rem 0.625rem;
+        text-decoration: none;
+        color: var(--muted-foreground);
+      }
+
+      .toc a:hover {
+        color: var(--foreground);
+      }
+
+      .variant {
+        margin-top: 6rem;
+        scroll-margin-top: 2rem;
+      }
+
+      .variant-head {
+        max-width: 60ch;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .variant-head h2 {
+        font-size: 1.75rem;
+        line-height: 1.3;
+      }
+
+      .variant-index {
+        color: var(--muted-foreground);
+        margin-right: 0.5rem;
+        font-family: var(--font-sans);
+        font-size: 1rem;
+      }
+
+      .variant-head p {
+        color: var(--muted-foreground);
+      }
+
+      .demos {
+        margin-top: 2rem;
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+      }
+
+      .demo-label {
+        font-size: 0.875rem;
+        color: var(--muted-foreground);
+        margin-bottom: 0.5rem;
+      }
+
+      /* The stage stands in for the site's max-w-3xl container, and carries a
+         container query so type scales off the stage rather than the window. */
+      .stage {
+        container-type: inline-size;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        padding: 2rem 1.5rem;
+        max-width: 48rem;
+      }
+
+      .note {
+        margin-top: 1.5rem;
+        max-width: 65ch;
+        font-size: 0.875rem;
+        color: var(--muted-foreground);
+      }
+
+      .note code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.8125rem;
+        color: var(--foreground);
+        background: var(--secondary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 0.05rem 0.3rem;
+      }
+
+      /* ---------------------------------------------------------------
+         Placement contexts, mirroring src/pages/work/[slug].astro and the
+         .case-study rules in global.css.
+         --------------------------------------------------------------- */
+      .ph {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .ph h1 {
+        font-size: 2.25rem;
+        line-height: 1.25;
+      }
+
+      .ph .summary {
+        color: var(--muted-foreground);
+      }
+
+      @container (min-width: 40rem) {
+        .ph h1 {
+          font-size: 3rem;
+        }
+      }
+
+      .case-study > * {
+        margin-top: 1.5rem;
+      }
+
+      .case-study > *:first-child {
+        margin-top: 0;
+      }
+
+      .case-study h2 {
+        margin-top: 3rem;
+        font-size: 1.5rem;
+        line-height: 2rem;
+        color: var(--foreground);
+      }
+
+      .case-study h2 + * {
+        margin-top: 0.75rem;
+      }
+
+      .case-study p {
+        max-width: 65ch;
+        color: var(--muted-foreground);
+      }
+
+      .case-study figure {
+        margin: 1.5rem 0 0;
+        width: 100%;
+      }
+
+      .case-study figure img {
+        width: 100%;
+        border-radius: var(--radius-xl);
+        background: var(--muted);
+        display: block;
+      }
+
+      .case-study figcaption {
+        margin: 0.5rem auto 0;
+        max-width: 65ch;
+        text-align: center;
+        font-size: 0.875rem;
+        color: var(--muted-foreground);
+      }
+
+      .case-study figcaption a {
+        color: var(--foreground);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      /* ---------------------------------------------------------------
+         Chips, as they exist today in ProjectMeta.astro and BrandChip.astro
+         --------------------------------------------------------------- */
+      .chip {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        background: var(--secondary);
+        padding: 0.125rem 0.375rem;
+        color: var(--foreground);
+      }
+
+      .brand-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin: 0 0.125rem;
+        transform: translateY(-0.06em);
+        vertical-align: middle;
+        white-space: nowrap;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        background: var(--secondary);
+        padding: 0.125rem 0.25rem;
+        font-size: 0.875rem;
+        line-height: 1;
+        color: var(--foreground);
+      }
+
+      .brand-tile {
+        display: inline-flex;
+        flex: none;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        width: 1rem;
+        height: 1rem;
+        border-radius: 0.25rem;
+        background: var(--tile);
+      }
+
+      /* Amplitude's wave and counter are cutouts, so currentColor has to match
+         the tile for them to read white. */
+      .brand-tile.is-amplitude {
+        color: var(--tile);
+      }
+
+      .brand-tile.is-cursor {
+        color: #fff;
+      }
+
+      .brand-tile svg {
+        display: block;
+      }
+
+      .icon-figma {
+        height: 0.75rem;
+        width: auto;
+      }
+
+      .icon-cursor {
+        width: 0.75rem;
+        height: 0.75rem;
+      }
+
+      .icon-amplitude {
+        width: 1rem;
+        height: 1rem;
+      }
+
+      .legend {
+        margin-top: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1rem;
+        font-size: 0.875rem;
+        line-height: 1;
+      }
+
+      /* ---------------------------------------------------------------
+         01 Chip row
+         --------------------------------------------------------------- */
+      .meta-chips {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem 1.5rem;
+        margin: 0;
+        font-size: 0.875rem;
+        line-height: 1;
+      }
+
+      .meta-chips > div {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .meta-chips dt {
+        color: var(--muted-foreground);
+      }
+
+      .meta-chips dd {
+        margin: 0;
+      }
+
+      /* ---------------------------------------------------------------
+         02 Spec grid
+         --------------------------------------------------------------- */
+      .meta-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+        gap: 1.25rem;
+        margin: 0;
+        border-top: 1px solid var(--border);
+        padding-top: 1rem;
+      }
+
+      .meta-grid dt {
+        font-size: 0.8125rem;
+        color: var(--muted-foreground);
+      }
+
+      .meta-grid dd {
+        margin: 0.25rem 0 0;
+        color: var(--foreground);
+      }
+
+      /* ---------------------------------------------------------------
+         03 Hairline rows
+         --------------------------------------------------------------- */
+      .meta-rows {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        margin: 0;
+        max-width: 28rem;
+        font-size: 0.875rem;
+        border-top: 1px solid var(--border);
+      }
+
+      .meta-rows dt,
+      .meta-rows dd {
+        border-bottom: 1px solid var(--border);
+        padding: 0.5rem 0;
+        margin: 0;
+      }
+
+      .meta-rows dt {
+        color: var(--muted-foreground);
+        padding-right: 2rem;
+      }
+
+      .meta-rows dd {
+        text-align: right;
+        color: var(--foreground);
+      }
+
+      /* ---------------------------------------------------------------
+         04 Byline
+         --------------------------------------------------------------- */
+      .meta-byline {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.5rem;
+        margin: 0;
+        font-size: 0.875rem;
+        color: var(--muted-foreground);
+      }
+
+      .meta-byline dt {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+
+      .meta-byline dd {
+        margin: 0;
+        color: var(--foreground);
+      }
+
+      .meta-byline dd:not(:last-child)::after {
+        content: "·";
+        margin-left: 0.5rem;
+        color: var(--muted-foreground);
+      }
+
+      /* ---------------------------------------------------------------
+         05 Panel
+         --------------------------------------------------------------- */
+      .meta-panel {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+        gap: 1rem 1.5rem;
+        margin: 0;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--secondary);
+        padding: 1rem 1.25rem;
+      }
+
+      .meta-panel dt {
+        font-size: 0.8125rem;
+        color: var(--muted-foreground);
+      }
+
+      .meta-panel dd {
+        margin: 0.25rem 0 0;
+        font-size: 0.875rem;
+        color: var(--foreground);
+      }
+
+      /* ---------------------------------------------------------------
+         06 Sticky rail. Below 60rem it drops back into the flow as a stacked
+         list; above it, it sits beside the reading measure.
+         --------------------------------------------------------------- */
+      .meta-rail {
+        display: grid;
+        gap: 0.75rem;
+        margin: 0;
+        font-size: 0.875rem;
+      }
+
+      .meta-rail dt {
+        color: var(--muted-foreground);
+      }
+
+      .meta-rail dd {
+        margin: 0.125rem 0 0;
+        color: var(--foreground);
+      }
+
+      @container (min-width: 40rem) {
+        .ctx-rail {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) 10rem;
+          column-gap: 2.5rem;
+          align-items: start;
+        }
+
+        .ctx-rail > * {
+          grid-column: 1;
+        }
+
+        .ctx-rail > .meta-rail {
+          grid-column: 2;
+          grid-row: 1 / -1;
+          position: sticky;
+          top: 1.5rem;
+          margin-top: 0;
+          border-left: 1px solid var(--border);
+          padding-left: 1rem;
+        }
+      }
+
+      /* ---------------------------------------------------------------
+         07 Narrative sentence
+         --------------------------------------------------------------- */
+      .meta-sentence {
+        max-width: 65ch;
+        color: var(--foreground);
+      }
+
+      /* ---------------------------------------------------------------
+         08 End credits
+         --------------------------------------------------------------- */
+      .meta-credits {
+        max-width: 28rem;
+      }
+
+      .meta-credits h3 {
+        font-size: 1.125rem;
+        color: var(--muted-foreground);
+      }
+
+      .meta-credits dl {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        margin: 0.75rem 0 0;
+        font-size: 0.875rem;
+        border-top: 1px solid var(--border);
+      }
+
+      .meta-credits dt,
+      .meta-credits dd {
+        border-bottom: 1px solid var(--border);
+        padding: 0.5rem 0;
+        margin: 0;
+      }
+
+      .meta-credits dt {
+        color: var(--muted-foreground);
+        padding-right: 2rem;
+      }
+
+      .meta-credits dd {
+        text-align: right;
+        color: var(--foreground);
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Icon sprite. The markup is lifted from src/icons/*.svg so the
+         currentColor behaviour survives outside astro-icon. -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="i-figma" viewBox="0 0 38 57" fill="none">
+        <path fill="#1ABCFE" d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 1 1-19 0Z" />
+        <path fill="#0ACF83" d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0Z" />
+        <path fill="#FF7262" d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19Z" />
+        <path fill="#F24E1E" d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5Z" />
+        <path fill="#A259FF" d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5Z" />
+      </symbol>
+      <symbol id="i-cursor" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M11.503.131 1.891 5.678a.84.84 0 0 0-.42.726v11.188c0 .3.162.575.42.724l9.609 5.55a1 1 0 0 0 .998 0l9.61-5.55a.84.84 0 0 0 .42-.724V6.404a.84.84 0 0 0-.42-.726L12.497.131a1.01 1.01 0 0 0-.996 0M2.657 6.338h18.55c.263 0 .43.287.297.515L12.23 22.918c-.062.107-.229.064-.229-.06V12.335a.59.59 0 0 0-.295-.51l-9.11-5.257c-.109-.063-.064-.23.061-.23" />
+      </symbol>
+      <symbol id="i-amplitude" viewBox="6 4 498 498" fill="currentColor">
+        <circle cx="254.99" cy="253.15" r="235" fill="#fff" />
+        <path d="M225.48 116.24c-1.38-1.82-2.95-2.78-4.7-2.78-1.44 0-2.75.64-3.6 1.19-13.26 10.42-31.4 54.53-46.27 112.67l13.16.15c26 .29 52.84.6 79.38 1.01-6.99-26.63-13.61-49.45-19.67-67.88-8.86-26.93-14.84-39-18.3-44.36z" />
+        <path
+          fill-rule="evenodd"
+          d="M254.99 4.15c-137.52 0-249 111.48-249 249 0 137.52 111.48 249 249 249s249-111.48 249-249c0-137.52-111.48-248.99-249-248.99zM434.04 257.67c-.02.02-.04.03-.06.05-.27.22-.54.42-.83.62-.09.06-.18.13-.28.19-.19.12-.39.24-.58.35-.18.11-.36.21-.54.31-.01.01-.02.01-.03.02-1.83.96-3.92 1.51-6.13 1.51H307.64c.94 3.91 1.97 8.35 3.09 13.18 6.46 27.91 23.64 102.06 41.88 102.06h.36l.2-.03h.35c14.25 0 21.52-20.6 37.46-65.74l.19-.55c2.56-7.25 5.45-15.43 8.58-24.08l.8-2.21c.81-2.16 2.89-3.7 5.34-3.7 3.15 0 5.71 2.56 5.71 5.71 0 .57-.09 1.12-.24 1.64l-.66 2.22c-1.66 5.37-3.43 12.69-5.47 21.16-9.5 39.37-23.85 98.85-60.67 98.85h-.27c-23.79-.19-38.03-38.22-44.11-54.46-11.37-30.37-19.97-62.73-28.27-94.07h-103.4l-22.54 72.14-.33-.26c-2.06 3.24-5.68 5.32-9.67 5.32-6.29 0-11.44-5.12-11.47-11.41l.02-.39 1.36-8.16c3.11-18.54 6.84-37.78 11.1-57.23H85.97l-.17-.17c-8.32-1.2-14.71-8.54-14.71-17.1 0-8.39 5.94-15.54 14.12-16.99.75-.1 2.27-.23 5.36-.23h2.23c14.53.25 29.95.48 46.86.7 23.93-97.24 51.65-146.6 82.4-146.74 32.99 0 57.47 75.12 77.06 148.61l.08.29c40.25.81 83.15 1.98 124.86 4.97l1.75.16c.67.01 1.33.08 1.97.18l.24.02.21.05.11.02c6.07 1.22 10.57 6.54 10.57 12.94 0 4.54-1.9 8.23-4.87 10.66z"
+        />
+      </symbol>
+    </svg>
+
+    <!-- ===============================================================
+         Placement contexts, cloned once per variant by the script below.
+         =============================================================== -->
+    <template id="ctx-header">
+      <header class="ph">
+        <h1>Table Layout Switcher</h1>
+        <p class="summary">
+          A Figma plugin that flips a table between row and column auto layout
+          without rebuilding it.
+        </p>
+        <div data-slot></div>
+      </header>
+    </template>
+
+    <template id="ctx-inline">
+      <div class="case-study">
+        <figure>
+          <img
+            src="../public/media/table-layout-switcher/community.png"
+            alt="The Table Layout Switcher listing on the Figma Community"
+          />
+          <figcaption>
+            The plugin's page on the
+            <a
+              href="https://www.figma.com/community/plugin/1557990989029143639/table-layout-switcher"
+              target="_blank"
+              rel="noreferrer"
+              >Figma Community</a
+            >
+          </figcaption>
+        </figure>
+        <div data-slot></div>
+        <h2>Outcome</h2>
+        <p>
+          100% of the Ab Initio design team used it. Sinan called it "our most
+          useful tool."
+        </p>
+      </div>
+    </template>
+
+    <!-- ===============================================================
+         Variants. Each is defined once and rendered into both contexts.
+         =============================================================== -->
+    <template id="v-chips">
+      <dl class="meta-chips">
+        <div>
+          <dt>My role</dt>
+          <dd class="chip">Designer and developer</dd>
+        </div>
+        <div>
+          <dt>Team</dt>
+          <dd class="chip">Just me</dd>
+        </div>
+        <div>
+          <dt>Year</dt>
+          <dd class="chip">2025</dd>
+        </div>
+        <div>
+          <dt>Tools</dt>
+          <dd class="chip">Figma, Cursor</dd>
+        </div>
+      </dl>
+    </template>
+
+    <template id="v-grid">
+      <dl class="meta-grid">
+        <div>
+          <dt>My role</dt>
+          <dd>Designer and developer</dd>
+        </div>
+        <div>
+          <dt>Team</dt>
+          <dd>Just me</dd>
+        </div>
+        <div>
+          <dt>Year</dt>
+          <dd>2025</dd>
+        </div>
+        <div>
+          <dt>Tools</dt>
+          <dd>Figma, Cursor</dd>
+        </div>
+      </dl>
+    </template>
+
+    <template id="v-rows">
+      <dl class="meta-rows">
+        <dt>My role</dt>
+        <dd>Designer and developer</dd>
+        <dt>Team</dt>
+        <dd>Just me</dd>
+        <dt>Year</dt>
+        <dd>2025</dd>
+        <dt>Tools</dt>
+        <dd>Figma, Cursor</dd>
+      </dl>
+    </template>
+
+    <template id="v-byline">
+      <dl class="meta-byline">
+        <dt>My role</dt>
+        <dd>Designer and developer</dd>
+        <dt>Team</dt>
+        <dd>Just me</dd>
+        <dt>Year</dt>
+        <dd>2025</dd>
+        <dt>Tools</dt>
+        <dd>Figma, Cursor</dd>
+      </dl>
+    </template>
+
+    <template id="v-panel">
+      <dl class="meta-panel">
+        <div>
+          <dt>My role</dt>
+          <dd>Designer and developer</dd>
+        </div>
+        <div>
+          <dt>Team</dt>
+          <dd>Just me</dd>
+        </div>
+        <div>
+          <dt>Year</dt>
+          <dd>2025</dd>
+        </div>
+        <div>
+          <dt>Tools</dt>
+          <dd>
+            <span class="brand-chip"
+              ><span class="brand-tile"
+                ><svg class="icon-figma"><use href="#i-figma" /></svg></span
+              >Figma</span
+            >
+            <span class="brand-chip"
+              ><span class="brand-tile is-cursor"
+                ><svg class="icon-cursor"><use href="#i-cursor" /></svg></span
+              >Cursor</span
+            >
+          </dd>
+        </div>
+      </dl>
+    </template>
+
+    <template id="v-rail">
+      <dl class="meta-rail">
+        <div>
+          <dt>My role</dt>
+          <dd>Designer and developer</dd>
+        </div>
+        <div>
+          <dt>Team</dt>
+          <dd>Just me</dd>
+        </div>
+        <div>
+          <dt>Year</dt>
+          <dd>2025</dd>
+        </div>
+        <div>
+          <dt>Tools</dt>
+          <dd>Figma, Cursor</dd>
+        </div>
+      </dl>
+    </template>
+
+    <template id="v-sentence">
+      <p class="meta-sentence">
+        I designed and built this alone in 2025, in
+        <span class="brand-chip"
+          ><span class="brand-tile"
+            ><svg class="icon-figma"><use href="#i-figma" /></svg></span
+          >Figma</span
+        >
+        and
+        <span class="brand-chip"
+          ><span class="brand-tile is-cursor"
+            ><svg class="icon-cursor"><use href="#i-cursor" /></svg></span
+          >Cursor</span
+        >.
+      </p>
+    </template>
+
+    <template id="v-credits">
+      <div class="meta-credits">
+        <h3>Credits</h3>
+        <dl>
+          <dt>My role</dt>
+          <dd>Designer and developer</dd>
+          <dt>Team</dt>
+          <dd>Just me</dd>
+          <dt>Year</dt>
+          <dd>2025</dd>
+          <dt>Tools</dt>
+          <dd>Figma, Cursor</dd>
+        </dl>
+      </div>
+    </template>
+
+    <main class="page">
+      <div class="page-head">
+        <h1>Project metadata</h1>
+        <p>
+          Eight ways to say who did what, each rendered in the page header and
+          mid-page, on the site's own tokens and fonts. Sample values are Table
+          Layout Switcher's, so the layouts are judged against real string
+          lengths.
+        </p>
+      </div>
+
+      <ul class="toc">
+        <li><a href="#chips">01 Chip row</a></li>
+        <li><a href="#grid">02 Spec grid</a></li>
+        <li><a href="#rows">03 Hairline rows</a></li>
+        <li><a href="#byline">04 Byline</a></li>
+        <li><a href="#panel">05 Panel</a></li>
+        <li><a href="#rail">06 Sticky rail</a></li>
+        <li><a href="#sentence">07 Narrative sentence</a></li>
+        <li><a href="#credits">08 End credits</a></li>
+      </ul>
+
+      <section class="variant" id="ingredients">
+        <div class="variant-head">
+          <h2><span class="variant-index">00</span>Ingredients</h2>
+          <p>
+            The pieces already on the site: the chip from ProjectMeta and the
+            three brand chips from BrandChip.
+          </p>
+        </div>
+        <div class="legend">
+          <span class="chip">Designer and developer</span>
+          <span class="brand-chip"
+            ><span class="brand-tile"
+              ><svg class="icon-figma"><use href="#i-figma" /></svg></span
+            >Figma</span
+          >
+          <span class="brand-chip"
+            ><span class="brand-tile is-cursor"
+              ><svg class="icon-cursor"><use href="#i-cursor" /></svg></span
+            >Cursor</span
+          >
+          <span class="brand-chip"
+            ><span class="brand-tile is-amplitude"
+              ><svg class="icon-amplitude">
+                <use href="#i-amplitude" /></svg></span
+            >Amplitude</span
+          >
+        </div>
+      </section>
+
+      <section class="variant" id="chips" data-variant="chips">
+        <div class="variant-head">
+          <h2><span class="variant-index">01</span>Chip row</h2>
+          <p>
+            Today's component, extended from two pairs to four. The control
+            everything else is measured against.
+          </p>
+        </div>
+        <div class="demos">
+          <div>
+            <p class="demo-label">In the header</p>
+            <div class="stage" data-context="header"></div>
+          </div>
+          <div>
+            <p class="demo-label">Mid-page</p>
+            <div class="stage" data-context="inline"></div>
+          </div>
+        </div>
+        <p class="note">
+          Four pairs is where this starts to strain: the chips make every value
+          look like a button, and a long role plus a long tools list wraps into
+          a second line that no longer scans as a row. Reads better mid-page
+          than in the header, where the chips compete with the title.
+          Translation: <code>flex flex-wrap gap-x-6 gap-y-2 text-sm</code> with
+          <code>rounded-md border border-border bg-secondary px-1.5 py-0.5</code>
+          on each value.
+        </p>
+      </section>
+
+      <section class="variant" id="grid" data-variant="grid">
+        <div class="variant-head">
+          <h2><span class="variant-index">02</span>Spec grid</h2>
+          <p>
+            Labels above values in equal columns, under a hairline rule. The
+            standard editorial answer.
+          </p>
+        </div>
+        <div class="demos">
+          <div>
+            <p class="demo-label">In the header</p>
+            <div class="stage" data-context="header"></div>
+          </div>
+          <div>
+            <p class="demo-label">Mid-page</p>
+            <div class="stage" data-context="inline"></div>
+          </div>
+        </div>
+        <p class="note">
+          Fastest to scan of the eight, and long values wrap inside their own
+          column instead of pushing the others around. The cost is that it
+          looks like every other portfolio, and the rule plus four columns is a
+          lot of structure for a solo project whose honest answer is "just me".
+          Translation:
+          <code>grid grid-cols-2 gap-5 border-t border-border pt-4 sm:grid-cols-4</code>.
+        </p>
+      </section>
+
+      <section class="variant" id="rows" data-variant="rows">
+        <div class="variant-head">
+          <h2><span class="variant-index">03</span>Hairline rows</h2>
+          <p>
+            Label left, value right, one rule per row. A spec sheet rather than
+            a banner.
+          </p>
+        </div>
+        <div class="demos">
+          <div>
+            <p class="demo-label">In the header</p>
+            <div class="stage" data-context="header"></div>
+          </div>
+          <div>
+            <p class="demo-label">Mid-page</p>
+            <div class="stage" data-context="inline"></div>
+          </div>
+        </div>
+        <p class="note">
+          Survives any string length and any number of fields, and it is the
+          only variant that would still work in a 10rem column. But four rules
+          stacked in the header add visual weight right where the page should
+          feel light, and the right-aligned values pull the eye away from the
+          reading edge. Translation:
+          <code>grid grid-cols-[auto_1fr] border-t border-border text-sm</code>
+          with <code>border-b border-border py-2</code> on every cell.
+        </p>
+      </section>
+
+      <section class="variant" id="byline" data-variant="byline">
+        <div class="variant-head">
+          <h2><span class="variant-index">04</span>Byline</h2>
+          <p>
+            One line, dot separated, labels only for screen readers. The
+            lightest touch available.
+          </p>
+        </div>
+        <div class="demos">
+          <div>
+            <p class="demo-label">In the header</p>
+            <div class="stage" data-context="header"></div>
+          </div>
+          <div>
+            <p class="demo-label">Mid-page</p>
+            <div class="stage" data-context="inline"></div>
+          </div>
+        </div>
+        <p class="note">
+          Sits under the summary without asking for anything, which is exactly
+          right for the header. It leans on the reader to infer which value is
+          which: "Just me · 2025" is obvious, "Designer and developer" less so
+          once the labels are visually gone. Translation:
+          <code>flex flex-wrap items-baseline gap-2 text-sm text-muted-foreground</code>
+          with <code>sr-only</code> on the <code>dt</code>s.
+        </p>
+      </section>
+
+      <section class="variant" id="panel" data-variant="panel">
+        <div class="variant-head">
+          <h2><span class="variant-index">05</span>Panel</h2>
+          <p>
+            The same pairs grouped on a secondary surface, with the tools as
+            brand chips.
+          </p>
+        </div>
+        <div class="demos">
+          <div>
+            <p class="demo-label">In the header</p>
+            <div class="stage" data-context="header"></div>
+          </div>
+          <div>
+            <p class="demo-label">Mid-page</p>
+            <div class="stage" data-context="inline"></div>
+          </div>
+        </div>
+        <p class="note">
+          The surface does the grouping so no rules are needed, and it is the
+          one variant with room for the brand chips without them looking
+          stranded. It also reads as a card in a layout that has none, and
+          mid-page it competes with the figure directly above it. Translation:
+          <code>rounded-lg border border-border bg-secondary px-5 py-4</code>
+          around a <code>grid gap-4 sm:grid-cols-4</code>.
+        </p>
+      </section>
+
+      <section class="variant" id="rail" data-variant="rail" data-layout="rail">
+        <div class="variant-head">
+          <h2><span class="variant-index">06</span>Sticky rail</h2>
+          <p>
+            A column beside the reading measure that follows the scroll, and
+            collapses into the flow when there is no room.
+          </p>
+        </div>
+        <div class="demos">
+          <div>
+            <p class="demo-label">In the header</p>
+            <div class="stage" data-context="header"></div>
+          </div>
+          <div>
+            <p class="demo-label">Mid-page</p>
+            <div class="stage" data-context="inline"></div>
+          </div>
+        </div>
+        <p class="note">
+          Keeps the facts available for the whole scroll without spending a
+          single line of the article on them. The problem is structural: the
+          site's container is a single centred
+          <code>max-w-3xl</code> column, so a rail either narrows the reading
+          measure or has to break out of the container, and 10rem is not enough
+          for "Designer and developer" to sit on one line. Translation:
+          <code>lg:grid lg:grid-cols-[minmax(0,1fr)_10rem] lg:gap-10</code> with
+          <code>lg:sticky lg:top-6</code> on the rail, and a container widened
+          past <code>max-w-3xl</code>.
+        </p>
+      </section>
+
+      <section class="variant" id="sentence" data-variant="sentence">
+        <div class="variant-head">
+          <h2><span class="variant-index">07</span>Narrative sentence</h2>
+          <p>
+            The metadata written as prose, with brand chips inline. The move
+            SiteIntro already makes on the home page.
+          </p>
+        </div>
+        <div class="demos">
+          <div>
+            <p class="demo-label">In the header</p>
+            <div class="stage" data-context="header"></div>
+          </div>
+          <div>
+            <p class="demo-label">Mid-page</p>
+            <div class="stage" data-context="inline"></div>
+          </div>
+        </div>
+        <p class="note">
+          The only variant that sounds like the rest of the site, and it turns
+          "Just me" from a field into a claim. It cannot be skimmed, it has to
+          be written by hand per project, and there is nowhere for a field to go
+          if a project has a real team and a stakeholder list. Translation: a
+          <code>p</code> at <code>text-base text-foreground</code> with
+          <code>BrandChip</code> inline, exactly as in
+          <code>SiteIntro.astro</code>.
+        </p>
+      </section>
+
+      <section
+        class="variant"
+        id="credits"
+        data-variant="credits"
+        data-position="end"
+      >
+        <div class="variant-head">
+          <h2><span class="variant-index">08</span>End credits</h2>
+          <p>
+            A serif heading over hairline rows, placed at the end of the case
+            study instead of the start.
+          </p>
+        </div>
+        <div class="demos">
+          <div>
+            <p class="demo-label">In the header</p>
+            <div class="stage" data-context="header"></div>
+          </div>
+          <div>
+            <p class="demo-label">At the end, mid-page context</p>
+            <div class="stage" data-context="inline"></div>
+          </div>
+        </div>
+        <p class="note">
+          Puts the work first and the credentials after, which is the confident
+          order and the one film titles use. It also means a reader who wants to
+          know whether you did this alone has to scroll the whole case study to
+          find out. The header column here is only for comparison; the point of
+          this variant is the second demo. Translation: an
+          <code>h3</code> in <code>font-heading</code> over the same
+          <code>grid-cols-[auto_1fr]</code> rows as variant 03, rendered after
+          <code>&lt;Content /&gt;</code> in
+          <code>src/pages/work/[slug].astro</code>.
+        </p>
+      </section>
+    </main>
+
+    <script>
+      const contexts = {
+        header: document.getElementById("ctx-header"),
+        inline: document.getElementById("ctx-inline"),
+      };
+
+      for (const section of document.querySelectorAll("[data-variant]")) {
+        const variant = document.getElementById(`v-${section.dataset.variant}`);
+
+        for (const stage of section.querySelectorAll("[data-context]")) {
+          const context = contexts[stage.dataset.context].content.cloneNode(true);
+          const root = context.firstElementChild;
+          const slot = context.querySelector("[data-slot]");
+          const meta = variant.content.cloneNode(true);
+
+          if (section.dataset.position === "end") {
+            slot.remove();
+            root.append(meta);
+          } else {
+            slot.replaceWith(meta);
+          }
+
+          if (section.dataset.layout) {
+            root.classList.add(`ctx-${section.dataset.layout}`);
+          }
+
+          stage.append(context);
+        }
+      }
+    </script>
+  </body>
+</html>

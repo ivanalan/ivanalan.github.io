@@ -13,7 +13,7 @@ function Card({ item, index }: { item: WorkCard; index: number }) {
     <a
       href={item.href}
       style={{ "--reveal-index": index } as CSSProperties}
-      className="reveal group flex flex-col gap-3 rounded-xl p-2 outline-none transition-colors duration-400 ease-out hover:bg-secondary focus-visible:ring-3 focus-visible:ring-ring/50"
+      className="reveal group flex flex-col gap-3 rounded-xl p-2 outline-none transition-[background-color,scale] duration-400 ease-out hover:bg-secondary focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-[0.99] active:duration-100"
     >
       {item.coverVideo ? (
         <VideoCover
@@ -70,8 +70,9 @@ export function WorkTabs({
           value="work"
           className={cn(
             "h-auto cursor-pointer rounded-lg p-2 text-sm duration-400 ease-out",
-            "hover:not-data-active:bg-muted",
-            "dark:data-active:border-transparent dark:data-active:bg-muted",
+            "hover:not-data-active:bg-secondary",
+            "active:scale-[0.96] active:duration-100",
+            "dark:data-active:border-transparent dark:data-active:bg-secondary",
           )}
         >
           Work
@@ -80,8 +81,9 @@ export function WorkTabs({
           value="side-projects"
           className={cn(
             "h-auto cursor-pointer rounded-lg p-2 text-sm duration-400 ease-out",
-            "hover:not-data-active:bg-muted",
-            "dark:data-active:border-transparent dark:data-active:bg-muted",
+            "hover:not-data-active:bg-secondary",
+            "active:scale-[0.96] active:duration-100",
+            "dark:data-active:border-transparent dark:data-active:bg-secondary",
           )}
         >
           Side projects

@@ -3,6 +3,6 @@ export const site = {
   role: "Building at Qualtrics",
   jobTitle: "Design Engineer",
   description:
-    "I design with Figma, iterate in code, and measure impact through Amplitude.",
+    "I design with Figma, iterate in Cursor, and measure impact using Amplitude.",
   url: "https://alanmatias.com",
 } as const;

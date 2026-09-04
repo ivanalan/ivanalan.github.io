@@ -10,6 +10,11 @@ const { work, sideProjects } = await getWorkCards();
 <Layout>
   <main id="main" class="flex flex-col gap-8">
     <SiteIntro />
-    <WorkTabs client:load work={work} sideProjects={sideProjects} />
+    <WorkTabs
+      client:load
+      work={work}
+      sideProjects={sideProjects}
+      defaultTab="side-projects"
+    />
   </main>
 </Layout>
