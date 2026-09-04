@@ -5,10 +5,12 @@ import { cn } from "@/lib/utils";
  *  reduced motion holds the clip on its first frame instead of looping it. */
 export function VideoCover({
   src,
+  poster,
   className,
   videoClassName,
 }: {
   src: string;
+  poster?: string;
   className?: string;
   videoClassName?: string;
 }) {
@@ -40,6 +42,7 @@ export function VideoCover({
       <video
         ref={ref}
         src={src}
+        poster={poster}
         width={1280}
         height={720}
         muted

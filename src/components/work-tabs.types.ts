@@ -10,6 +10,7 @@ export type WorkCard = {
   coverHeight?: number | string;
   coverShader?: CoverShader;
   coverVideo?: string;
+  coverVideoPoster?: string;
   coverVideoClassName?: string;
   fetchPriority?: "high" | "low" | "auto";
 };

@@ -38,6 +38,7 @@ const sideProjects = defineCollection({
       cover: image().optional(),
       coverShader: z.enum(["r5", "qualtrics"]).optional(),
       coverVideo: z.string().optional(),
+      coverVideoPoster: z.string().optional(),
       coverVideoClassName: z.string().optional(),
       order: z.number(),
       externalUrl: z.string().optional(),

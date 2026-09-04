@@ -18,6 +18,7 @@ function Card({ item, index }: { item: WorkCard; index: number }) {
       {item.coverVideo ? (
         <VideoCover
           src={item.coverVideo}
+          poster={item.coverVideoPoster}
           videoClassName={item.coverVideoClassName}
           className="aspect-[16/9] w-full rounded-xl transition-opacity duration-400 ease-out group-hover:opacity-85"
         />
