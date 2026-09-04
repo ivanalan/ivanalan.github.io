@@ -1,27 +1,57 @@
 ---
 title: Table Layout Switcher
-summary: A Figma plugin to switch a table between row and column based auto layout.
+summary: A Figma plugin that flips a table between row and column auto layout without rebuilding it.
 role: Design Engineer
+team: Just me
 year: 2025
-status: placeholder
-coverVideo: "/videos/table-layout-switcher.mp4"
-coverVideoPoster: "/videos/table-layout-switcher-poster.webp"
+status: published
+outcome: 100% of the Ab Initio design team. 26 Community installs, five likes, and one comment.
+coverVideo: "/media/table-layout-switcher/cover.mp4"
+coverVideoPoster: "/media/table-layout-switcher/cover-poster.webp"
 coverVideoClassName: "translate-y-[6%] scale-120"
-order: 1
+order: 2
 externalUrl: https://www.figma.com/community/plugin/1557990989029143639/table-layout-switcher
 ---
 
-## Context
+import { CaseImage } from "../../components/CaseImage";
+import { CaseVideo } from "../../components/CaseVideo";
 
-Tables built with auto layout commit to one axis. Restructuring a row-based table
-into a column-based one means rebuilding it by hand and losing the frame
-properties that were already set.
-
-## What it does
-
-Select a table with auto layout applied and the plugin switches it to the other
-orientation, preserving frame properties and absolutely positioned children.
+<CaseImage
+  client:load
+  src="/media/table-layout-switcher/community.png"
+  alt="The Table Layout Switcher listing on the Figma Community, with 26 users and five likes"
+  caption="The plugin's page on the Figma Community"
+  href="https://www.figma.com/community/plugin/1557990989029143639/table-layout-switcher"
+  linkLabel="Figma Community"
+/>
 
 ## Outcome
 
-Published on the Figma Community. This page is a stub until the write-up is ready.
+1. 100% usage within Ab Initio design team.
+2. Figma Community: 26 installs, 5 likes, and 1 comment. “Thank you, small function but useful.”
+
+## Auto layout was too rigid
+
+At Ab Initio, every Figma I touched had a data table. I designed data processing flows, which meant editing and resizing columns, rows, and cells every day. If the table was row-based and I needed to resize a column, I had to pick cells out of each row and resize them one by one.
+
+## A flexible solution
+
+In January 2025 I designed, coded, and shipped Table Layout Switcher. This Figma plugin allows users to flexibly switch between rows and columns without any property loss of cells; since launch, it became part of the team’s daily workflow.
+
+Later that year Figma launched Grid. However, this new feature still does not give users the full power of row or column based auto layout, which my plugin still allows.
+
+<CaseVideo
+  client:load
+  src="/media/table-layout-switcher/product-demo.mp4"
+  poster="/media/table-layout-switcher/product-demo-poster.webp"
+  width={1712}
+  height={1108}
+  title="Table Layout Switcher demo"
+  caption="Switching a table from row-based to column-based auto layout"
+/>
+
+## Letting real use cases drive iteration
+
+The simple case worked well and was enough to feel instantly valuable. However, there were later issues with tables that had hidden columns, mixed row heights, annotation layers, and row fills.
+
+Instead of thinking of every single edge case before launching, my philosophy is to ship an MVP and let real use cases drive iteration. Since then, I’ve launched 6 new versions.

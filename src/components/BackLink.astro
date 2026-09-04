@@ -2,10 +2,16 @@
 import { Icon } from "astro-icon/components";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+type Props = {
+  href?: string;
+};
+
+const { href = "/" } = Astro.props;
 ---
 
 <a
-  href="/"
+  href={href}
   class={cn(
     buttonVariants({ variant: "ghost", size: "icon-lg" }),
     "reveal -ml-2 mb-8 size-11 text-foreground",

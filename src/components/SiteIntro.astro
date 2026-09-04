@@ -1,5 +1,6 @@
 ---
 import { site } from "@/lib/site";
+import BrandChip from "@/components/BrandChip.astro";
 ---
 
 <header class="flex flex-col gap-4">
@@ -8,15 +9,13 @@ import { site } from "@/lib/site";
       {site.name}
     </h1>
     <p class="reveal text-base text-muted-foreground" style="--reveal-index: 1">
-      <span class="shimmer shimmer-color-foreground shimmer-spread-8">
-        {site.role}
-      </span>
+      {site.role}
     </p>
   </div>
   <p
     class="reveal text-base text-foreground"
     style="--reveal-index: 2"
   >
-    {site.description}
+    I design with <BrandChip brand="figma" />, iterate in <BrandChip brand="cursor" />, and measure impact using <BrandChip brand="amplitude" />.
   </p>
 </header>

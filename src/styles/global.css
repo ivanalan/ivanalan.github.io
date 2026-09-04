@@ -31,8 +31,8 @@
    surfaces off one #E4E4E4 base, plus the #228df2 accent for focus. */
 :root,
 .dark {
-  --background: oklch(18.54% 0.02509 272.976);
-  --secondary: oklch(23.316% 0.00736 248.23);
+  --background: oklch(18.561% 0.00161 197.742);
+  --secondary: oklch(24.705% 0.01511 285.224);
   --muted: oklch(0.311 0 0);
   --foreground: oklch(94.611% 0.00011 271.152);
   --muted-foreground: oklch(62.193% 0.00737 274.859);
@@ -70,6 +70,92 @@
   }
 }
 
+/* Blocks space themselves off the one above, so a heading can sit closer to
+   the copy it introduces than that copy sits to the next section. */
+.case-study > * {
+  @apply mt-6;
+}
+
+.case-study > *:first-child {
+  @apply mt-0;
+}
+
+.case-study h2 {
+  @apply mt-12 text-2xl text-foreground;
+}
+
+.case-study h2 + * {
+  @apply mt-3;
+}
+
+.case-study p {
+  @apply max-w-prose text-base text-muted-foreground;
+}
+
+/* Preflight strips list markers and padding, so the numbers and their indent
+   have to be asked for. Items sit closer than top-level blocks do. */
+.case-study ol {
+  @apply max-w-prose list-decimal pl-[1.5em] text-base text-muted-foreground;
+}
+
+.case-study li + li {
+  @apply mt-3;
+}
+
+/* The island wrapper is display: contents, so the figure has to carry the
+   block spacing itself instead of inheriting it from .case-study > *. */
+.case-study figure {
+  @apply mt-6 w-full;
+}
+
+.case-study figcaption {
+  @apply mx-auto mt-2 max-w-prose text-center text-sm text-muted-foreground;
+}
+
+.case-study figcaption a,
+.case-study [data-slot="dialog-description"] a {
+  @apply text-foreground underline underline-offset-3 hover:text-foreground;
+}
+
+/* Placeholder bars for case studies that are still stubs. Heights track the
+   ink band of the type they stand in for: 0.7rem for body copy on a 1.5rem
+   pitch, 1.05rem for an h2. */
+.skeleton {
+  background-color: var(--muted);
+  background-image: linear-gradient(
+    100deg,
+    transparent 34%,
+    color-mix(in oklab, var(--foreground) 7%, transparent) 50%,
+    transparent 66%
+  );
+  background-repeat: no-repeat;
+  background-size: 200% 100%;
+  background-position: -100% 0;
+}
+
+.skeleton-line {
+  @apply h-[0.7rem] rounded-full;
+}
+
+.skeleton-heading {
+  @apply h-[1.05rem] rounded-md;
+  /* Carries the same foreground-vs-muted step the real h2 has over its
+     paragraphs, so the hierarchy survives the abstraction. */
+  background-color: color-mix(in oklab, var(--foreground) 22%, var(--muted));
+}
+
+/* The sweep travels for two thirds of the cycle, then rests off-screen: the
+   dwell is what keeps the loop from reading as a spinner. */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  65%,
+  100% {
+    background-position: -100% 0;
+  }
+}
+
 @keyframes reveal-up {
   from {
     opacity: 0;
@@ -78,21 +164,30 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  /* Every bar shares one delay, so the sweep crosses them together. */
+  .skeleton {
+    animation: shimmer 3.2s linear infinite;
+  }
+
   .reveal,
-  .case-study > * {
+  .case-study > *,
+  /* A hydrated island is display: contents, so the box that can animate is
+     its child, which inherits the index set on the island. */
+  .case-study > astro-island > * {
     animation: reveal-up var(--reveal-duration, 1.2s)
       cubic-bezier(0.16, 1, 0.3, 1) both;
     animation-delay: calc(var(--reveal-index, 0) * var(--reveal-step, 70ms));
   }
 
-  /* Continue the article cascade after back (0), title (1), summary (2). */
+  /* Continue the article cascade after back (0), title (1), summary (2),
+     meta (3). */
   .case-study > * {
-    --reveal-index: 3;
+    --reveal-index: 4;
   }
 
   @supports (animation-delay: calc(sibling-index() * 1s)) {
     .case-study > * {
-      --reveal-index: calc(2 + sibling-index());
+      --reveal-index: calc(3 + sibling-index());
     }
   }
 }

@@ -1,0 +1,44 @@
+---
+import { Icon } from "astro-icon/components";
+
+const brands = {
+  figma: {
+    label: "Figma",
+    tile: "bg-neutral-950",
+    icon: "h-3 w-auto",
+  },
+  cursor: {
+    label: "Cursor",
+    tile: "bg-neutral-950 text-white",
+    icon: "size-3",
+  },
+  amplitude: {
+    label: "Amplitude",
+    // currentColor paints the mark's disc, so it matches the tile and the
+    // cutouts are what read white.
+    tile: "bg-neutral-950 text-neutral-950",
+    icon: "size-4",
+  },
+} as const;
+
+type Props = {
+  brand: keyof typeof brands;
+};
+
+const { brand } = Astro.props;
+const { label, tile, icon } = brands[brand];
+---
+
+<span
+  class="mx-0.5 inline-flex translate-y-[-0.06em] items-center gap-1 whitespace-nowrap rounded-md border border-border bg-secondary py-0.5 pr-1 pl-1 align-middle text-sm leading-none text-foreground"
+>
+  <span
+    class:list={[
+      "inline-flex size-4 shrink-0 items-center justify-center overflow-hidden rounded-[0.25rem]",
+      tile,
+    ]}
+  >
+    <Icon name={brand} class={icon} aria-hidden="true" />
+  </span>
+  {label}
+</span>
