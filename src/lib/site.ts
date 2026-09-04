@@ -3,6 +3,6 @@ export const site = {
   role: "Building at Qualtrics",
   jobTitle: "Design Engineer",
   description:
-    "I am a designer and engineer. I aim to quantify design impact and believe that shipping is the fastest way to iterate.",
+    "I design with Figma, iterate in code, and measure impact through Amplitude.",
   url: "https://alanmatias.com",
 } as const;
