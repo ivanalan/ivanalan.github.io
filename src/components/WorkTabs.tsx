@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import type { WorkCard, WorkTabsProps } from "./work-tabs.types";
 import { ShaderCover } from "@/components/ShaderCover";
+import { VideoCover } from "@/components/VideoCover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
@@ -12,12 +13,18 @@ function Card({ item, index }: { item: WorkCard; index: number }) {
     <a
       href={item.href}
       style={{ "--reveal-index": index } as CSSProperties}
-      className="reveal group flex flex-col gap-3 rounded-xl p-2 outline-none transition-colors hover:bg-secondary focus-visible:ring-3 focus-visible:ring-ring/50"
+      className="reveal group flex flex-col gap-3 rounded-xl p-2 outline-none transition-colors duration-400 ease-out hover:bg-secondary focus-visible:ring-3 focus-visible:ring-ring/50"
     >
-      {item.coverShader ? (
+      {item.coverVideo ? (
+        <VideoCover
+          src={item.coverVideo}
+          videoClassName={item.coverVideoClassName}
+          className="aspect-[16/9] w-full rounded-xl transition-opacity duration-400 ease-out group-hover:opacity-85"
+        />
+      ) : item.coverShader ? (
         <ShaderCover
           variant={item.coverShader}
-          className="aspect-[16/9] w-full transition-opacity group-hover:opacity-85"
+          className="aspect-[16/9] w-full transition-opacity duration-400 ease-out group-hover:opacity-85"
         />
       ) : item.coverSrc ? (
         <img
@@ -26,11 +33,11 @@ function Card({ item, index }: { item: WorkCard; index: number }) {
           width={item.coverWidth}
           height={item.coverHeight}
           fetchPriority={item.fetchPriority}
-          className="aspect-[16/9] w-full rounded-xl bg-muted object-cover transition-opacity group-hover:opacity-85"
+          className="aspect-[16/9] w-full rounded-xl bg-muted object-cover transition-opacity duration-400 ease-out group-hover:opacity-85"
         />
       ) : (
         <div
-          className="aspect-[16/9] w-full rounded-xl bg-muted transition-colors group-hover:bg-muted/70"
+          className="aspect-[16/9] w-full rounded-xl bg-muted transition-colors duration-400 ease-out group-hover:bg-muted/70"
           aria-hidden="true"
         />
       )}
@@ -38,7 +45,7 @@ function Card({ item, index }: { item: WorkCard; index: number }) {
         <h2 className="font-heading text-work-title text-foreground">
           {item.title}
         </h2>
-        <p className="text-base leading-relaxed text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {item.summary}
         </p>
       </div>
@@ -61,7 +68,7 @@ export function WorkTabs({
         <TabsTrigger
           value="work"
           className={cn(
-            "h-auto cursor-pointer rounded-lg p-2 text-sm",
+            "h-auto cursor-pointer rounded-lg p-2 text-sm duration-400 ease-out",
             "hover:not-data-active:bg-muted",
             "dark:data-active:border-transparent dark:data-active:bg-muted",
           )}
@@ -71,7 +78,7 @@ export function WorkTabs({
         <TabsTrigger
           value="side-projects"
           className={cn(
-            "h-auto cursor-pointer rounded-lg p-2 text-sm",
+            "h-auto cursor-pointer rounded-lg p-2 text-sm duration-400 ease-out",
             "hover:not-data-active:bg-muted",
             "dark:data-active:border-transparent dark:data-active:bg-muted",
           )}

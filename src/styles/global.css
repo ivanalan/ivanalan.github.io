@@ -10,6 +10,7 @@
   --font-heading: "Gentium Book Basic", ui-serif, Georgia, "Times New Roman",
     serif;
   --font-sans: "Fustat Variable", ui-sans-serif, system-ui, sans-serif;
+  --text-base--line-height: 1.5;
   --text-name: 1.5rem;
   --text-name--line-height: 1.25;
   --text-work-title: 1.25rem;
@@ -34,7 +35,7 @@
   --secondary: oklch(23.316% 0.00736 248.23);
   --muted: oklch(0.311 0 0);
   --foreground: oklch(94.611% 0.00011 271.152);
-  --muted-foreground: oklch(86.995% 0.0001 271.152);
+  --muted-foreground: oklch(62.193% 0.00737 274.859);
   --border: oklch(0.919 0 0 / 7%);
   --ring: oklch(0.638 0.177 252.2);
   --radius: 0.625rem;

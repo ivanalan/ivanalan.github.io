@@ -8,11 +8,13 @@ import { site } from "@/lib/site";
       {site.name}
     </h1>
     <p class="reveal text-base text-muted-foreground" style="--reveal-index: 1">
-      {site.role}
+      <span class="shimmer shimmer-color-foreground shimmer-spread-8">
+        {site.role}
+      </span>
     </p>
   </div>
   <p
-    class="reveal text-base leading-relaxed text-foreground"
+    class="reveal text-base text-foreground"
     style="--reveal-index: 2"
   >
     {site.description}
