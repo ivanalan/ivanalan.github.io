@@ -30,6 +30,11 @@ const toCard = async (
     coverWidth: cover?.attributes.width,
     coverHeight: cover?.attributes.height,
     coverShader: entry.data.coverShader,
+    coverVideo: "coverVideo" in entry.data ? entry.data.coverVideo : undefined,
+    coverVideoClassName:
+      "coverVideoClassName" in entry.data
+        ? entry.data.coverVideoClassName
+        : undefined,
     fetchPriority: featured ? "high" : undefined,
   };
 };
