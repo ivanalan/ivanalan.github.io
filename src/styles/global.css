@@ -34,8 +34,8 @@
   --background: oklch(18.561% 0.00161 197.742);
   --secondary: oklch(24.705% 0.01511 285.224);
   --muted: oklch(0.311 0 0);
-  --foreground: oklch(94.611% 0.00011 271.152);
-  --muted-foreground: oklch(62.193% 0.00737 274.859);
+  --foreground: oklch(96.946% 0.00318 15.308);
+  --muted-foreground: oklch(76.092% 0.01027 273.305);
   --border: oklch(0.919 0 0 / 7%);
   --ring: oklch(0.638 0.177 252.2);
   --radius: 0.625rem;
@@ -92,10 +92,14 @@
   @apply max-w-prose text-base text-muted-foreground;
 }
 
-/* Preflight strips list markers and padding, so the numbers and their indent
-   have to be asked for. Items sit closer than top-level blocks do. */
+/* Preflight strips list markers and padding, so the numbers, dots, and
+   indent have to be asked for. Items sit closer than top-level blocks do. */
 .case-study ol {
   @apply max-w-prose list-decimal pl-[1.5em] text-base text-muted-foreground;
+}
+
+.case-study ul {
+  @apply max-w-prose list-disc pl-[1.5em] text-base text-muted-foreground;
 }
 
 .case-study li + li {
