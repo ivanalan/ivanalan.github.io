@@ -3,14 +3,16 @@ type Props = {
   role?: string;
   team?: string;
   year?: number;
+  readTime?: string;
 };
 
-const { role, team, year } = Astro.props;
+const { role, team, year, readTime } = Astro.props;
 
 const fields = [
   { label: "My role", value: role },
   { label: "Team", value: team },
   { label: "Year", value: year },
+  { label: "Length", value: readTime },
 ].filter((field) => field.value !== undefined);
 ---
 

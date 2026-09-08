@@ -1,0 +1,28 @@
+---
+import BackLink from "@/components/BackLink.astro";
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout
+  title="Page not found"
+  description="That page doesn't exist. Head back home to the work."
+>
+  <main id="main" class="flex flex-col">
+    <BackLink />
+    <header class="flex flex-col gap-3">
+      <h1
+        class="reveal text-4xl leading-tight text-foreground md:text-5xl"
+        style="--reveal-index: 1"
+      >
+        404: This page doesn't exist
+      </h1>
+      <p
+        class="reveal max-w-prose text-base text-muted-foreground"
+        style="--reveal-index: 2"
+      >
+        The link might be broken, or the page may have moved since
+        you last saw it.
+      </p>
+    </header>
+  </main>
+</Layout>

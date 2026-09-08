@@ -2,6 +2,7 @@
 import BackLink from "@/components/BackLink.astro";
 import ProjectMeta from "@/components/ProjectMeta.astro";
 import Layout from "@/layouts/Layout.astro";
+import { readingTimeLabel } from "@/lib/reading-time";
 import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
@@ -19,6 +20,7 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const backHref = entry.collection === "sideProjects" ? "/side-projects" : "/";
 const { Content } = await render(entry);
+const isPublished = entry.data.status === "published";
 ---
 
 <Layout title={entry.data.title} description={entry.data.summary} type="article">
@@ -41,11 +43,12 @@ const { Content } = await render(entry);
         role={entry.data.role}
         team={entry.data.team}
         year={entry.data.year}
+        readTime={isPublished ? readingTimeLabel(entry.body) : undefined}
       />
     </header>
     <div class="case-study flex flex-col">
       {
-        entry.data.status === "published" ? (
+        isPublished ? (
           <Content />
         ) : (
           <Fragment>
