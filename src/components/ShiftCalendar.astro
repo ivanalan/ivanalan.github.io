@@ -1,0 +1,93 @@
+---
+/* The month calendar from Mi Guardia, scaled for the article column: 42px day
+   markers on a 16px radius, one 24-hour shift every fourth day (the app draws
+   36px markers on a 14px radius). A weekend
+   only counts as free when Friday, Saturday, and Sunday are all clear,
+   because a Friday shift ends Saturday morning. */
+const DAYS_IN_MONTH = 31;
+/* Monday-first index of the first day. Opening on a Saturday is what walks the
+   shift through every weekday and leaves exactly one weekend standing. */
+const FIRST_WEEKDAY = 5;
+const WEEKDAYS = ["M", "T", "W", "T", "F", "S", "S"];
+
+const weekdayOf = (day: number) => (FIRST_WEEKDAY + day - 1) % 7;
+const isShift = (day: number) => (day - 1) % 4 === 0;
+
+const startsFreeWeekend = (day: number) =>
+  weekdayOf(day) === 5 &&
+  day > 1 &&
+  day + 1 <= DAYS_IN_MONTH &&
+  !isShift(day - 1) &&
+  !isShift(day) &&
+  !isShift(day + 1);
+
+const isFreeWeekend = (day: number) =>
+  startsFreeWeekend(day) ||
+  (weekdayOf(day) === 6 && startsFreeWeekend(day - 1));
+
+/* Leading blanks instead of the previous month's days: with no month name on
+   the card, real dates either side would imply a month that isn't the point. */
+const cells: (number | null)[] = [
+  ...Array.from({ length: FIRST_WEEKDAY }, () => null),
+  ...Array.from({ length: DAYS_IN_MONTH }, (_, index) => index + 1),
+];
+const weeks = Array.from({ length: Math.ceil(cells.length / 7) }, (_, week) =>
+  Array.from({ length: 7 }, (_, day) => cells[week * 7 + day] ?? null),
+);
+---
+
+<figure>
+  <div
+    class="mx-auto w-full max-w-[29rem] rounded-[2.25rem] bg-secondary px-7 py-6"
+    style="--shift-mark: #c11e1e; --weekend-mark: #0a6a42"
+    role="img"
+    aria-label="A month laid out as a calendar. A 24-hour shift falls every fourth day, landing on a different weekday each week. Only one weekend has no shift on its Friday, Saturday, or Sunday."
+  >
+    <div class="grid grid-cols-7">
+      {
+        WEEKDAYS.map((letter) => (
+          <span class="text-center font-mono text-sm text-foreground">
+            {letter}
+          </span>
+        ))
+      }
+    </div>
+    <div class="mt-2.5 flex flex-col gap-2.5">
+      {
+        weeks.map((week) => (
+          <div class="relative grid grid-cols-7">
+            {/* One capsule spanning Saturday to Sunday, drawn from Saturday's
+                column center to Sunday's, plus half a marker at each end. */}
+            {week.some((day) => day !== null && startsFreeWeekend(day)) && (
+              <div
+                class="absolute top-0 h-[2.625rem] rounded-[1rem] bg-[var(--weekend-mark)]"
+                style="left: calc(78.5714% - 1.3125rem); width: calc(14.2857% + 2.625rem)"
+              />
+            )}
+            {week.map((day) => (
+              <span class="flex h-[2.625rem] items-center justify-center">
+                {day !== null && (
+                  <span
+                    class:list={[
+                      "relative flex size-[2.625rem] items-center justify-center rounded-[1rem] font-mono text-sm",
+                      isShift(day)
+                        ? "bg-[var(--shift-mark)] text-white"
+                        : isFreeWeekend(day)
+                          ? "text-white"
+                          : "text-foreground",
+                    ]}
+                  >
+                    {day}
+                  </span>
+                )}
+              </span>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  <figcaption>
+    Every 24-hour shift is a different weekday. One free weekend a month.
+  </figcaption>
+</figure>

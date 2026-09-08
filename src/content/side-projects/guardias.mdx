@@ -1,12 +1,55 @@
 ---
-title: Guardias
+title: Mi Guardia
 summary: An app to track medical rotation schedules, shared shifts, and free weekends.
 role: Design Engineer
+team: Just me
 year: 2026
-status: placeholder
-outcome: Shipped on Android first, then iOS as Mi Guardia. Offline, bilingual, no ads or accounts.
+status: published
+outcome: One daily user. Shipped on the App Store and Google Play.
 coverVideo: "/media/guardias/cover.mp4"
 coverVideoPoster: "/media/guardias/cover-poster.webp"
 coverVideoClassName: "scale-120"
 order: 1
 ---
+
+import { CaseImage } from "../../components/CaseImage";
+import ShiftCalendar from "../../components/ShiftCalendar.astro";
+
+<CaseImage
+  client:load
+  src="/media/guardias/feature-graphic.png"
+  alt="Mi Guardia App Store feature graphic, with the app name, tagline Medical shift tracking, and a phone showing the shift calendar"
+  caption="The App Store feature graphic for Mi Guardia"
+/>
+
+## Outcome
+
+1. Shipped on the App Store and Google Play. My first time doing app design, development, and distribution end to end.
+2. One daily user. My partner replaced the shift-tracking app she had used for six months with mine.
+
+## Why don’t you use google calendar?
+
+My partner is a medical intern, and every four days she works a 24-hour overnight shift. I had assumed she tracked those shifts in Google Calendar with a recurring calendar event; so, I was shocked when I saw that instead, she downloaded an app specifically for tracking medical shifts.
+
+The fact that she had downloaded this alternative app instead, and used it for every rotation, was the most important observation in this whole project. Anybody can make an app, but knowing when there’s a real need is how products thrive.
+
+## "When are you free?"
+
+The four-day cycle is exhausting, and it makes medical interns socially unavailable in a pattern nobody else can hold in their head. So, everyone around them asks the same question: “when are you free?”
+
+<ShiftCalendar />
+
+## The job was never just tracking
+
+Google Calendar and the medical trackers all solve the narrow version: repeat this event every four days. The needs I found go beyond that:
+
+- Counting down the shifts and days left in a brutal rotation, for motivation
+- Overlaying a friend's shift schedule against their own
+- Sharing calendar with parents so they don’t have to keep asking
+- Anticipating when their one free weekend a month falls in order to plan a restful break.
+
+## Building > planning (sometimes)
+
+I started with a complete set of mocks, a written PRD, and a comparison of technical architectures. The paper sketches of information architecture stayed the same from start to finish, and working through them first was invaluable. Everything else I planned extensively either changed entirely, or got replaced by features I only found while building.
+
+The widget data visualization is the clearest case. In code I could feed it real shift values and watch it break in seconds; by hand I drew very poor examples that weren’t based in real libraries I could use. In the AI era, I learned that moving between architectures is cheap enough that committing early costs less than deciding slowly.
