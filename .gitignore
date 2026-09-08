@@ -9,6 +9,9 @@ node_modules/
 # source recordings, kept out of the build; public/media holds the encoded ones
 /media/
 
+# large deck, not part of the site
+src/content/work/Portfolio Presentation.pdf
+
 # logs
 npm-debug.log*
 yarn-debug.log*
