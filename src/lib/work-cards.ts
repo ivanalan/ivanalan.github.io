@@ -18,16 +18,9 @@ const toCard = async (entry: Entry, featured = false): Promise<WorkCard> => {
     coverWidth: cover?.attributes.width,
     coverHeight: cover?.attributes.height,
     coverShader: entry.data.coverShader,
-    coverVideo:
-      entry.collection === "sideProjects" ? entry.data.coverVideo : undefined,
-    coverVideoPoster:
-      entry.collection === "sideProjects"
-        ? entry.data.coverVideoPoster
-        : undefined,
-    coverVideoClassName:
-      entry.collection === "sideProjects"
-        ? entry.data.coverVideoClassName
-        : undefined,
+    coverVideo: entry.data.coverVideo,
+    coverVideoPoster: entry.data.coverVideoPoster,
+    coverVideoClassName: entry.data.coverVideoClassName,
     fetchPriority: featured ? "high" : undefined,
   };
 };
