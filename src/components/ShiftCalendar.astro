@@ -1,7 +1,6 @@
 ---
-/* The month calendar from Mi Guardia, scaled for the article column: 42px day
-   markers on a 16px radius, one 24-hour shift every fourth day (the app draws
-   36px markers on a 14px radius). A weekend
+/* The month calendar from Mi Guardia at the app's own scale: 36px day markers
+   on a 14px radius, one 24-hour shift every fourth day. A weekend
    only counts as free when Friday, Saturday, and Sunday are all clear,
    because a Friday shift ends Saturday morning. */
 const DAYS_IN_MONTH = 31;
@@ -36,9 +35,11 @@ const weeks = Array.from({ length: Math.ceil(cells.length / 7) }, (_, week) =>
 );
 ---
 
-<figure>
+{/* Held to the prose column so the card centers on the body copy, not on the
+    wider article column. */}
+<figure class="max-w-prose">
   <div
-    class="mx-auto w-full max-w-[29rem] rounded-[2.25rem] bg-secondary px-7 py-6"
+    class="mx-auto w-full max-w-[24rem] rounded-[2rem] bg-secondary px-6 py-5"
     style="--shift-mark: #c11e1e; --weekend-mark: #0a6a42"
     role="img"
     aria-label="A month laid out as a calendar. A 24-hour shift falls every fourth day, landing on a different weekday each week. Only one weekend has no shift on its Friday, Saturday, or Sunday."
@@ -52,7 +53,7 @@ const weeks = Array.from({ length: Math.ceil(cells.length / 7) }, (_, week) =>
         ))
       }
     </div>
-    <div class="mt-2.5 flex flex-col gap-2.5">
+    <div class="mt-2 flex flex-col gap-2">
       {
         weeks.map((week) => (
           <div class="relative grid grid-cols-7">
@@ -60,16 +61,16 @@ const weeks = Array.from({ length: Math.ceil(cells.length / 7) }, (_, week) =>
                 column center to Sunday's, plus half a marker at each end. */}
             {week.some((day) => day !== null && startsFreeWeekend(day)) && (
               <div
-                class="absolute top-0 h-[2.625rem] rounded-[1rem] bg-[var(--weekend-mark)]"
-                style="left: calc(78.5714% - 1.3125rem); width: calc(14.2857% + 2.625rem)"
+                class="absolute top-0 h-[2.25rem] rounded-[0.875rem] bg-[var(--weekend-mark)]"
+                style="left: calc(78.5714% - 1.125rem); width: calc(14.2857% + 2.25rem)"
               />
             )}
             {week.map((day) => (
-              <span class="flex h-[2.625rem] items-center justify-center">
+              <span class="flex h-[2.25rem] items-center justify-center">
                 {day !== null && (
                   <span
                     class:list={[
-                      "relative flex size-[2.625rem] items-center justify-center rounded-[1rem] font-mono text-sm",
+                      "relative flex size-[2.25rem] items-center justify-center rounded-[0.875rem] font-mono text-sm",
                       isShift(day)
                         ? "bg-[var(--shift-mark)] text-white"
                         : isFreeWeekend(day)
