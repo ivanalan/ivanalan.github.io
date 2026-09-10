@@ -17,5 +17,5 @@ export function readingTimeLabel(source: string | undefined): string {
     .split(/\s+/)
     .filter(Boolean).length;
   const minutes = Math.max(1, Math.ceil(words / WORDS_PER_MINUTE));
-  return `${minutes} min`;
+  return `${minutes} min read`;
 }
