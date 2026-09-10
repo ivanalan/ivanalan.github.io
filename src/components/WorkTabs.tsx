@@ -46,9 +46,9 @@ function Card({ item, index }: { item: WorkCard; index: number }) {
         <h2 className="font-heading text-work-title text-foreground">
           {item.title}
         </h2>
-        <p className="text-base text-muted-foreground">
-          {item.summary}
-        </p>
+        {item.meta ? (
+          <p className="text-base text-muted-foreground">{item.meta}</p>
+        ) : null}
       </div>
     </a>
   );

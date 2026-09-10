@@ -10,12 +10,11 @@ const work = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
-      summary: z.string(),
+      company: z.string().optional(),
       role: z.string().optional(),
       team: z.string().optional(),
       year: z.number().optional(),
       status: z.enum(["placeholder", "published"]).default("placeholder"),
-      outcome: z.string().optional(),
       cover: image().optional(),
       coverShader: z.enum(["r5", "qualtrics"]).optional(),
       coverVideo: z.string().optional(),
@@ -34,12 +33,11 @@ const sideProjects = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
-      summary: z.string(),
+      company: z.string().optional(),
       role: z.string().optional(),
       team: z.string().optional(),
       year: z.number().optional(),
       status: z.enum(["placeholder", "published"]).default("placeholder"),
-      outcome: z.string().optional(),
       cover: image().optional(),
       coverShader: z.enum(["r5", "qualtrics"]).optional(),
       coverVideo: z.string().optional(),
