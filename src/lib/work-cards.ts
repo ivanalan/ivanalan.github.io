@@ -4,6 +4,12 @@ import { getCollection } from "astro:content";
 
 type Entry = Awaited<ReturnType<typeof getCollection<"work" | "sideProjects">>>[number];
 
+function cardMeta(entry: Entry): string {
+  return [entry.data.company, entry.data.role, entry.data.year]
+    .filter((part) => part !== undefined && part !== "")
+    .join(" · ");
+}
+
 const toCard = async (entry: Entry, featured = false): Promise<WorkCard> => {
   const cover = entry.data.cover
     ? await getImage({ src: entry.data.cover, width: 1280 })
@@ -12,7 +18,7 @@ const toCard = async (entry: Entry, featured = false): Promise<WorkCard> => {
   return {
     href: `/work/${entry.id}`,
     title: entry.data.title,
-    summary: entry.data.summary,
+    meta: cardMeta(entry),
     status: entry.data.status,
     coverSrc: cover?.src,
     coverWidth: cover?.attributes.width,

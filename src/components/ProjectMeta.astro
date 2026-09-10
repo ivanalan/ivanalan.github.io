@@ -3,16 +3,14 @@ type Props = {
   role?: string;
   team?: string;
   year?: number;
-  readTime?: string;
 };
 
-const { role, team, year, readTime } = Astro.props;
+const { role, team, year } = Astro.props;
 
 const fields = [
   { label: "My role", value: role },
   { label: "Team", value: team },
   { label: "Year", value: year },
-  { label: "Length", value: readTime },
 ].filter((field) => field.value !== undefined);
 ---
 
@@ -21,7 +19,7 @@ const fields = [
     /* auto-fit collapses the tracks an entry has no value for, so two fields
        split the width the same way three do. */
     <dl
-      class="reveal grid grid-cols-[repeat(auto-fit,minmax(7.5rem,1fr))] gap-5 border-t border-border pt-4"
+      class="reveal mt-8 grid grid-cols-[repeat(auto-fit,minmax(7.5rem,1fr))] gap-5 border-t border-border pt-5"
       style="--reveal-index: 3"
     >
       {fields.map(({ label, value }) => (

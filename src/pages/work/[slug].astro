@@ -21,29 +21,35 @@ const { entry } = Astro.props;
 const backHref = entry.collection === "sideProjects" ? "/side-projects" : "/";
 const { Content } = await render(entry);
 const isPublished = entry.data.status === "published";
+const readTime = isPublished ? readingTimeLabel(entry.body) : undefined;
 ---
 
-<Layout title={entry.data.title} description={entry.data.summary} type="article">
+<Layout title={entry.data.title} type="article">
   <article id="main" class="flex flex-col">
     <BackLink href={backHref} />
-    <header class="mb-14 flex flex-col gap-3">
-      <h1
-        class="reveal text-4xl leading-tight text-foreground md:text-5xl"
-        style="--reveal-index: 1"
-      >
-        {entry.data.title}
-      </h1>
-      <p
-        class="reveal text-base text-muted-foreground"
-        style="--reveal-index: 2"
-      >
-        {entry.data.summary}
-      </p>
+    <header class="mb-14 flex flex-col">
+      <div class="flex flex-col gap-2">
+        <h1
+          class="reveal text-4xl leading-tight text-foreground md:text-5xl"
+          style="--reveal-index: 1"
+        >
+          {entry.data.title}
+        </h1>
+        {
+          readTime && (
+            <p
+              class="reveal text-base text-muted-foreground"
+              style="--reveal-index: 2"
+            >
+              {readTime}
+            </p>
+          )
+        }
+      </div>
       <ProjectMeta
         role={entry.data.role}
         team={entry.data.team}
         year={entry.data.year}
-        readTime={isPublished ? readingTimeLabel(entry.body) : undefined}
       />
     </header>
     <div class="case-study flex flex-col">

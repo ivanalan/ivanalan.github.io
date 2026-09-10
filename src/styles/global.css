@@ -183,7 +183,7 @@
     animation-delay: calc(var(--reveal-index, 0) * var(--reveal-step, 70ms));
   }
 
-  /* Continue the article cascade after back (0), title (1), summary (2),
+  /* Continue the article cascade after back (0), title (1), read time (2),
      meta (3). */
   .case-study > * {
     --reveal-index: 4;

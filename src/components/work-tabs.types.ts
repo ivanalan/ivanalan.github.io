@@ -3,7 +3,7 @@ export type CoverShader = "r5" | "qualtrics";
 export type WorkCard = {
   href: string;
   title: string;
-  summary: string;
+  meta: string;
   status: "placeholder" | "published";
   coverSrc?: string;
   coverWidth?: number | string;
