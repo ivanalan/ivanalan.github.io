@@ -7,32 +7,53 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Open in Mi Guardia</title>
+    <title>A rotation was shared with you — Mi Guardia</title>
     <meta
       name="description"
-      content="Someone shared a guardia rotation with you. Open it in Mi Guardia."
+      content="Someone shared a guardia rotation with you. Install Mi Guardia to review it and save it on your device."
     />
-    <style>
+    <meta name="apple-itunes-app" content="app-id=6803777786" />
+    <meta property="og:title" content="A rotation was shared with you" />
+    <meta
+      property="og:description"
+      content="Install Mi Guardia to review the schedule and save it on your device."
+    />
+    <meta
+      property="og:image"
+      content="https://alanmatias.com/media/guardias/icon.png"
+    />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" href="/media/guardias/icon.png" />
+    <style is:inline>
       :root {
         color-scheme: light dark;
-        --fg: #171616;
+        --fg: #1c1b1f;
         --muted: #6b6560;
         --bg: #f6f1ec;
-        --brand: #dc211e;
+        --cta: #111111;
         --card: #fff;
+        --card-border: color-mix(in srgb, var(--muted) 22%, transparent);
+        --weekend: #007259;
       }
       @media (prefers-color-scheme: dark) {
         :root {
           --fg: #f2f2f2;
           --muted: #aaa;
           --bg: #171616;
-          --card: #242221;
+          --cta: #f2f2f2;
+          --card: #2a2927;
+          --card-border: color-mix(in srgb, #fff 12%, transparent);
         }
       }
       body {
         margin: 0;
         min-height: 100dvh;
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
         background: var(--bg);
         color: var(--fg);
         display: grid;
@@ -40,76 +61,578 @@
         padding: 1.5rem;
       }
       main {
-        width: min(24rem, 100%);
-        background: var(--card);
-        border-radius: 1.5rem;
-        padding: 1.75rem 1.5rem;
+        width: min(22rem, 100%);
+        text-align: left;
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        align-items: stretch;
+        gap: 0;
+      }
+      .hero {
+        margin-bottom: 2rem;
+      }
+      .icon {
+        width: 6.375rem;
+        height: 6.375rem;
+        border-radius: 1.4rem;
+        display: block;
+        margin: 0 auto;
+      }
+      .icon[hidden] {
+        display: none !important;
+      }
+      .copy {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1.75rem;
       }
       h1 {
-        font-size: 1.5rem;
         margin: 0;
-        letter-spacing: -0.02em;
+        font-size: clamp(1.65rem, 5.5vw, 1.95rem);
+        line-height: 1.2;
+        letter-spacing: -0.03em;
+        font-weight: 700;
       }
-      p {
+      .copy > p {
         margin: 0;
         color: var(--muted);
-        line-height: 1.5;
+        line-height: 1.55;
+        font-size: 0.95rem;
+      }
+      .preview {
+        width: 100%;
+        box-sizing: border-box;
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 1.5rem;
+        padding: 1.1rem 1rem 1.15rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+      }
+      .preview[hidden] {
+        display: none !important;
+      }
+      .preview-head {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        min-width: 0;
+      }
+      .swatch {
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 999px;
+        flex-shrink: 0;
+        background: #dc211e;
+      }
+      .preview-label {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        line-height: 1.25;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--fg);
+      }
+      .preview-meta {
+        margin: 0;
+        font-size: 0.875rem;
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
+      .cal {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        margin-top: 0.45rem;
+        width: 100%;
+      }
+      .cal-dows,
+      .cal-week,
+      .cal-weeks {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        width: 100%;
+      }
+      .cal-weeks {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        width: 100%;
+      }
+      .cal-dow {
+        text-align: center;
+        font-size: 0.7rem;
+        font-weight: 500;
+        color: var(--muted);
+        line-height: 1;
+        padding-bottom: 0.2rem;
+      }
+      .cal-week {
+        position: relative;
+        align-items: center;
+      }
+      .cal-cell {
+        height: 2.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+        min-width: 0;
+      }
+      .cal-mark {
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.7rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
+        color: var(--fg);
+        line-height: 1;
+        box-sizing: border-box;
+      }
+      .cal-mark.shift {
+        color: #fff;
+      }
+      .cal-mark.weekend {
+        color: #fff;
+        background: transparent;
+      }
+      .cal-mark.today {
+        border: 1.5px solid var(--fg);
+      }
+      .cal-mark.today.shift {
+        padding: 2px;
+      }
+      .cal-mark.today.shift .cal-mark-inner {
+        width: 100%;
+        height: 100%;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+      }
+      .cal-weekend-pill {
+        position: absolute;
+        top: 0;
+        height: 2.25rem;
+        border-radius: 0.7rem;
+        background: var(--weekend);
+        left: calc(78.5714% - 1.125rem);
+        width: calc(14.2857% + 2.25rem);
+        z-index: 0;
       }
       .actions {
         display: flex;
         flex-direction: column;
+        align-items: stretch;
         gap: 0.75rem;
-        margin-top: 0.5rem;
+        width: 100%;
       }
       a.btn {
         display: block;
+        box-sizing: border-box;
+        width: 100%;
         text-align: center;
         text-decoration: none;
         font-weight: 600;
         border-radius: 999px;
-        padding: 0.85rem 1rem;
-      }
-      a.primary {
-        background: var(--brand);
+        padding: 0.9rem 1rem;
+        background: var(--cta);
         color: #fff;
       }
-      a.secondary {
-        background: transparent;
-        color: var(--fg);
-        border: 1px solid color-mix(in srgb, var(--muted) 40%, transparent);
+      @media (prefers-color-scheme: dark) {
+        a.btn {
+          color: #171616;
+        }
       }
-      .es {
-        margin-top: 0.5rem;
-        font-size: 0.9rem;
+      .soon {
+        margin: 0;
+        width: 100%;
+        text-align: center;
+        font-size: 0.85rem;
+        color: var(--muted);
       }
     </style>
   </head>
   <body>
     <main>
-      <h1>Open in Mi Guardia</h1>
-      <p>
-        Someone shared a rotation schedule with you. Install or open Mi Guardia
-        to review it and save it on your device.
-      </p>
-      <p class="es">
-        Alguien compartió una rotación contigo. Instala o abre Mi Guardia para
-        revisarla y guardarla en tu dispositivo.
-      </p>
+      <div class="hero">
+        <img
+          class="icon"
+          id="icon"
+          src="/media/guardias/icon.png"
+          width="102"
+          height="102"
+          alt="Mi Guardia"
+        />
+        <article class="preview" id="preview" hidden>
+          <div class="preview-head">
+            <span class="swatch" id="swatch" aria-hidden="true"></span>
+            <h2 class="preview-label" id="label"></h2>
+          </div>
+          <p class="preview-meta" id="meta"></p>
+          <div class="cal" id="cal" aria-hidden="true">
+            <div class="cal-dows" id="dows"></div>
+            <div class="cal-weeks" id="weeks"></div>
+          </div>
+        </article>
+      </div>
+      <div class="copy">
+        <h1>A rotation was shared with you</h1>
+        <p>
+          Install Mi Guardia to review the schedule and save it on your device.
+        </p>
+      </div>
       <div class="actions">
         <a
-          class="btn primary"
-          href="https://apps.apple.com/search?term=Mi%20Guardia"
+          class="btn"
+          href="https://apps.apple.com/app/id6803777786"
           >App Store</a
         >
-        <a
-          class="btn secondary"
-          href="https://play.google.com/store/apps/details?id=com.alanmatias.guardias"
-          >Google Play</a
-        >
+        <p class="soon">Coming soon to Google Play</p>
       </div>
     </main>
+
+    <script is:inline>
+      (function () {
+        var ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+        var HH_MM = /^\d{2}:\d{2}$/;
+        var HEX = /^#[0-9A-Fa-f]{6}$/;
+        var OFFSET_INDEX = { A: 0, B: 1, C: 2, D: 3 };
+        var DOW_ES = ["L", "M", "M", "J", "V", "S", "D"];
+
+        function decodeBase64Url(payload) {
+          try {
+            var padded =
+              payload.replace(/-/g, "+").replace(/_/g, "/") +
+              "===".slice((payload.length + 3) % 4);
+            var binary = atob(padded);
+            var bytes = new Uint8Array(binary.length);
+            for (var i = 0; i < binary.length; i += 1) {
+              bytes[i] = binary.charCodeAt(i);
+            }
+            return new TextDecoder().decode(bytes);
+          } catch (e) {
+            return null;
+          }
+        }
+
+        function parseLocalDate(iso) {
+          var parts = iso.split("-");
+          return new Date(
+            Number(parts[0]),
+            Number(parts[1]) - 1,
+            Number(parts[2]),
+          );
+        }
+
+        function toISODate(date) {
+          var y = date.getFullYear();
+          var m = String(date.getMonth() + 1).padStart(2, "0");
+          var d = String(date.getDate()).padStart(2, "0");
+          return y + "-" + m + "-" + d;
+        }
+
+        function addDays(iso, n) {
+          var date = parseLocalDate(iso);
+          date.setDate(date.getDate() + n);
+          return toISODate(date);
+        }
+
+        function daysBetween(a, b) {
+          var ms =
+            parseLocalDate(b).getTime() - parseLocalDate(a).getTime();
+          return Math.round(ms / 86400000);
+        }
+
+        function formatRange(start, end) {
+          var opts = { month: "short", day: "numeric" };
+          return (
+            parseLocalDate(start).toLocaleDateString("en-US", opts) +
+            " – " +
+            parseLocalDate(end).toLocaleDateString("en-US", opts)
+          );
+        }
+
+        function patternLabel(cycleDays, offset) {
+          var cycle = cycleDays === 3 ? "A–C" : "A–D";
+          return cycle + " · " + offset;
+        }
+
+        function isOnVacation(draft, iso) {
+          if (!draft.vacationStartDate || !draft.vacationEndDate) return false;
+          return (
+            iso >= draft.vacationStartDate && iso <= draft.vacationEndDate
+          );
+        }
+
+        function matchesYearLetter(iso, cycleDays, offset) {
+          var date = parseLocalDate(iso);
+          var jan1 = new Date(date.getFullYear(), 0, 1);
+          var daysFromJan1 = Math.round(
+            (date.getTime() - jan1.getTime()) / 86400000,
+          );
+          var index = ((daysFromJan1 % cycleDays) + cycleDays) % cycleDays;
+          return index === OFFSET_INDEX[offset];
+        }
+
+        function matchesFirstShiftCycle(iso, firstShiftDate, cycleDays) {
+          var days = daysBetween(firstShiftDate, iso);
+          return ((days % cycleDays) + cycleDays) % cycleDays === 0;
+        }
+
+        function isShiftDay(draft, iso) {
+          if (iso < draft.startDate || iso > draft.endDate) return false;
+          if (isOnVacation(draft, iso)) return false;
+          if (draft.firstShiftDate) {
+            return matchesFirstShiftCycle(
+              iso,
+              draft.firstShiftDate,
+              draft.pattern.cycleDays,
+            );
+          }
+          return matchesYearLetter(
+            iso,
+            draft.pattern.cycleDays,
+            draft.pattern.offset,
+          );
+        }
+
+        function mondayOnOrBefore(iso) {
+          var date = parseLocalDate(iso);
+          var day = date.getDay();
+          var back = day === 0 ? 6 : day - 1;
+          date.setDate(date.getDate() - back);
+          return toISODate(date);
+        }
+
+        function twoWeekStart(draft) {
+          var anchor =
+            draft.firstShiftDate &&
+            draft.firstShiftDate >= draft.startDate &&
+            draft.firstShiftDate <= draft.endDate
+              ? draft.firstShiftDate
+              : draft.startDate;
+          return mondayOnOrBefore(anchor);
+        }
+
+        function buildShiftSet(draft, from, to) {
+          var set = {};
+          var cursor = from;
+          while (cursor <= to) {
+            if (isShiftDay(draft, cursor)) set[cursor] = true;
+            cursor = addDays(cursor, 1);
+          }
+          return set;
+        }
+
+        /** Sat/Sun marked when Fri+Sat+Sun are all clear of shifts. */
+        function freeWeekendSet(shiftSet, from, to) {
+          var free = {};
+          var cursor = mondayOnOrBefore(from);
+          var end = to;
+          while (cursor <= end) {
+            var sat = addDays(cursor, 5);
+            var fri = addDays(cursor, 4);
+            var sun = addDays(cursor, 6);
+            if (
+              !shiftSet[fri] &&
+              !shiftSet[sat] &&
+              !shiftSet[sun] &&
+              ((sat >= from && sat <= to) || (sun >= from && sun <= to))
+            ) {
+              if (sat >= from && sat <= to) free[sat] = true;
+              if (sun >= from && sun <= to) free[sun] = true;
+            }
+            cursor = addDays(cursor, 7);
+          }
+          return free;
+        }
+
+        function parseDraft(raw) {
+          if (raw == null || typeof raw !== "object") return null;
+          var pattern = raw.pattern;
+          if (pattern == null || typeof pattern !== "object") return null;
+          var cycleDays = pattern.cycleDays;
+          var offset = pattern.offset;
+          if (cycleDays !== 3 && cycleDays !== 4) return null;
+          if (typeof offset !== "string" || !(offset in OFFSET_INDEX))
+            return null;
+          if (cycleDays === 3 && offset === "D") return null;
+          if (typeof raw.label !== "string" || !raw.label.trim()) return null;
+          if (!ISO_DATE.test(raw.startDate) || !ISO_DATE.test(raw.endDate))
+            return null;
+          if (raw.endDate < raw.startDate) return null;
+          var firstShiftDate =
+            raw.firstShiftDate === null || ISO_DATE.test(raw.firstShiftDate)
+              ? raw.firstShiftDate
+              : null;
+          var vacationStartDate =
+            raw.vacationStartDate === null ||
+            ISO_DATE.test(raw.vacationStartDate)
+              ? raw.vacationStartDate
+              : null;
+          var vacationEndDate =
+            raw.vacationEndDate === null || ISO_DATE.test(raw.vacationEndDate)
+              ? raw.vacationEndDate
+              : null;
+          var shiftStartTime =
+            typeof raw.shiftStartTime === "string" &&
+            HH_MM.test(raw.shiftStartTime)
+              ? raw.shiftStartTime
+              : "07:00";
+          var color =
+            typeof raw.color === "string" && HEX.test(raw.color)
+              ? raw.color
+              : "#DC211E";
+
+          return {
+            label: raw.label.trim(),
+            startDate: raw.startDate,
+            endDate: raw.endDate,
+            pattern: { cycleDays: cycleDays, offset: offset },
+            firstShiftDate: firstShiftDate,
+            vacationStartDate: vacationStartDate,
+            vacationEndDate: vacationEndDate,
+            shiftStartTime: shiftStartTime,
+            color: color,
+          };
+        }
+
+        var params = new URLSearchParams(window.location.search);
+        var payload = params.get("d");
+        if (!payload) return;
+
+        var json = decodeBase64Url(payload);
+        if (!json) return;
+
+        var draft;
+        try {
+          draft = parseDraft(JSON.parse(json));
+        } catch (e) {
+          return;
+        }
+        if (!draft) return;
+
+        var preview = document.getElementById("preview");
+        var iconEl = document.getElementById("icon");
+        var labelEl = document.getElementById("label");
+        var metaEl = document.getElementById("meta");
+        var swatchEl = document.getElementById("swatch");
+        var dowsEl = document.getElementById("dows");
+        var weeksEl = document.getElementById("weeks");
+        if (
+          !preview ||
+          !labelEl ||
+          !metaEl ||
+          !swatchEl ||
+          !dowsEl ||
+          !weeksEl
+        )
+          return;
+
+        labelEl.textContent = draft.label;
+        metaEl.textContent =
+          patternLabel(draft.pattern.cycleDays, draft.pattern.offset) +
+          " · " +
+          formatRange(draft.startDate, draft.endDate);
+        swatchEl.style.background = draft.color;
+
+        var start = twoWeekStart(draft);
+        var end = addDays(start, 13);
+        var shiftSet = buildShiftSet(
+          draft,
+          addDays(start, -1),
+          addDays(end, 1),
+        );
+        var freeSet = freeWeekendSet(shiftSet, start, end);
+        var todayIso = toISODate(new Date());
+
+        dowsEl.replaceChildren();
+        dowsEl.style.cssText =
+          "display:grid;grid-template-columns:repeat(7,minmax(0,1fr));width:100%";
+        for (var d = 0; d < 7; d += 1) {
+          var dow = document.createElement("span");
+          dow.className = "cal-dow";
+          dow.textContent = DOW_ES[d];
+          dowsEl.append(dow);
+        }
+
+        weeksEl.replaceChildren();
+        weeksEl.style.cssText =
+          "display:flex;flex-direction:column;gap:0.35rem;width:100%";
+        for (var w = 0; w < 2; w += 1) {
+          var week = document.createElement("div");
+          week.className = "cal-week";
+          week.style.cssText =
+            "display:grid;grid-template-columns:repeat(7,minmax(0,1fr));width:100%;position:relative;align-items:center";
+          var weekStart = addDays(start, w * 7);
+          var sat = addDays(weekStart, 5);
+          var sun = addDays(weekStart, 6);
+          if (freeSet[sat] && freeSet[sun]) {
+            var pill = document.createElement("div");
+            pill.className = "cal-weekend-pill";
+            week.append(pill);
+          }
+          for (var i = 0; i < 7; i += 1) {
+            var iso = addDays(weekStart, i);
+            var date = parseLocalDate(iso);
+            var shift = !!shiftSet[iso];
+            var weekend = !!freeSet[iso];
+            var isToday = iso === todayIso;
+            var cell = document.createElement("div");
+            cell.className = "cal-cell";
+            cell.style.cssText =
+              "height:2.25rem;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;min-width:0";
+            var mark = document.createElement("span");
+            var classes = ["cal-mark"];
+            if (shift) classes.push("shift");
+            if (weekend) classes.push("weekend");
+            if (isToday) classes.push("today");
+            mark.className = classes.join(" ");
+            mark.style.cssText =
+              "width:2.25rem;height:2.25rem;border-radius:0.7rem;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:500;line-height:1;box-sizing:border-box";
+            if (shift && isToday) {
+              mark.style.border = "1.5px solid currentColor";
+              mark.style.padding = "2px";
+              var inner = document.createElement("span");
+              inner.className = "cal-mark-inner";
+              inner.style.cssText =
+                "width:100%;height:100%;border-radius:0.5rem;display:flex;align-items:center;justify-content:center;color:#fff";
+              inner.style.background = draft.color;
+              inner.textContent = String(date.getDate());
+              mark.append(inner);
+            } else {
+              mark.textContent = String(date.getDate());
+              if (shift) {
+                mark.style.background = draft.color;
+                mark.style.color = "#fff";
+              } else if (weekend) {
+                mark.style.color = "#fff";
+              }
+              if (isToday) {
+                mark.style.border = "1.5px solid currentColor";
+              }
+            }
+            cell.append(mark);
+            week.append(cell);
+          }
+          weeksEl.append(week);
+        }
+
+        if (iconEl) iconEl.hidden = true;
+        preview.hidden = false;
+      })();
+    </script>
   </body>
 </html>
