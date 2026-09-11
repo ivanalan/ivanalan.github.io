@@ -47,6 +47,12 @@ const readTime = isPublished ? readingTimeLabel(entry.body) : undefined;
         }
       </div>
       <ProjectMeta
+        company={entry.data.company}
+        projectType={
+          entry.collection === "sideProjects"
+            ? entry.data.projectType
+            : undefined
+        }
         role={entry.data.role}
         team={entry.data.team}
         year={entry.data.year}

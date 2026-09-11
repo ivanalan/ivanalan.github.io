@@ -33,6 +33,7 @@ const sideProjects = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
+      projectType: z.string().optional(),
       company: z.string().optional(),
       role: z.string().optional(),
       team: z.string().optional(),

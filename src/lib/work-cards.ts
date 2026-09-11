@@ -5,7 +5,11 @@ import { getCollection } from "astro:content";
 type Entry = Awaited<ReturnType<typeof getCollection<"work" | "sideProjects">>>[number];
 
 function cardMeta(entry: Entry): string {
-  return [entry.data.company, entry.data.role, entry.data.year]
+  const isSideProject = entry.collection === "sideProjects";
+  const projectType = isSideProject ? entry.data.projectType : undefined;
+  const role = isSideProject ? undefined : entry.data.role;
+
+  return [entry.data.company, projectType, role, entry.data.year]
     .filter((part) => part !== undefined && part !== "")
     .join(" · ");
 }

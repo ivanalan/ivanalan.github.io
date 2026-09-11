@@ -1,13 +1,17 @@
 ---
 type Props = {
+  company?: string;
+  projectType?: string;
   role?: string;
   team?: string;
   year?: number;
 };
 
-const { role, team, year } = Astro.props;
+const { company, projectType, role, team, year } = Astro.props;
 
 const fields = [
+  { label: "Company", value: company },
+  { label: "Type", value: projectType },
   { label: "My role", value: role },
   { label: "Team", value: team },
   { label: "Year", value: year },
@@ -19,7 +23,7 @@ const fields = [
     /* auto-fit collapses the tracks an entry has no value for, so two fields
        split the width the same way three do. */
     <dl
-      class="reveal mt-8 grid grid-cols-[repeat(auto-fit,minmax(7.5rem,1fr))] gap-5 border-t border-border pt-5"
+      class="reveal mt-8 grid grid-cols-[repeat(auto-fit,minmax(7.5rem,1fr))] gap-5 border-t border-border pt-8"
       style="--reveal-index: 3"
     >
       {fields.map(({ label, value }) => (
