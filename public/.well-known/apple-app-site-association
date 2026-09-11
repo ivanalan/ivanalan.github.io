@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "RA52PG7K74.com.alanmatias.guardias",
+        "paths": ["/guardias/r", "/guardias/r/*"]
+      }
+    ]
+  }
+}

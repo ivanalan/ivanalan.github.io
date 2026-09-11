@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.alanmatias.guardias",
+      "sha256_cert_fingerprints": [
+        "94:76:3F:5D:94:21:8A:33:EE:C0:DE:F4:1E:76:13:10:98:A3:39:23:1E:51:00:AA:8D:36:D2:E8:8B:4A:CE:2F"
+      ]
+    }
+  }
+]
