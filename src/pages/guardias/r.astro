@@ -238,22 +238,51 @@
         gap: 0.75rem;
         width: 100%;
       }
-      a.btn {
-        display: block;
+      .btn-row {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.6rem;
+        width: 100%;
+      }
+      a.btn,
+      button.btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
         box-sizing: border-box;
         width: 100%;
         text-align: center;
         text-decoration: none;
+        font: inherit;
         font-weight: 600;
+        font-size: 0.9rem;
         border-radius: 999px;
         padding: 0.9rem 1rem;
+        border: none;
+        cursor: pointer;
         background: var(--cta);
         color: #fff;
       }
+      .btn ion-icon {
+        font-size: 1.2em;
+        flex-shrink: 0;
+      }
+      a.btn-secondary,
+      button.btn-secondary {
+        background: transparent;
+        color: var(--fg);
+        border: 1px solid var(--card-border);
+      }
       @media (prefers-color-scheme: dark) {
-        a.btn {
+        a.btn:not(.btn-secondary),
+        button.btn:not(.btn-secondary) {
           color: #171616;
         }
+      }
+      .btn[hidden] {
+        display: none !important;
       }
       .soon {
         margin: 0;
@@ -288,21 +317,42 @@
         </article>
       </div>
       <div class="copy">
-        <h1>A rotation was shared with you</h1>
-        <p>
+        <h1 id="title">A rotation was shared with you</h1>
+        <p id="copy-body">
           Install Mi Guardia to review the schedule and save it on your device.
         </p>
       </div>
       <div class="actions">
-        <a
-          class="btn"
-          href="https://apps.apple.com/app/id6803777786"
-          >App Store</a
-        >
+        <div class="btn-row">
+          <a
+            class="btn"
+            id="store-btn"
+            href="https://apps.apple.com/app/id6803777786"
+          >
+            <ion-icon name="logo-apple" aria-hidden="true"></ion-icon>
+            App Store
+          </a>
+          <button type="button" class="btn btn-secondary" id="gcal-btn" hidden>
+            <ion-icon name="logo-google" aria-hidden="true"></ion-icon>
+            Google Calendar
+          </button>
+          <button type="button" class="btn btn-secondary" id="ics-btn" hidden>
+            <ion-icon name="download-outline" aria-hidden="true"></ion-icon>
+            Download calendar file
+          </button>
+        </div>
         <p class="soon">Coming soon to Google Play</p>
       </div>
     </main>
 
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@8.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@8.1.0/dist/ionicons/ionicons.js"
+    ></script>
     <script is:inline>
       (function () {
         var ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -509,6 +559,199 @@
           };
         }
 
+        function pad2(n) {
+          return String(n).padStart(2, "0");
+        }
+
+        function formatIcsLocal(isoDate, hhmm) {
+          var parts = hhmm.split(":");
+          return (
+            isoDate.replace(/-/g, "") +
+            "T" +
+            parts[0] +
+            parts[1] +
+            "00"
+          );
+        }
+
+        function formatIcsUtcNow() {
+          var d = new Date();
+          return (
+            d.getUTCFullYear() +
+            pad2(d.getUTCMonth() + 1) +
+            pad2(d.getUTCDate()) +
+            "T" +
+            pad2(d.getUTCHours()) +
+            pad2(d.getUTCMinutes()) +
+            pad2(d.getUTCSeconds()) +
+            "Z"
+          );
+        }
+
+        function escapeIcsText(value) {
+          return String(value)
+            .replace(/\\/g, "\\\\")
+            .replace(/;/g, "\\;")
+            .replace(/,/g, "\\,")
+            .replace(/\r\n|\n|\r/g, "\\n");
+        }
+
+        function slugFilename(label) {
+          var slug = label
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "")
+            .slice(0, 48);
+          return (slug || "rotation") + ".ics";
+        }
+
+        /** 24h overnight shifts: end is start time on the next calendar day. */
+        function buildIcs(draft) {
+          var stamp = formatIcsUtcNow();
+          var summary = escapeIcsText(draft.label);
+          var lines = [
+            "BEGIN:VCALENDAR",
+            "VERSION:2.0",
+            "PRODID:-//Mi Guardia//EN",
+            "CALSCALE:GREGORIAN",
+            "METHOD:PUBLISH",
+            "X-WR-CALNAME:" + summary,
+          ];
+          var cursor = draft.startDate;
+          var count = 0;
+          while (cursor <= draft.endDate) {
+            if (isShiftDay(draft, cursor)) {
+              var endDate = addDays(cursor, 1);
+              var uid =
+                "guardia-" +
+                cursor.replace(/-/g, "") +
+                "-" +
+                draft.pattern.cycleDays +
+                draft.pattern.offset +
+                "@alanmatias.com";
+              lines.push(
+                "BEGIN:VEVENT",
+                "UID:" + uid,
+                "DTSTAMP:" + stamp,
+                "DTSTART:" + formatIcsLocal(cursor, draft.shiftStartTime),
+                "DTEND:" + formatIcsLocal(endDate, draft.shiftStartTime),
+                "SUMMARY:" + summary,
+                "DESCRIPTION:" +
+                  escapeIcsText(
+                    "Shared from Mi Guardia · " +
+                      patternLabel(
+                        draft.pattern.cycleDays,
+                        draft.pattern.offset,
+                      ),
+                  ),
+                "END:VEVENT",
+              );
+              count += 1;
+            }
+            cursor = addDays(cursor, 1);
+          }
+          lines.push("END:VCALENDAR");
+          return { ics: lines.join("\r\n") + "\r\n", count: count };
+        }
+
+        function downloadIcs(draft) {
+          var built = buildIcs(draft);
+          if (!built.count) return;
+          var blob = new Blob([built.ics], {
+            type: "text/calendar;charset=utf-8",
+          });
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement("a");
+          a.href = url;
+          a.download = slugFilename(draft.label);
+          document.body.append(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+        }
+
+        /** True when vacation removes at least one otherwise-scheduled shift. */
+        function vacationBreaksCycle(draft) {
+          if (!draft.vacationStartDate || !draft.vacationEndDate) return false;
+          var cursor = draft.startDate;
+          while (cursor <= draft.endDate) {
+            if (
+              cursor >= draft.vacationStartDate &&
+              cursor <= draft.vacationEndDate
+            ) {
+              var withoutVacation = Object.assign({}, draft, {
+                vacationStartDate: null,
+                vacationEndDate: null,
+              });
+              if (isShiftDay(withoutVacation, cursor)) return true;
+            }
+            cursor = addDays(cursor, 1);
+          }
+          return false;
+        }
+
+        function firstAndCountShifts(draft) {
+          var first = null;
+          var count = 0;
+          var cursor = draft.startDate;
+          while (cursor <= draft.endDate) {
+            if (isShiftDay(draft, cursor)) {
+              if (!first) first = cursor;
+              count += 1;
+            }
+            cursor = addDays(cursor, 1);
+          }
+          return { first: first, count: count };
+        }
+
+        /**
+         * One recurring event via Google’s TEMPLATE URL.
+         * Only valid when shifts are a clean every-N-days cycle (no vacation gaps).
+         */
+        function buildGoogleCalendarUrl(draft) {
+          var shiftInfo = firstAndCountShifts(draft);
+          if (!shiftInfo.first || !shiftInfo.count) return null;
+          var endDate = addDays(shiftInfo.first, 1);
+          var dates =
+            formatIcsLocal(shiftInfo.first, draft.shiftStartTime) +
+            "/" +
+            formatIcsLocal(endDate, draft.shiftStartTime);
+          var params = new URLSearchParams();
+          params.set("action", "TEMPLATE");
+          params.set("text", draft.label);
+          params.set("dates", dates);
+          params.set(
+            "details",
+            "Shared from Mi Guardia · " +
+              patternLabel(draft.pattern.cycleDays, draft.pattern.offset),
+          );
+          params.set(
+            "recur",
+            "RRULE:FREQ=DAILY;INTERVAL=" +
+              draft.pattern.cycleDays +
+              ";COUNT=" +
+              shiftInfo.count,
+          );
+          return (
+            "https://calendar.google.com/calendar/render?" + params.toString()
+          );
+        }
+
+        function exportToGoogleCalendar(draft) {
+          if (vacationBreaksCycle(draft)) {
+            downloadIcs(draft);
+            window.open(
+              "https://calendar.google.com/calendar/u/0/r/settings/import",
+              "_blank",
+              "noopener,noreferrer",
+            );
+            return;
+          }
+          var url = buildGoogleCalendarUrl(draft);
+          if (!url) return;
+          window.open(url, "_blank", "noopener,noreferrer");
+        }
+
         var params = new URLSearchParams(window.location.search);
         var payload = params.get("d");
         if (!payload) return;
@@ -531,6 +774,10 @@
         var swatchEl = document.getElementById("swatch");
         var dowsEl = document.getElementById("dows");
         var weeksEl = document.getElementById("weeks");
+        var icsBtn = document.getElementById("ics-btn");
+        var gcalBtn = document.getElementById("gcal-btn");
+        var copyBody = document.getElementById("copy-body");
+        var titleEl = document.getElementById("title");
         if (
           !preview ||
           !labelEl ||
@@ -547,6 +794,29 @@
           " · " +
           formatRange(draft.startDate, draft.endDate);
         swatchEl.style.background = draft.color;
+
+        if (titleEl) {
+          titleEl.textContent = draft.label + " was shared with you";
+        }
+        if (copyBody) {
+          copyBody.textContent =
+            "Install Mi Guardia to keep the rotation on your device, export to Google Calendar, or download an .ics calendar file.";
+        }
+        var icsPreview = buildIcs(draft);
+        if (icsPreview.count > 0) {
+          if (gcalBtn) {
+            gcalBtn.hidden = false;
+            gcalBtn.addEventListener("click", function () {
+              exportToGoogleCalendar(draft);
+            });
+          }
+          if (icsBtn) {
+            icsBtn.hidden = false;
+            icsBtn.addEventListener("click", function () {
+              downloadIcs(draft);
+            });
+          }
+        }
 
         var start = twoWeekStart(draft);
         var end = addDays(start, 13);
