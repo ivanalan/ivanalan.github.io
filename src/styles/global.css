@@ -163,6 +163,7 @@
 @keyframes reveal-up {
   from {
     opacity: 0;
+    filter: blur(var(--reveal-blur, 5px));
     transform: translateY(var(--reveal-distance, 1rem));
   }
 }

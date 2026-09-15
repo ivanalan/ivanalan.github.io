@@ -38,6 +38,7 @@ const sideProjects = defineCollection({
       role: z.string().optional(),
       team: z.string().optional(),
       year: z.number().optional(),
+      metrics: z.string().optional(),
       status: z.enum(["placeholder", "published"]).default("placeholder"),
       cover: image().optional(),
       coverShader: z.enum(["r5", "qualtrics"]).optional(),
