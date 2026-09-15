@@ -8,8 +8,9 @@ function cardMeta(entry: Entry): string {
   const isSideProject = entry.collection === "sideProjects";
   const projectType = isSideProject ? entry.data.projectType : undefined;
   const role = isSideProject ? undefined : entry.data.role;
+  const metrics = isSideProject ? entry.data.metrics : undefined;
 
-  return [entry.data.company, projectType, role, entry.data.year]
+  return [entry.data.company, projectType, role, metrics, entry.data.year]
     .filter((part) => part !== undefined && part !== "")
     .join(" · ");
 }
