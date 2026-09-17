@@ -1,5 +1,5 @@
 ---
-/** Fallback when Mi Guardia is not installed (Universal / App Links). */
+/** Share landing page. App opens only via the Mi Guardia App button (custom scheme). */
 ---
 
 <!doctype html>
@@ -24,6 +24,12 @@
     />
     <meta name="twitter:card" content="summary" />
     <link rel="icon" href="/media/guardias/icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@300;400&family=Instrument+Serif&display=swap"
+      rel="stylesheet"
+    />
     <style is:inline>
       :root {
         color-scheme: light dark;
@@ -31,9 +37,15 @@
         --muted: #6b6560;
         --bg: #f6f1ec;
         --cta: #111111;
-        --card: #fff;
         --card-border: color-mix(in srgb, var(--muted) 22%, transparent);
         --weekend: #007259;
+        --cal-bg: #1c1b1a;
+        --cal-fg: #f2f2f2;
+        --cal-muted: #6a6864;
+        --cal-dow: #9a9894;
+        /* Match Mi Guardia: Instrument Serif headers, mono body (Inconsolata on web). */
+        --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+        --font-mono: Inconsolata, ui-monospace, Menlo, monospace;
       }
       @media (prefers-color-scheme: dark) {
         :root {
@@ -41,24 +53,23 @@
           --muted: #aaa;
           --bg: #171616;
           --cta: #f2f2f2;
-          --card: #2a2927;
           --card-border: color-mix(in srgb, #fff 12%, transparent);
         }
       }
       body {
         margin: 0;
         min-height: 100dvh;
-        font-family:
-          system-ui,
-          -apple-system,
-          "Segoe UI",
-          Roboto,
-          sans-serif;
+        font-family: var(--font-mono);
+        font-weight: 300;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
         background: var(--bg);
         color: var(--fg);
-        display: grid;
-        place-items: center;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
         padding: 1.5rem;
+        box-sizing: border-box;
       }
       main {
         width: min(22rem, 100%);
@@ -69,7 +80,7 @@
         gap: 0;
       }
       .hero {
-        margin-bottom: 2rem;
+        margin-bottom: 1.75rem;
       }
       .icon {
         width: 6.375rem;
@@ -81,75 +92,125 @@
       .icon[hidden] {
         display: none !important;
       }
+      .share-head {
+        margin-bottom: 1.25rem;
+        text-align: left;
+      }
+      .share-head[hidden] {
+        display: none !important;
+      }
+      .share-label {
+        margin: 0;
+        font-family: var(--font-serif);
+        font-size: clamp(2rem, 7vw, 2.75rem);
+        font-weight: 400;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        color: var(--fg);
+      }
+      .share-meta {
+        margin: 0.55rem 0 0;
+        font-family: var(--font-mono);
+        font-size: 1rem;
+        font-weight: 300;
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
       .copy {
         display: flex;
         flex-direction: column;
         gap: 0.75rem;
         margin-bottom: 1.75rem;
       }
+      .copy.has-preview {
+        margin-top: 0.25rem;
+        text-align: left;
+      }
+      .copy.has-preview #title {
+        display: none;
+      }
       h1 {
         margin: 0;
+        font-family: var(--font-serif);
         font-size: clamp(1.65rem, 5.5vw, 1.95rem);
         line-height: 1.2;
-        letter-spacing: -0.03em;
-        font-weight: 700;
+        letter-spacing: -0.02em;
+        font-weight: 400;
       }
       .copy > p {
         margin: 0;
         color: var(--muted);
-        line-height: 1.55;
+        line-height: 1.3;
         font-size: 0.95rem;
+        font-weight: 300;
       }
       .preview {
         width: 100%;
         box-sizing: border-box;
-        background: var(--card);
-        border: 1px solid var(--card-border);
+        background: var(--cal-bg);
+        border: none;
         border-radius: 1.5rem;
         padding: 1.1rem 1rem 1.15rem;
         display: flex;
         flex-direction: column;
         gap: 0.55rem;
+        color: var(--cal-fg);
       }
       .preview[hidden] {
         display: none !important;
       }
-      .preview-head {
-        display: flex;
-        align-items: center;
-        gap: 0.65rem;
-        min-width: 0;
-      }
-      .swatch {
-        width: 0.75rem;
-        height: 0.75rem;
-        border-radius: 999px;
-        flex-shrink: 0;
-        background: #dc211e;
-      }
-      .preview-label {
-        margin: 0;
-        font-size: 1.05rem;
-        font-weight: 600;
-        letter-spacing: -0.02em;
-        line-height: 1.25;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        color: var(--fg);
-      }
-      .preview-meta {
-        margin: 0;
-        font-size: 0.875rem;
-        color: var(--muted);
-        font-variant-numeric: tabular-nums;
-      }
       .cal {
         display: flex;
         flex-direction: column;
-        gap: 0.4rem;
-        margin-top: 0.45rem;
+        gap: 0.25rem;
         width: 100%;
+      }
+      .cal-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-bottom: 0.2rem;
+        min-height: 1.75rem;
+      }
+      .cal-month {
+        margin: 0;
+        font-family: var(--font-serif);
+        font-size: 1.75rem;
+        font-weight: 400;
+        line-height: 1.15;
+        letter-spacing: -0.01em;
+        color: var(--cal-fg);
+        text-transform: lowercase;
+      }
+      .cal-nav {
+        display: flex;
+        align-items: center;
+        gap: 0.15rem;
+        flex-shrink: 0;
+      }
+      .cal-nav-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        padding: 0;
+        border: none;
+        border-radius: 0.4rem;
+        background: transparent;
+        color: var(--cal-fg);
+        cursor: pointer;
+      }
+      .cal-nav-btn ion-icon {
+        font-size: 1.05rem;
+      }
+      .cal-nav-btn:disabled {
+        opacity: 0.28;
+        cursor: default;
+      }
+      .cal-nav-btn:not(:disabled):hover {
+        background: color-mix(in srgb, #fff 10%, transparent);
       }
       .cal-dows,
       .cal-week,
@@ -161,23 +222,24 @@
       .cal-weeks {
         display: flex;
         flex-direction: column;
-        gap: 0.4rem;
+        gap: 0.2rem;
         width: 100%;
       }
       .cal-dow {
         text-align: center;
-        font-size: 0.7rem;
-        font-weight: 500;
-        color: var(--muted);
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        font-weight: 300;
+        color: var(--cal-dow);
         line-height: 1;
-        padding-bottom: 0.2rem;
+        padding-bottom: 0.15rem;
       }
       .cal-week {
         position: relative;
         align-items: center;
       }
       .cal-cell {
-        height: 2.25rem;
+        height: 2.1rem;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -186,18 +248,22 @@
         min-width: 0;
       }
       .cal-mark {
-        width: 2.25rem;
-        height: 2.25rem;
-        border-radius: 0.7rem;
+        width: 2.1rem;
+        height: 2.1rem;
+        border-radius: 0.65rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.85rem;
-        font-weight: 500;
+        font-family: var(--font-mono);
+        font-size: 0.875rem;
+        font-weight: 300;
         font-variant-numeric: tabular-nums;
-        color: var(--fg);
+        color: var(--cal-fg);
         line-height: 1;
         box-sizing: border-box;
+      }
+      .cal-mark.outside {
+        color: var(--cal-muted);
       }
       .cal-mark.shift {
         color: #fff;
@@ -207,7 +273,7 @@
         background: transparent;
       }
       .cal-mark.today {
-        border: 1.5px solid var(--fg);
+        border: 1.5px solid var(--cal-fg);
       }
       .cal-mark.today.shift {
         padding: 2px;
@@ -224,11 +290,11 @@
       .cal-weekend-pill {
         position: absolute;
         top: 0;
-        height: 2.25rem;
-        border-radius: 0.7rem;
+        height: 2.1rem;
+        border-radius: 0.65rem;
         background: var(--weekend);
-        left: calc(78.5714% - 1.125rem);
-        width: calc(14.2857% + 2.25rem);
+        left: calc(78.5714% - 1.05rem);
+        width: calc(14.2857% + 2.1rem);
         z-index: 0;
       }
       .actions {
@@ -255,8 +321,8 @@
         width: 100%;
         text-align: center;
         text-decoration: none;
-        font: inherit;
-        font-weight: 600;
+        font-family: var(--font-mono);
+        font-weight: 400;
         font-size: 0.9rem;
         border-radius: 999px;
         padding: 0.9rem 1rem;
@@ -291,6 +357,83 @@
         font-size: 0.85rem;
         color: var(--muted);
       }
+      /* Offscreen export: narrow, height hugs stacked months. */
+      .export-sheet {
+        position: fixed;
+        left: -10000px;
+        top: 0;
+        width: 20rem;
+        max-width: 20rem;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 1.35rem 1.1rem 1.15rem;
+        background: #171616;
+        color: #f2f2f2;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.15rem;
+        pointer-events: none;
+        -webkit-font-smoothing: antialiased;
+      }
+      .export-head {
+        text-align: left;
+      }
+      .export-label {
+        margin: 0;
+        font-family: var(--font-serif);
+        font-size: 2.35rem;
+        font-weight: 400;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+        color: #f2f2f2;
+      }
+      .export-meta {
+        margin: 0.5rem 0 0;
+        font-family: var(--font-mono);
+        font-size: 0.95rem;
+        font-weight: 300;
+        color: #aaa;
+        font-variant-numeric: tabular-nums;
+      }
+      .export-months {
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+        width: 100%;
+      }
+      .export-month {
+        width: 100%;
+        box-sizing: border-box;
+        background: #1c1b1a;
+        border-radius: 1.5rem;
+        padding: 1.1rem 1rem 1.15rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+        color: #f2f2f2;
+      }
+      .export-month .cal-month {
+        margin: 0;
+      }
+      .export-brand {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        font-weight: 300;
+        line-height: 1.2;
+        color: #9a9894;
+      }
+      .export-brand img {
+        width: 1.15rem;
+        height: 1.15rem;
+        border-radius: 0.28rem;
+        display: block;
+        flex-shrink: 0;
+      }
     </style>
   </head>
   <body>
@@ -304,19 +447,42 @@
           height="102"
           alt="Mi Guardia"
         />
+        <div class="share-head" id="share-head" hidden>
+          <h1 class="share-label" id="label"></h1>
+          <p class="share-meta" id="meta"></p>
+        </div>
         <article class="preview" id="preview" hidden>
-          <div class="preview-head">
-            <span class="swatch" id="swatch" aria-hidden="true"></span>
-            <h2 class="preview-label" id="label"></h2>
-          </div>
-          <p class="preview-meta" id="meta"></p>
-          <div class="cal" id="cal" aria-hidden="true">
+          <div class="cal" id="cal" aria-label="Rotation calendar">
+            <div class="cal-toolbar">
+              <p class="cal-month" id="month-label"></p>
+              <div class="cal-nav">
+                <button
+                  type="button"
+                  class="cal-nav-btn"
+                  id="month-prev"
+                  aria-label="Previous month"
+                >
+                  <ion-icon name="chevron-back" aria-hidden="true"></ion-icon>
+                </button>
+                <button
+                  type="button"
+                  class="cal-nav-btn"
+                  id="month-next"
+                  aria-label="Next month"
+                >
+                  <ion-icon
+                    name="chevron-forward"
+                    aria-hidden="true"
+                  ></ion-icon>
+                </button>
+              </div>
+            </div>
             <div class="cal-dows" id="dows"></div>
             <div class="cal-weeks" id="weeks"></div>
           </div>
         </article>
       </div>
-      <div class="copy">
+      <div class="copy" id="copy">
         <h1 id="title">A rotation was shared with you</h1>
         <p id="copy-body">
           Install Mi Guardia to review the schedule and save it on your device.
@@ -330,7 +496,7 @@
             href="https://apps.apple.com/app/id6803777786"
           >
             <ion-icon name="logo-apple" aria-hidden="true"></ion-icon>
-            App Store
+            Mi Guardia App
           </a>
           <button type="button" class="btn btn-secondary" id="gcal-btn" hidden>
             <ion-icon name="logo-google" aria-hidden="true"></ion-icon>
@@ -338,12 +504,33 @@
           </button>
           <button type="button" class="btn btn-secondary" id="ics-btn" hidden>
             <ion-icon name="download-outline" aria-hidden="true"></ion-icon>
-            Download calendar file
+            Download .ics calendar file
+          </button>
+          <button type="button" class="btn btn-secondary" id="png-btn" hidden>
+            <ion-icon name="image-outline" aria-hidden="true"></ion-icon>
+            Download image
           </button>
         </div>
         <p class="soon">Coming soon to Google Play</p>
       </div>
     </main>
+
+    <div class="export-sheet" id="export-sheet" aria-hidden="true">
+      <div class="export-head">
+        <p class="export-label" id="export-label"></p>
+        <p class="export-meta" id="export-meta"></p>
+      </div>
+      <div class="export-months" id="export-months"></div>
+      <div class="export-brand">
+        <img
+          src="/media/guardias/icon.png"
+          width="18"
+          height="18"
+          alt=""
+        />
+        <span>Mi Guardia</span>
+      </div>
+    </div>
 
     <script
       type="module"
@@ -353,15 +540,36 @@
       nomodule
       src="https://unpkg.com/ionicons@8.1.0/dist/ionicons/ionicons.js"
     ></script>
-    <script is:inline>
+    <script>
+      import { toPng } from "html-to-image";
+
       (function () {
+        type OffsetLetter = "A" | "B" | "C" | "D";
+        type Draft = {
+          label: string;
+          startDate: string;
+          endDate: string;
+          pattern: { cycleDays: 3 | 4; offset: OffsetLetter };
+          firstShiftDate: string | null;
+          vacationStartDate: string | null;
+          vacationEndDate: string | null;
+          shiftStartTime: string;
+          color: string;
+        };
+        type DaySet = Record<string, boolean>;
+
         var ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
         var HH_MM = /^\d{2}:\d{2}$/;
         var HEX = /^#[0-9A-Fa-f]{6}$/;
-        var OFFSET_INDEX = { A: 0, B: 1, C: 2, D: 3 };
+        var OFFSET_INDEX: Record<OffsetLetter, number> = {
+          A: 0,
+          B: 1,
+          C: 2,
+          D: 3,
+        };
         var DOW_ES = ["L", "M", "M", "J", "V", "S", "D"];
 
-        function decodeBase64Url(payload) {
+        function decodeBase64Url(payload: string): string | null {
           try {
             var padded =
               payload.replace(/-/g, "+").replace(/_/g, "/") +
@@ -377,7 +585,7 @@
           }
         }
 
-        function parseLocalDate(iso) {
+        function parseLocalDate(iso: string): Date {
           var parts = iso.split("-");
           return new Date(
             Number(parts[0]),
@@ -386,27 +594,30 @@
           );
         }
 
-        function toISODate(date) {
+        function toISODate(date: Date): string {
           var y = date.getFullYear();
           var m = String(date.getMonth() + 1).padStart(2, "0");
           var d = String(date.getDate()).padStart(2, "0");
           return y + "-" + m + "-" + d;
         }
 
-        function addDays(iso, n) {
+        function addDays(iso: string, n: number): string {
           var date = parseLocalDate(iso);
           date.setDate(date.getDate() + n);
           return toISODate(date);
         }
 
-        function daysBetween(a, b) {
+        function daysBetween(a: string, b: string): number {
           var ms =
             parseLocalDate(b).getTime() - parseLocalDate(a).getTime();
           return Math.round(ms / 86400000);
         }
 
-        function formatRange(start, end) {
-          var opts = { month: "short", day: "numeric" };
+        function formatRange(start: string, end: string): string {
+          var opts: Intl.DateTimeFormatOptions = {
+            month: "long",
+            day: "numeric",
+          };
           return (
             parseLocalDate(start).toLocaleDateString("en-US", opts) +
             " – " +
@@ -414,19 +625,64 @@
           );
         }
 
-        function patternLabel(cycleDays, offset) {
+        function toYearMonth(iso: string): string {
+          return iso.slice(0, 7);
+        }
+
+        function monthsInRange(startDate: string, endDate: string): string[] {
+          var months: string[] = [];
+          var cursor = toYearMonth(startDate);
+          var endYm = toYearMonth(endDate);
+          while (cursor <= endYm) {
+            months.push(cursor);
+            var parts = cursor.split("-");
+            var y = Number(parts[0]);
+            var m = Number(parts[1]);
+            if (m === 12) {
+              y += 1;
+              m = 1;
+            } else {
+              m += 1;
+            }
+            cursor = y + "-" + String(m).padStart(2, "0");
+          }
+          return months;
+        }
+
+        function firstOfMonth(ym: string): string {
+          return ym + "-01";
+        }
+
+        function lastOfMonth(ym: string): string {
+          var parts = ym.split("-");
+          var y = Number(parts[0]);
+          var m = Number(parts[1]);
+          return toISODate(new Date(y, m, 0));
+        }
+
+        function monthLabel(ym: string): string {
+          return parseLocalDate(firstOfMonth(ym)).toLocaleDateString("en-US", {
+            month: "long",
+          });
+        }
+
+        function patternLabel(cycleDays: number, offset: string): string {
           var cycle = cycleDays === 3 ? "A–C" : "A–D";
           return cycle + " · " + offset;
         }
 
-        function isOnVacation(draft, iso) {
+        function isOnVacation(draft: Draft, iso: string): boolean {
           if (!draft.vacationStartDate || !draft.vacationEndDate) return false;
           return (
             iso >= draft.vacationStartDate && iso <= draft.vacationEndDate
           );
         }
 
-        function matchesYearLetter(iso, cycleDays, offset) {
+        function matchesYearLetter(
+          iso: string,
+          cycleDays: number,
+          offset: OffsetLetter,
+        ): boolean {
           var date = parseLocalDate(iso);
           var jan1 = new Date(date.getFullYear(), 0, 1);
           var daysFromJan1 = Math.round(
@@ -436,12 +692,16 @@
           return index === OFFSET_INDEX[offset];
         }
 
-        function matchesFirstShiftCycle(iso, firstShiftDate, cycleDays) {
+        function matchesFirstShiftCycle(
+          iso: string,
+          firstShiftDate: string,
+          cycleDays: number,
+        ): boolean {
           var days = daysBetween(firstShiftDate, iso);
           return ((days % cycleDays) + cycleDays) % cycleDays === 0;
         }
 
-        function isShiftDay(draft, iso) {
+        function isShiftDay(draft: Draft, iso: string): boolean {
           if (iso < draft.startDate || iso > draft.endDate) return false;
           if (isOnVacation(draft, iso)) return false;
           if (draft.firstShiftDate) {
@@ -458,7 +718,7 @@
           );
         }
 
-        function mondayOnOrBefore(iso) {
+        function mondayOnOrBefore(iso: string): string {
           var date = parseLocalDate(iso);
           var day = date.getDay();
           var back = day === 0 ? 6 : day - 1;
@@ -466,18 +726,8 @@
           return toISODate(date);
         }
 
-        function twoWeekStart(draft) {
-          var anchor =
-            draft.firstShiftDate &&
-            draft.firstShiftDate >= draft.startDate &&
-            draft.firstShiftDate <= draft.endDate
-              ? draft.firstShiftDate
-              : draft.startDate;
-          return mondayOnOrBefore(anchor);
-        }
-
-        function buildShiftSet(draft, from, to) {
-          var set = {};
+        function buildShiftSet(draft: Draft, from: string, to: string): DaySet {
+          var set: DaySet = {};
           var cursor = from;
           while (cursor <= to) {
             if (isShiftDay(draft, cursor)) set[cursor] = true;
@@ -487,8 +737,12 @@
         }
 
         /** Sat/Sun marked when Fri+Sat+Sun are all clear of shifts. */
-        function freeWeekendSet(shiftSet, from, to) {
-          var free = {};
+        function freeWeekendSet(
+          shiftSet: DaySet,
+          from: string,
+          to: string,
+        ): DaySet {
+          var free: DaySet = {};
           var cursor = mondayOnOrBefore(from);
           var end = to;
           while (cursor <= end) {
@@ -509,48 +763,61 @@
           return free;
         }
 
-        function parseDraft(raw) {
+        function parseDraft(raw: unknown): Draft | null {
           if (raw == null || typeof raw !== "object") return null;
-          var pattern = raw.pattern;
-          if (pattern == null || typeof pattern !== "object") return null;
+          var data = raw as Record<string, unknown>;
+          var patternRaw = data.pattern;
+          if (patternRaw == null || typeof patternRaw !== "object") return null;
+          var pattern = patternRaw as Record<string, unknown>;
           var cycleDays = pattern.cycleDays;
           var offset = pattern.offset;
           if (cycleDays !== 3 && cycleDays !== 4) return null;
           if (typeof offset !== "string" || !(offset in OFFSET_INDEX))
             return null;
-          if (cycleDays === 3 && offset === "D") return null;
-          if (typeof raw.label !== "string" || !raw.label.trim()) return null;
-          if (!ISO_DATE.test(raw.startDate) || !ISO_DATE.test(raw.endDate))
+          var offsetLetter = offset as OffsetLetter;
+          if (cycleDays === 3 && offsetLetter === "D") return null;
+          if (typeof data.label !== "string" || !data.label.trim()) return null;
+          if (
+            typeof data.startDate !== "string" ||
+            typeof data.endDate !== "string" ||
+            !ISO_DATE.test(data.startDate) ||
+            !ISO_DATE.test(data.endDate)
+          )
             return null;
-          if (raw.endDate < raw.startDate) return null;
+          if (data.endDate < data.startDate) return null;
           var firstShiftDate =
-            raw.firstShiftDate === null || ISO_DATE.test(raw.firstShiftDate)
-              ? raw.firstShiftDate
+            data.firstShiftDate === null ||
+            (typeof data.firstShiftDate === "string" &&
+              ISO_DATE.test(data.firstShiftDate))
+              ? (data.firstShiftDate as string | null)
               : null;
           var vacationStartDate =
-            raw.vacationStartDate === null ||
-            ISO_DATE.test(raw.vacationStartDate)
-              ? raw.vacationStartDate
+            data.vacationStartDate === null ||
+            (typeof data.vacationStartDate === "string" &&
+              ISO_DATE.test(data.vacationStartDate))
+              ? (data.vacationStartDate as string | null)
               : null;
           var vacationEndDate =
-            raw.vacationEndDate === null || ISO_DATE.test(raw.vacationEndDate)
-              ? raw.vacationEndDate
+            data.vacationEndDate === null ||
+            (typeof data.vacationEndDate === "string" &&
+              ISO_DATE.test(data.vacationEndDate))
+              ? (data.vacationEndDate as string | null)
               : null;
           var shiftStartTime =
-            typeof raw.shiftStartTime === "string" &&
-            HH_MM.test(raw.shiftStartTime)
-              ? raw.shiftStartTime
+            typeof data.shiftStartTime === "string" &&
+            HH_MM.test(data.shiftStartTime)
+              ? data.shiftStartTime
               : "07:00";
           var color =
-            typeof raw.color === "string" && HEX.test(raw.color)
-              ? raw.color
+            typeof data.color === "string" && HEX.test(data.color)
+              ? data.color
               : "#DC211E";
 
           return {
-            label: raw.label.trim(),
-            startDate: raw.startDate,
-            endDate: raw.endDate,
-            pattern: { cycleDays: cycleDays, offset: offset },
+            label: data.label.trim(),
+            startDate: data.startDate,
+            endDate: data.endDate,
+            pattern: { cycleDays: cycleDays, offset: offsetLetter },
             firstShiftDate: firstShiftDate,
             vacationStartDate: vacationStartDate,
             vacationEndDate: vacationEndDate,
@@ -559,11 +826,11 @@
           };
         }
 
-        function pad2(n) {
+        function pad2(n: number): string {
           return String(n).padStart(2, "0");
         }
 
-        function formatIcsLocal(isoDate, hhmm) {
+        function formatIcsLocal(isoDate: string, hhmm: string): string {
           var parts = hhmm.split(":");
           return (
             isoDate.replace(/-/g, "") +
@@ -574,7 +841,7 @@
           );
         }
 
-        function formatIcsUtcNow() {
+        function formatIcsUtcNow(): string {
           var d = new Date();
           return (
             d.getUTCFullYear() +
@@ -588,7 +855,7 @@
           );
         }
 
-        function escapeIcsText(value) {
+        function escapeIcsText(value: string): string {
           return String(value)
             .replace(/\\/g, "\\\\")
             .replace(/;/g, "\\;")
@@ -596,17 +863,17 @@
             .replace(/\r\n|\n|\r/g, "\\n");
         }
 
-        function slugFilename(label) {
+        function slugFilename(label: string, ext?: string): string {
           var slug = label
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, "-")
             .replace(/^-+|-+$/g, "")
             .slice(0, 48);
-          return (slug || "rotation") + ".ics";
+          return (slug || "rotation") + (ext || ".ics");
         }
 
         /** 24h overnight shifts: end is start time on the next calendar day. */
-        function buildIcs(draft) {
+        function buildIcs(draft: Draft): { ics: string; count: number } {
           var stamp = formatIcsUtcNow();
           var summary = escapeIcsText(draft.label);
           var lines = [
@@ -654,7 +921,7 @@
           return { ics: lines.join("\r\n") + "\r\n", count: count };
         }
 
-        function downloadIcs(draft) {
+        function downloadIcs(draft: Draft): void {
           var built = buildIcs(draft);
           if (!built.count) return;
           var blob = new Blob([built.ics], {
@@ -671,7 +938,7 @@
         }
 
         /** True when vacation removes at least one otherwise-scheduled shift. */
-        function vacationBreaksCycle(draft) {
+        function vacationBreaksCycle(draft: Draft): boolean {
           if (!draft.vacationStartDate || !draft.vacationEndDate) return false;
           var cursor = draft.startDate;
           while (cursor <= draft.endDate) {
@@ -690,8 +957,11 @@
           return false;
         }
 
-        function firstAndCountShifts(draft) {
-          var first = null;
+        function firstAndCountShifts(draft: Draft): {
+          first: string | null;
+          count: number;
+        } {
+          var first: string | null = null;
           var count = 0;
           var cursor = draft.startDate;
           while (cursor <= draft.endDate) {
@@ -708,7 +978,7 @@
          * One recurring event via Google’s TEMPLATE URL.
          * Only valid when shifts are a clean every-N-days cycle (no vacation gaps).
          */
-        function buildGoogleCalendarUrl(draft) {
+        function buildGoogleCalendarUrl(draft: Draft): string | null {
           var shiftInfo = firstAndCountShifts(draft);
           if (!shiftInfo.first || !shiftInfo.count) return null;
           var endDate = addDays(shiftInfo.first, 1);
@@ -737,7 +1007,7 @@
           );
         }
 
-        function exportToGoogleCalendar(draft) {
+        function exportToGoogleCalendar(draft: Draft): void {
           if (vacationBreaksCycle(draft)) {
             downloadIcs(draft);
             window.open(
@@ -752,14 +1022,219 @@
           window.open(url, "_blank", "noopener,noreferrer");
         }
 
+        function fillDows(dowsTarget: HTMLElement): void {
+          dowsTarget.replaceChildren();
+          for (var d = 0; d < 7; d += 1) {
+            var dow = document.createElement("span");
+            dow.className = "cal-dow";
+            dow.textContent = DOW_ES[d];
+            dowsTarget.append(dow);
+          }
+        }
+
+        function fillWeeks(
+          weeksTarget: HTMLElement,
+          draft: Draft,
+          ym: string,
+          todayIso: string,
+          markToday: boolean,
+        ): void {
+          var monthStart = firstOfMonth(ym);
+          var monthEnd = lastOfMonth(ym);
+          var gridStart = mondayOnOrBefore(monthStart);
+          var gridEnd = addDays(mondayOnOrBefore(monthEnd), 6);
+          var shiftSet = buildShiftSet(
+            draft,
+            addDays(gridStart, -1),
+            addDays(gridEnd, 1),
+          );
+          var freeSet = freeWeekendSet(shiftSet, gridStart, gridEnd);
+          var daySpan = Math.round(
+            (parseLocalDate(gridEnd).getTime() -
+              parseLocalDate(gridStart).getTime()) /
+              86400000,
+          );
+          var weekCount = (daySpan + 1) / 7;
+
+          weeksTarget.replaceChildren();
+          for (var w = 0; w < weekCount; w += 1) {
+            var week = document.createElement("div");
+            week.className = "cal-week";
+            var weekStart = addDays(gridStart, w * 7);
+            var sat = addDays(weekStart, 5);
+            var sun = addDays(weekStart, 6);
+            var satInMonth = toYearMonth(sat) === ym;
+            var sunInMonth = toYearMonth(sun) === ym;
+            var satInRange =
+              sat >= draft.startDate && sat <= draft.endDate;
+            var sunInRange =
+              sun >= draft.startDate && sun <= draft.endDate;
+            if (
+              satInMonth &&
+              sunInMonth &&
+              satInRange &&
+              sunInRange &&
+              freeSet[sat] &&
+              freeSet[sun]
+            ) {
+              var pill = document.createElement("div");
+              pill.className = "cal-weekend-pill";
+              week.append(pill);
+            }
+            for (var i = 0; i < 7; i += 1) {
+              var iso = addDays(weekStart, i);
+              var date = parseLocalDate(iso);
+              var inMonth = toYearMonth(iso) === ym;
+              var inRange =
+                iso >= draft.startDate && iso <= draft.endDate;
+              var shift = inMonth && !!shiftSet[iso];
+              var weekend = inMonth && inRange && !!freeSet[iso];
+              var isToday = markToday && inMonth && iso === todayIso;
+              var cell = document.createElement("div");
+              cell.className = "cal-cell";
+              var mark = document.createElement("span");
+              var classes = ["cal-mark"];
+              if (!inMonth) classes.push("outside");
+              if (shift) classes.push("shift");
+              if (weekend) classes.push("weekend");
+              if (isToday) classes.push("today");
+              mark.className = classes.join(" ");
+              if (shift && isToday) {
+                var inner = document.createElement("span");
+                inner.className = "cal-mark-inner";
+                inner.style.background = draft.color;
+                inner.textContent = String(date.getDate());
+                mark.append(inner);
+              } else {
+                mark.textContent = String(date.getDate());
+                if (shift) {
+                  mark.style.background = draft.color;
+                }
+              }
+              cell.append(mark);
+              week.append(cell);
+            }
+            weeksTarget.append(week);
+          }
+        }
+
+        function buildExportMonths(
+          exportMonthsEl: HTMLElement,
+          draft: Draft,
+          months: string[],
+          todayIso: string,
+        ): void {
+          exportMonthsEl.replaceChildren();
+          for (var m = 0; m < months.length; m += 1) {
+            var ym = months[m];
+            var card = document.createElement("article");
+            card.className = "export-month";
+            var cal = document.createElement("div");
+            cal.className = "cal";
+            var monthEl = document.createElement("p");
+            monthEl.className = "cal-month";
+            monthEl.textContent = monthLabel(ym);
+            var dows = document.createElement("div");
+            dows.className = "cal-dows";
+            fillDows(dows);
+            var weeks = document.createElement("div");
+            weeks.className = "cal-weeks";
+            fillWeeks(weeks, draft, ym, todayIso, false);
+            cal.append(monthEl, dows, weeks);
+            card.append(cal);
+            exportMonthsEl.append(card);
+          }
+        }
+
+        function downloadPng(draft: Draft, sheet: HTMLElement): Promise<void> {
+          // Capture the offscreen sheet; force the clone on-screen and opaque
+          // (mutating opacity:0 on the live node paints a blank PNG).
+          return document.fonts.ready
+            .then(function () {
+              return toPng(sheet, {
+                pixelRatio: 2,
+                cacheBust: true,
+                backgroundColor: "#171616",
+                style: {
+                  position: "fixed",
+                  left: "0",
+                  top: "0",
+                  right: "auto",
+                  bottom: "auto",
+                  transform: "none",
+                  opacity: "1",
+                  zIndex: "-1",
+                },
+              });
+            })
+            .then(function (dataUrl) {
+              var a = document.createElement("a");
+              a.href = dataUrl;
+              a.download = slugFilename(draft.label, ".png");
+              document.body.append(a);
+              a.click();
+              a.remove();
+            });
+        }
+
+        var APP_STORE_URL = "https://apps.apple.com/app/id6803777786";
+        var APP_OPEN_TIMEOUT_MS = 1600;
+
+        /**
+         * Try the custom scheme first; if the page is still visible shortly
+         * after, assume the app is not installed and go to the App Store.
+         */
+        function wireOpenInAppButton(payload: string) {
+          var storeBtn = document.getElementById(
+            "store-btn",
+          ) as HTMLAnchorElement | null;
+          if (!storeBtn) return;
+
+          storeBtn.href = APP_STORE_URL;
+          storeBtn.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            var appUrl =
+              "miguardia://guardias/r/?d=" + encodeURIComponent(payload);
+            var leftForApp = false;
+            var settled = false;
+
+            function markLeft() {
+              leftForApp = true;
+            }
+
+            function goToStore() {
+              if (settled || leftForApp || document.hidden) return;
+              settled = true;
+              window.removeEventListener("pagehide", markLeft);
+              window.removeEventListener("blur", markLeft);
+              document.removeEventListener("visibilitychange", onVisibility);
+              window.location.href = APP_STORE_URL;
+            }
+
+            function onVisibility() {
+              if (document.hidden) markLeft();
+            }
+
+            window.addEventListener("pagehide", markLeft);
+            window.addEventListener("blur", markLeft);
+            document.addEventListener("visibilitychange", onVisibility);
+
+            window.location.href = appUrl;
+            window.setTimeout(goToStore, APP_OPEN_TIMEOUT_MS);
+          });
+        }
+
         var params = new URLSearchParams(window.location.search);
         var payload = params.get("d");
         if (!payload) return;
 
+        wireOpenInAppButton(payload);
+
         var json = decodeBase64Url(payload);
         if (!json) return;
 
-        var draft;
+        var draft: Draft | null;
         try {
           draft = parseDraft(JSON.parse(json));
         } catch (e) {
@@ -768,139 +1243,135 @@
         if (!draft) return;
 
         var preview = document.getElementById("preview");
+        var shareHead = document.getElementById("share-head");
         var iconEl = document.getElementById("icon");
         var labelEl = document.getElementById("label");
         var metaEl = document.getElementById("meta");
-        var swatchEl = document.getElementById("swatch");
+        var monthLabelEl = document.getElementById("month-label");
+        var monthPrevBtn = document.getElementById(
+          "month-prev",
+        ) as HTMLButtonElement | null;
+        var monthNextBtn = document.getElementById(
+          "month-next",
+        ) as HTMLButtonElement | null;
         var dowsEl = document.getElementById("dows");
         var weeksEl = document.getElementById("weeks");
         var icsBtn = document.getElementById("ics-btn");
         var gcalBtn = document.getElementById("gcal-btn");
+        var pngBtn = document.getElementById(
+          "png-btn",
+        ) as HTMLButtonElement | null;
+        var copyEl = document.getElementById("copy");
         var copyBody = document.getElementById("copy-body");
-        var titleEl = document.getElementById("title");
+        var exportSheet = document.getElementById("export-sheet");
+        var exportLabel = document.getElementById("export-label");
+        var exportMeta = document.getElementById("export-meta");
+        var exportMonths = document.getElementById("export-months");
         if (
           !preview ||
+          !shareHead ||
           !labelEl ||
           !metaEl ||
-          !swatchEl ||
+          !monthLabelEl ||
+          !monthPrevBtn ||
+          !monthNextBtn ||
           !dowsEl ||
-          !weeksEl
+          !weeksEl ||
+          !exportSheet ||
+          !exportLabel ||
+          !exportMeta ||
+          !exportMonths
         )
           return;
 
-        labelEl.textContent = draft.label;
-        metaEl.textContent =
-          patternLabel(draft.pattern.cycleDays, draft.pattern.offset) +
-          " · " +
-          formatRange(draft.startDate, draft.endDate);
-        swatchEl.style.background = draft.color;
+        var activeDraft = draft;
+        var activeMonthLabel = monthLabelEl;
+        var activeMonthPrev = monthPrevBtn;
+        var activeMonthNext = monthNextBtn;
+        var activeWeeks = weeksEl;
+        var activeExportSheet = exportSheet;
 
-        if (titleEl) {
-          titleEl.textContent = draft.label + " was shared with you";
-        }
+        labelEl.textContent = activeDraft.label;
+        metaEl.textContent = formatRange(
+          activeDraft.startDate,
+          activeDraft.endDate,
+        );
+        exportLabel.textContent = activeDraft.label;
+        exportMeta.textContent = formatRange(
+          activeDraft.startDate,
+          activeDraft.endDate,
+        );
+
+        if (copyEl) copyEl.classList.add("has-preview");
         if (copyBody) {
           copyBody.textContent =
-            "Install Mi Guardia to keep the rotation on your device, export to Google Calendar, or download an .ics calendar file.";
+            "A rotation was shared with you. You can open it in the Mi Guardia app or export it with the options below.";
         }
-        var icsPreview = buildIcs(draft);
+        var icsPreview = buildIcs(activeDraft);
         if (icsPreview.count > 0) {
           if (gcalBtn) {
             gcalBtn.hidden = false;
             gcalBtn.addEventListener("click", function () {
-              exportToGoogleCalendar(draft);
+              exportToGoogleCalendar(activeDraft);
             });
           }
           if (icsBtn) {
             icsBtn.hidden = false;
             icsBtn.addEventListener("click", function () {
-              downloadIcs(draft);
+              downloadIcs(activeDraft);
             });
           }
         }
 
-        var start = twoWeekStart(draft);
-        var end = addDays(start, 13);
-        var shiftSet = buildShiftSet(
-          draft,
-          addDays(start, -1),
-          addDays(end, 1),
-        );
-        var freeSet = freeWeekendSet(shiftSet, start, end);
+        var months = monthsInRange(activeDraft.startDate, activeDraft.endDate);
         var todayIso = toISODate(new Date());
+        var todayYm = toYearMonth(todayIso);
+        var monthIndex = months.indexOf(todayYm);
+        if (monthIndex < 0) monthIndex = 0;
 
-        dowsEl.replaceChildren();
-        dowsEl.style.cssText =
-          "display:grid;grid-template-columns:repeat(7,minmax(0,1fr));width:100%";
-        for (var d = 0; d < 7; d += 1) {
-          var dow = document.createElement("span");
-          dow.className = "cal-dow";
-          dow.textContent = DOW_ES[d];
-          dowsEl.append(dow);
+        buildExportMonths(exportMonths, activeDraft, months, todayIso);
+        if (pngBtn) {
+          var activePngBtn = pngBtn;
+          activePngBtn.hidden = false;
+          activePngBtn.addEventListener("click", function () {
+            if (activePngBtn.disabled) return;
+            activePngBtn.disabled = true;
+            downloadPng(activeDraft, activeExportSheet)
+              .catch(function () {})
+              .then(function () {
+                activePngBtn.disabled = false;
+              });
+          });
         }
 
-        weeksEl.replaceChildren();
-        weeksEl.style.cssText =
-          "display:flex;flex-direction:column;gap:0.35rem;width:100%";
-        for (var w = 0; w < 2; w += 1) {
-          var week = document.createElement("div");
-          week.className = "cal-week";
-          week.style.cssText =
-            "display:grid;grid-template-columns:repeat(7,minmax(0,1fr));width:100%;position:relative;align-items:center";
-          var weekStart = addDays(start, w * 7);
-          var sat = addDays(weekStart, 5);
-          var sun = addDays(weekStart, 6);
-          if (freeSet[sat] && freeSet[sun]) {
-            var pill = document.createElement("div");
-            pill.className = "cal-weekend-pill";
-            week.append(pill);
-          }
-          for (var i = 0; i < 7; i += 1) {
-            var iso = addDays(weekStart, i);
-            var date = parseLocalDate(iso);
-            var shift = !!shiftSet[iso];
-            var weekend = !!freeSet[iso];
-            var isToday = iso === todayIso;
-            var cell = document.createElement("div");
-            cell.className = "cal-cell";
-            cell.style.cssText =
-              "height:2.25rem;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;min-width:0";
-            var mark = document.createElement("span");
-            var classes = ["cal-mark"];
-            if (shift) classes.push("shift");
-            if (weekend) classes.push("weekend");
-            if (isToday) classes.push("today");
-            mark.className = classes.join(" ");
-            mark.style.cssText =
-              "width:2.25rem;height:2.25rem;border-radius:0.7rem;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:500;line-height:1;box-sizing:border-box";
-            if (shift && isToday) {
-              mark.style.border = "1.5px solid currentColor";
-              mark.style.padding = "2px";
-              var inner = document.createElement("span");
-              inner.className = "cal-mark-inner";
-              inner.style.cssText =
-                "width:100%;height:100%;border-radius:0.5rem;display:flex;align-items:center;justify-content:center;color:#fff";
-              inner.style.background = draft.color;
-              inner.textContent = String(date.getDate());
-              mark.append(inner);
-            } else {
-              mark.textContent = String(date.getDate());
-              if (shift) {
-                mark.style.background = draft.color;
-                mark.style.color = "#fff";
-              } else if (weekend) {
-                mark.style.color = "#fff";
-              }
-              if (isToday) {
-                mark.style.border = "1.5px solid currentColor";
-              }
-            }
-            cell.append(mark);
-            week.append(cell);
-          }
-          weeksEl.append(week);
+        fillDows(dowsEl);
+
+        function updateNav() {
+          activeMonthPrev.disabled = monthIndex <= 0;
+          activeMonthNext.disabled = monthIndex >= months.length - 1;
         }
+
+        function renderMonth(ym: string) {
+          activeMonthLabel.textContent = monthLabel(ym);
+          fillWeeks(activeWeeks, activeDraft, ym, todayIso, true);
+          updateNav();
+        }
+
+        activeMonthPrev.addEventListener("click", function () {
+          if (monthIndex <= 0) return;
+          monthIndex -= 1;
+          renderMonth(months[monthIndex]);
+        });
+        activeMonthNext.addEventListener("click", function () {
+          if (monthIndex >= months.length - 1) return;
+          monthIndex += 1;
+          renderMonth(months[monthIndex]);
+        });
+
+        renderMonth(months[monthIndex]);
 
         if (iconEl) iconEl.hidden = true;
+        shareHead.hidden = false;
         preview.hidden = false;
       })();
     </script>
