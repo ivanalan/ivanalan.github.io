@@ -1,0 +1,55 @@
+---
+/* The shifts-left widget from Mi Guardia: remaining/total serif readout
+   over a packed grid of circular marks. Column count matches layoutMarks()
+   in the app for this total in a ~336px content width (max-w-[24rem] − px-6). */
+const REMAINING = 3;
+const TOTAL = 15;
+const COLS = 12;
+const ROWS = Math.ceil(TOTAL / COLS);
+const MARK_GAP = 4;
+---
+
+{/* Held to the prose column so the card centers on the body copy, not on the
+    wider article column. */}
+<figure class="max-w-prose">
+  <div
+    class="mx-auto flex w-full max-w-[24rem] flex-col gap-4 rounded-[2rem] bg-secondary px-6 py-5"
+    style={`--shift-mark: #c11e1e; --mark-track: #444444; --mark-gap: ${MARK_GAP}px; --mark-cols: ${COLS}`}
+    role="img"
+    aria-label={`${REMAINING} of ${TOTAL} shifts left. A grid of circles: the first ${REMAINING} filled in red for shifts still ahead, the rest muted for shifts already done.`}
+  >
+    <div class="flex flex-col gap-1">
+      <div class="font-heading text-2xl text-foreground">
+        <span style="color: var(--shift-mark)">{REMAINING}</span>
+        {" / "}
+        {TOTAL}
+      </div>
+      <div class="font-mono text-base text-foreground">shifts left</div>
+    </div>
+    <div class="flex flex-col" style="gap: var(--mark-gap)">
+      {
+        Array.from({ length: ROWS }, (_, row) => (
+          <div class="flex" style="gap: var(--mark-gap)">
+            {Array.from({ length: COLS }, (_, col) => {
+              const index = row * COLS + col;
+              if (index >= TOTAL) return null;
+              return (
+                <span
+                  class="aspect-square shrink-0 rounded-full"
+                  style={`width: calc((100% - (var(--mark-cols) - 1) * var(--mark-gap)) / var(--mark-cols)); background-color: ${
+                    index < REMAINING
+                      ? "var(--shift-mark)"
+                      : "var(--mark-track)"
+                  }`}
+                />
+              );
+            })}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  <figcaption>
+    Only 3 shifts left!
+  </figcaption>
+</figure>
