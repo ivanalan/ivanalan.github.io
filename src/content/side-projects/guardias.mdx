@@ -14,6 +14,8 @@ order: 1
 
 import { CaseImage } from "../../components/CaseImage";
 import ShiftCalendar from "../../components/ShiftCalendar.astro";
+import ShiftsLeft from "../../components/ShiftsLeft.astro";
+import ShareEmbed from "../../components/ShareEmbed.astro";
 
 <CaseImage
   client:load
@@ -24,29 +26,49 @@ import ShiftCalendar from "../../components/ShiftCalendar.astro";
 
 ## Outcome
 
-1. Shipped on the App Store and Google Play.
+1. Shipped on the [App Store](https://apps.apple.com/app/id6803777786) and Google Play.
 2. My first time doing app design, development, and distribution end to end.
-3. One daily user. 30 downloads
+3. One daily user. About 30 downloads.
 
 ## “When are you free?”
 
-Every 4 days, my partner has a 24-hour overnight shift at the hospital. It is crucial to rest the night before a shift, the shift itself is physically and emotionally tiring, and the day after is dedicated to recovery. In short, overnight shifts are a key event in her schedule and daily life.
+Every 4 days, my partner has a 24-hour overnight shift at the hospital. With such a physically and emotionally tiring job, those nights shape the rest of her week and month.
 
-Yet, this 4-day cycle is a pattern that is not easily trackable on a 7-day weekly routine. Shifts always fall on different days of the week. So, everyone always asks the same question: “when are you free?”
+The catch is the pattern itself. A 4-day cycle doesn’t sit cleanly on a 7-day calendar. It isn’t as easy as saying “I always work Mondays and Thursdays,” and it’s hard to share with friends and family.
 
 <ShiftCalendar />
 
-## The job was never just tracking
+So everyone asks the same question: “when are you free?”
 
-Google Calendar and other medical tracker apps all solve the narrow version of this issue: repeat this event every four days. The needs I found go beyond that:
+## The job wasn’t just “track my shifts”
 
-- Counting down the shifts and days left in a brutal rotation for motivation
-- Anticipating when the one free weekend a month falls in order to plan a restful break.
-- Sharing a calendar with others so they don’t have to keep asking
-- Overlaying a friend’s shift schedule against their own
+Creating a recurring schedule pattern for yourself only goes so far, and where most other apps stop. The real job was making “when are you free?” easily answerable without another back-and-forth.
 
-## Building > planning (sometimes)
+So I built sharing around a single link: if someone already has Mi Guardia, it opens with the rotation pre-filled and ready to save; if they don’t, the same page still lets them export to Google Calendar, download an .ics, or grab an image.
 
-When starting this project, I planned the information architecture (on paper!), documented requirements, edge cases, and researched different libraries. While I found the IA to be foundational (and did not change from my original sketches), other pre-work like my library choice changed multiple times (React Native Paper → Nativewind).
+<ShareEmbed />
 
-I learned that what’s important is to plan the basics, but build as quick as possible to iterate with feedback from real users. Decisions that were once rigid, like technical architecture, are now cheap to change with AI, so it's easier than ever to get a prototype in front of users instead of agonizing over those choices first.
+## What other apps miss
+
+Google Calendar and most shift trackers solve the narrow version: repeat this event every four days. The needs I kept running into went further:
+
+- Counting down the shifts and days left in a brutal rotation
+- Seeing when the one free weekend a month actually falls, so you can plan rest
+- Overlaying a friend’s schedule against your own
+- Getting the rotation out of your phone and into someone else’s
+
+<ShiftsLeft />
+
+## I built the wrong MVP
+
+In corporate software, an MVP usually means letting users create something and see it - sharing, commenting, and other collaboration can wait. I used that same habit here: first create a rotation, then visualize it in calendars and widgets.
+
+The real MVP was the reverse: define a recurring rotation, then share or export it. Everything else was secondary. I shipped the share link late, after the app already felt “done.”
+
+Looking back, I’d put sharing (and whatever it depends on) first. That gap taught me a lot about how PMs prioritize and how this can diverge from a UX or engineering instincts.
+
+## Iterating over waiting
+
+When I started, I planned a lot upfront: information architecture, requirements, edge cases, libraries. While the IA held strong across the whole SDLC, almost everything else changed. For example, the UI stack changed from React Native Paper → NativeWind, and I found better data visualizations only while building.
+
+What mattered most was a solid enough architecture and a real MVP, not a finished plan. With AI, once-rigid choices are cheaper to reverse, so the better move is a simple prototype in front of real people, then iterate. Agonizing over the first library or chart rarely pays off as much as putting a week of shifts on someone’s phone.

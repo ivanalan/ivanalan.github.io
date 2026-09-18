@@ -116,6 +116,8 @@
   @apply mx-auto mt-2 max-w-prose text-center text-sm text-muted-foreground;
 }
 
+.case-study p a,
+.case-study li a,
 .case-study figcaption a,
 .case-study [data-slot="dialog-description"] a {
   @apply text-foreground underline underline-offset-3 hover:text-foreground;
