@@ -7,16 +7,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>A rotation was shared with you — Mi Guardia</title>
+    <title>A rotation schedule was shared with you — Mi Guardia</title>
     <meta
       name="description"
-      content="Someone shared a guardia rotation with you. Install Mi Guardia to review it and save it on your device."
+      content="See all shift dates and save it on your device."
     />
     <meta name="apple-itunes-app" content="app-id=6803777786" />
-    <meta property="og:title" content="A rotation was shared with you" />
+    <meta property="og:title" content="A rotation schedule was shared with you" />
     <meta
       property="og:description"
-      content="Install Mi Guardia to review the schedule and save it on your device."
+      content="See all shift dates and save it on your device."
     />
     <meta
       property="og:image"
@@ -30,14 +30,16 @@
       href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@300;400&family=Instrument+Serif&display=swap"
       rel="stylesheet"
     />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#171616" />
     <style is:inline>
       :root {
-        color-scheme: light dark;
-        --fg: #1c1b1f;
-        --muted: #6b6560;
-        --bg: #f6f1ec;
-        --cta: #111111;
-        --card-border: color-mix(in srgb, var(--muted) 22%, transparent);
+        color-scheme: dark;
+        --fg: #f2f2f2;
+        --muted: #aaa;
+        --bg: #171616;
+        --cta: #f2f2f2;
+        --card-border: color-mix(in srgb, #fff 12%, transparent);
         --weekend: #007259;
         --cal-bg: #1c1b1a;
         --cal-fg: #f2f2f2;
@@ -46,15 +48,6 @@
         /* Match Mi Guardia: Instrument Serif headers, mono body (Inconsolata on web). */
         --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
         --font-mono: Inconsolata, ui-monospace, Menlo, monospace;
-      }
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --fg: #f2f2f2;
-          --muted: #aaa;
-          --bg: #171616;
-          --cta: #f2f2f2;
-          --card-border: color-mix(in srgb, #fff 12%, transparent);
-        }
       }
       body {
         margin: 0;
@@ -329,7 +322,7 @@
         border: none;
         cursor: pointer;
         background: var(--cta);
-        color: #fff;
+        color: #171616;
       }
       .btn ion-icon {
         font-size: 1.2em;
@@ -340,12 +333,6 @@
         background: transparent;
         color: var(--fg);
         border: 1px solid var(--card-border);
-      }
-      @media (prefers-color-scheme: dark) {
-        a.btn:not(.btn-secondary),
-        button.btn:not(.btn-secondary) {
-          color: #171616;
-        }
       }
       .btn[hidden] {
         display: none !important;
