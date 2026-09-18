@@ -5,6 +5,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { cn } from "@/lib/utils"
 
 type CaseImageProps = {
   src: string
@@ -12,6 +13,8 @@ type CaseImageProps = {
   caption: string
   href?: string
   linkLabel?: string
+  /** Fill behind transparent images. Defaults to muted. */
+  bgClassName?: string
 }
 
 function CaptionText({
@@ -52,12 +55,16 @@ export function CaseImage({
   caption,
   href,
   linkLabel,
+  bgClassName = "bg-muted",
 }: CaseImageProps) {
   return (
     <figure>
       <Dialog>
         <DialogTrigger
-          className="block w-full cursor-zoom-in rounded-xl bg-muted p-0 text-left"
+          className={cn(
+            "block w-full cursor-zoom-in rounded-xl p-0 text-left",
+            bgClassName,
+          )}
           aria-label={`Enlarge: ${alt}`}
         >
           <img src={src} alt={alt} className="w-full rounded-xl" />
@@ -71,7 +78,10 @@ export function CaseImage({
           <img
             src={src}
             alt=""
-            className="mx-auto max-h-[min(80vh,900px)] w-auto max-w-full object-contain"
+            className={cn(
+              "mx-auto max-h-[min(80vh,900px)] w-auto max-w-full rounded-xl object-contain",
+              bgClassName,
+            )}
           />
           <DialogDescription className="max-w-prose">
             <CaptionText
