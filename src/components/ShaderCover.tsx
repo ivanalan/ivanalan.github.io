@@ -4,8 +4,8 @@ import {
   type GrainGradientParams,
 } from "@paper-design/shaders-react";
 import type { CoverShader } from "./work-tabs.types";
-import qualtricsLogoUrl from "@/assets/QualtricsXM Logo.svg?url";
-import r5LogoUrl from "@/assets/R5_Logo.svg?url";
+import qualtricsLogoUrl from "@/assets/qualtrics.svg?url";
+import r5LogoUrl from "@/assets/r5.svg?url";
 import { cn } from "@/lib/utils";
 
 /** Dark base plus a brightening ramp in the brand hue: value contrast reads as depth.

@@ -1,3 +1,4 @@
+import { useState } from "react"
 import {
   Dialog,
   DialogContent,
@@ -57,9 +58,15 @@ export function CaseImage({
   linkLabel,
   bgClassName = "bg-muted",
 }: CaseImageProps) {
+  const [zoomed, setZoomed] = useState(false)
+
   return (
     <figure>
-      <Dialog>
+      <Dialog
+        onOpenChange={(open) => {
+          if (!open) setZoomed(false)
+        }}
+      >
         <DialogTrigger
           className={cn(
             "block w-full cursor-zoom-in rounded-xl p-0 text-left",
@@ -72,17 +79,33 @@ export function CaseImage({
         <DialogContent
           showCloseButton
           overlayClassName="bg-black/70 duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] supports-backdrop-filter:backdrop-blur-sm"
-          className="max-h-[90vh] w-[min(90vw,72rem)] max-w-none gap-3 overflow-auto bg-background p-3 duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:max-w-none"
+          className={cn(
+            "max-h-[90vh] max-w-none gap-3 overflow-auto bg-background p-3 duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:max-w-none",
+            zoomed ? "w-[min(96vw,90rem)]" : "w-[min(90vw,72rem)]",
+          )}
         >
           <DialogTitle className="sr-only">{alt}</DialogTitle>
-          <img
-            src={src}
-            alt=""
+          <button
+            type="button"
+            onClick={() => setZoomed((z) => !z)}
             className={cn(
-              "mx-auto max-h-[min(80vh,900px)] w-auto max-w-full rounded-xl object-contain",
+              "mx-auto block rounded-xl p-0",
+              zoomed ? "cursor-zoom-out" : "cursor-zoom-in",
               bgClassName,
             )}
-          />
+            aria-label={zoomed ? "Zoom out" : "Zoom in"}
+          >
+            <img
+              src={src}
+              alt=""
+              className={cn(
+                "mx-auto w-auto max-w-full rounded-xl object-contain transition-[max-height] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
+                zoomed
+                  ? "max-h-[min(92vh,1400px)]"
+                  : "max-h-[min(80vh,900px)]",
+              )}
+            />
+          </button>
           <DialogDescription className="max-w-prose">
             <CaptionText
               caption={caption}
