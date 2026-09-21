@@ -5,8 +5,8 @@ role: Sole designer
 team: 1 PM, 2 dev leads, 15 developers
 year: 2024
 status: published
-coverVideo: "/media/ab-initio-data-platform/cover-loop.mp4"
-coverVideoPoster: "/media/ab-initio-data-platform/cover-loop-poster.webp"
+coverVideo: "/media/work/ab-initio-data-platform/cover.mp4"
+coverVideoPoster: "/media/work/ab-initio-data-platform/cover-poster.webp"
 order: 2
 ---
 
@@ -15,14 +15,14 @@ import { CaseVideo } from "../../components/CaseVideo";
 
 <CaseImage
   client:load
-  src="/media/ab-initio-data-platform/redesign-overview.png"
+  src="/media/work/ab-initio-data-platform/redesign-overview.png"
   alt="Redesign overview of the unified data platform: Q4 2023 Reporting datasets, a data catalog, and a details panel with sample data and a lineage graph"
   caption="The redesigned platform: datasets, refresh schedule, and node editor all in one place."
 />
 
 ## Outcome
 
-1. Shipped an entirely new product in five months (on time) as a release for a European bank.
+1. Shipped an entirely new product in six months (on time) as a release for a European bank.
 2. Unified a three-product workflow into one platform.
 3. Established a longer-term vision for curated, persona-based navigation.
 
@@ -32,54 +32,110 @@ Ab Initio's software collects, organizes, and transforms enterprise data at scal
 
 Every handoff meant losing context and starting over with a new mental model. Each product was overwhelming, packed with features most users never touched. Plus, there was no formal design system, so there were three distinct user experiences.
 
-<CaseVideo
+<CaseImage
   client:load
-  ambient
-  src="/media/ab-initio-data-platform/product-fan-loop.mp4"
-  poster="/media/ab-initio-data-platform/product-fan-loop-poster.webp"
-  width={1152}
-  height={648}
-  title="Metadata>Portal, Express>It, and Control>Center fanned out in workflow order"
-  caption="One workflow, three interfaces to learn."
+  src="/media/work/ab-initio-data-platform/MetadataPortal.png"
+  alt="Metadata>Portal Technical Assets search: datasets results with a quick-look panel for Regional Monthly Sales"
+  caption="Start in Metadata>Portal to find the raw data."
 />
 
-## Proof that UX impacts sales
+<CaseImage
+  client:load
+  src="/media/work/ab-initio-data-platform/ExpressIt.png"
+  alt="Express>It canvas editing Total_Product_Sales: Join, Compute, and Rollup nodes between source and output datasets"
+  caption="Switch to Express>It to transform and enrich it."
+/>
 
-Ab Initio had always sold on technical prestige, but it had just lost a deal purely on UX — proof that experience moves revenue, not just satisfaction. This gave us the support we needed from leadership to build a new product, with user experience at the forefront. The team aligned on three principles:
+<CaseImage
+  client:load
+  src="/media/work/ab-initio-data-platform/ControlCenter.png"
+  alt="Control>Center Daily Jobs table listing running and completed jobs with status, elapsed time, and CPU"
+  caption="Switch again to Control>Center to put it on a schedule."
+/>
 
-1. A single unified platform (and design system) instead of three.
-2. Focus on user workflows instead of overwhelming users with all possible tools.
-3. Curate experiences for different personas as not everyone has the same needs.
+## A deal lost on UX
+
+Ab Initio had always sold on technical prestige, but it had just lost a deal purely on UX — proof that experience moves revenue, not just satisfaction. That gave us the support we needed from leadership to build a new product with user experience at the forefront.
+
+The team aligned on three principles:
+
+1. **Unified** — support the workflow in one platform instead of three products.
+2. **Curated** — focus on user tasks instead of exposing every tool.
+3. **Consistent** — one UI and, over time, one design system.
+
+## Scoping the MVP
+
+While there was a parallel effort to define a 2–3 year design vision, I focused on what we could ship in six months. Early reviews were less about pixels and more about forcing scope decisions:
+
+- How curated should this MVP be versus a kitchen-sink port of legacy features?
+- How much should we support legacy power users versus designing for new users of this platform?
+- Which pieces of Metadata>Portal, Express>It, and Control>Center had to transfer for this workflow?
+
+<CaseImage
+  client:load
+  src="/media/work/ab-initio-data-platform/lofi-wireframes.png"
+  alt="Early data platform home wireframe with persona switcher, Find and Explore Data, Search Business Terms, Resolve Work Items, and Recent Activity"
+  caption='Early reviews: aligning on what "unified" meant for an MVP, not the full vision.'
+/>
+
+We landed on a wrangling-first MVP: find data, transform it, and schedule it — enough to replace the three-product handoff without boiling the ocean. Everything else stayed on the longer vision track.
 
 ## Navigating ambiguity without data or research
 
-Our organization was just starting to invest in UX, so we had no user data or research. But, I did what I could: I read documentation to understand the deeply technical landscape, met with other teams to understand the history of problems they had already solved, and had frequent 1:1s with my PM and engineering leads.
+Our organization was just starting to invest in UX, so we had no user data or research. I read documentation to understand the technical landscape, met with other teams about problems they had already solved, and had frequent 1:1s with my PM and engineering leads.
 
 Then I wrote out the research questions I would have asked, hypotheses based on assumptions I made, and kept moving. Writing this down made the gap in evidence visible to everyone instead of always being a tension point in discussion.
 
 <CaseVideo
   client:load
-  ambient
-  src="/media/ab-initio-data-platform/doc-animation.mp4"
-  poster="/media/ab-initio-data-platform/doc-animation-poster.webp"
+  src="/media/work/ab-initio-data-platform/assumptions-doc.mp4"
+  poster="/media/work/ab-initio-data-platform/assumptions-doc-poster.webp"
   width={1112}
   height={574}
   title="The assumptions and unknowns doc, listing the research questions we could not ask"
-  caption="Making assumptions and gaps visible to all stakeholders"
+  caption="Making assumptions and gaps visible to all stakeholders."
 />
 
+## Reuse vs. redesign
+
+Unifying three products without a design system meant every pattern was a choice: copy what existed, or propose something better.
+
+I first tried to reuse legacy patterns for consistency — for example, a bottom panel used elsewhere to inspect data. Reusing it in the new platform kept visual continuity, but it also propagated a weak experience. Consistency with a bad pattern wasn’t worth it.
+
+For this product, I accepted short-term inconsistency and designed a side panel that better supported preview and context. That pattern could later land in the in-progress design system and roll out to other products.
+
+<CaseImage
+  client:load
+  src="/media/work/ab-initio-data-platform/bottom-sheet.png"
+  alt="Legacy inspect-data pattern: a bottom sheet overlay covering the datasets list for Q4 2023 New Customers"
+  caption="An existing inspect-data pattern I considered reusing."
+/>
+
+<CaseImage
+  client:load
+  src="/media/work/ab-initio-data-platform/side-panel.png"
+  alt="QuickLook side panel for Q4 2023 New Customers with a transform graph preview and sample data"
+  caption="The QuickLook panel: a better model for this product, even if it broke short-term consistency."
+/>
 
 ## Collaborating to make the design vision a reality
 
-My PM was an awesome collaborator and led the vision work. He described where the platform should be in three years, which products should fold into it, and why this work mattered.
+My PM led the vision work: where the platform should be in three years, which products should fold into it, and why it mattered.
 
-Because UX was a new investment for our organization, many engineering managers had trouble seeing immediate value in this vision. That's where I came in: I crafted concrete flows that we could discuss and iterate on for the MVP deadline.
+Because UX was a new investment, many engineering managers had trouble seeing immediate value in that vision. That’s where I came in: I turned direction into concrete flows we could debate against the MVP deadline. For most of the six months I interpolated between vision and shippable scope — take a direction, turn it into a realistic flow, get feedback for the MVP, then revisit the vision together.
 
-Interpolating between the design vision and our MVP implementation was my role for most of the five months. I'd take a direction from him, turn it into a more realistic flow with screens, get feedback for the MVP, then we'd both go back to the design vision and iterate.
+Weekly reviews with a working group of ~15 helped surface technical constraints and conflicts early. When discussions drifted into implementation detail, I used timeboxed agendas and lower-fidelity artifacts so we stayed on the decision at hand.
 
+<CaseImage
+  client:load
+  src="/media/work/ab-initio-data-platform/user-flow.png"
+  alt="Low-fidelity user flow from identifying an analytics problem through data access, transform, analyze, and optional production scheduling"
+  caption="Higher level when I needed feedback on structure, not screens."
+  bgClassName="bg-background"
+/>
 
 ## What I'd do differently
 
 As a junior designer, I expressed every design decision through detailed user workflows. That started as a set of ten screens. After updating them at every weekly sync, I was maintaining fifty just to describe the architecture of the platform.
 
-I should have started with a PRD, gotten every stakeholder to sign off on project objectives and user stories, and only then expressed them in design.
+I should have started with a PRD, gotten stakeholders to sign off on objectives and user stories, and only then expressed them in design. The scoping questions above belonged in writing first — not only in wireframes.
