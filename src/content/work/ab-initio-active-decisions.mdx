@@ -1,0 +1,117 @@
+---
+title: Building an MVP without PM, users, or research 
+company: Ab Initio
+role: Sole designer
+team: 1 Dev Lead, 20 Developers
+year: 2023
+status: published
+order: 3
+coverVideo: "/media/active-decisions/cover.mp4"
+coverVideoPoster: "/media/active-decisions/cover-poster.webp"
+---
+
+import { CaseImage } from "../../components/CaseImage";
+import { CaseVideo } from "../../components/CaseVideo";
+
+<CaseImage
+  client:load
+  src="/media/active-decisions/image.png"
+  alt="Decision Flows builder for a GameStore project: a vertical flow from a tagged catalog through eligibility, scoring, sorting, and offers, with the catalog panel filtering by Action, first person shooter, and 18+"
+  caption="Decision Flows: a visual builder for automated logic, here filtering a game catalog by tags."
+/>
+
+## Outcome
+
+1. On track to release 3 months early, with real-world trials already running with stakeholders
+2. Turned a tech-first architecture plan into a prioritized, user-centered roadmap
+3. Protected the MVP by parking high-effort detours in a post-launch proposal
+
+## From tracking metrics to automating decisions
+
+Active>360 lets enterprise marketing teams track real-time customer data and define custom metrics without leaning on IT. Marketers can answer questions like: how much cellular data did customers use over the past 30 days, broken down by texting, streaming, and gaming?
+
+<CaseVideo
+  client:load
+  ambient
+  src="/media/active-decisions/cellular-data-load.mp4"
+  poster="/media/active-decisions/cellular-data-load-poster.webp"
+  width={1208}
+  height={612}
+  title="Cellular data usage metric broken down by texting, streaming, and gaming"
+  caption="A custom metric: cellular data use by category over the past 30 days."
+/>
+
+Decision Flows was the next step: not only track that data, but automate decisions on top of it. When a customer’s cellular data falls below 5GB, offer a discount tailored to their most-used category.
+
+<CaseVideo
+  client:load
+  ambient
+  src="/media/active-decisions/send-deal.mp4"
+  poster="/media/active-decisions/send-deal-poster.webp"
+  width={1208}
+  height={612}
+  title="Decision Flow offering a category-tailored discount when cellular data falls below a threshold"
+  caption="When usage drops below 5GB, send a deal for the customer’s top category."
+/>
+
+## Sole designer with few resources
+
+This was my first full-time UX role. I joined a team of 20 developers led by a senior engineer, with a vague mandate to lead Decision Flows from planning through implementation.
+
+There were no user researchers, no direct users to consult, no use cases, no product manager, and no other designers on the team. The most important move I made was getting help: I set up weekly mentorship with a senior UX designer on another team and used those sessions for advice and critique.
+
+## Turning a technical foundation into user-driven thinking
+
+The only plan for how to get this work done was a 15+ page software architecture doc with no reference to the overall problem, personas, user flows, IA, UI, or timelines. Tasked with leading UX for this team, I took on the challenge of transforming this engineering-first implementation into a product that would meet real user needs.
+
+<CaseImage
+  client:load
+  src="/media/active-decisions/tech-arch.png"
+  alt="Annotated software architecture diagram for Active Compute, Active Data, and related services"
+  caption="The starting point: a 15+ page architecture plan with no user flows, IA, or UI."
+/>
+
+I started by reverse-engineering user tasks from that doc and cross-checked them with proxy users — account managers. Then I led a workshop with our entire engineering team so we could work together and establish the main feature sets and their priorities. With this work, I was able to put together a UX north star to complement the technical architecture.
+
+## Stepping into product management
+
+With the UX north star built, I drafted an initial information architecture and was able to create more separate threads of work. With one year to launch, I stepped into product management and created a roadmap so that we could map dependencies and work efficiently.
+
+<CaseImage
+  client:load
+  src="/media/active-decisions/roadmap.png"
+  alt="Basic roadmap table of major efforts with UX and development milestones across a year"
+  caption="A year-long roadmap mapping UX and engineering dependencies across major efforts."
+/>
+
+## Stay low fidelity, ship the hard parts first
+
+The project was large, the company was new to me, and the industry was unfamiliar, so I validated low-fidelity ideas early and often with my proxy users: account managers. With a tight deadline, I prioritized iterating in low fidelity on the most complex features and gave front-end engineers room to interpolate the rest.
+
+The highest-impact work was flows: a way for users to author automated logic as flow charts. It would take the most effort, and was also critical to success, so I started early and ran recurring meetings to review high-level direction, interaction design, and technical constraints.
+
+<CaseImage
+  client:load
+  src="/media/active-decisions/low-fi-1.png"
+  alt="Low-fidelity wireframe of an agent details view with a visual logic builder and component details panel"
+  caption="Early low-fi for the flow builder: visual logic on the left, component details on the right."
+/>
+
+## Knowing when the MVP should increase scope
+
+Feature creep was constant as there were no product managers; instead, technical leads ran both the software and product needs. At one point, our engineering lead (PM) pushed a testing mode where users could run an algorithm against historical data before production. But after consulting the account managers, it seemed like customers already had workable ways to test. This would have been a huge amount of work, jeopardizing the MVP, so I reframed this as a follow-up product-wide launch that would incorporate other monitoring features we had planned follow-ups for anyway.
+
+Our navigation was different. Active>360 had a flat IA based on our runtime architecture that added a top-level page for every feature. Keeping that model for Decision Flows was the tipping point for this mental model, and was important enough to add to the MVP scope. I redesigned our entire navigation through stakeholder feedback so it could scale, resulting in navigation based on user workflows, not a technical architecture.
+
+<CaseImage
+  client:load
+  src="/media/active-decisions/new-ia.png"
+  alt="Before and after comparison of Active>360 navigation, remapped from technical architecture to user workflows"
+  caption="Navigation redesigned around user workflows instead of the runtime architecture."
+/>
+
+## What I’d do differently
+
+Funding was cut before launch, so the early schedule and stakeholder appetite never became a shipped release. Still, the work changed how I operate: do more than “design screens,” even when that is the expectation. My work to turn this technical project into a user-driven product was valued by our team, even when it was an unexpected and new process.
+
+However, I would also have protected low-fidelity exploration longer. Direction moved faster than it needed to, as I was worried about my roadmap, and a few more cheap iterations before locking flows would have helped.
