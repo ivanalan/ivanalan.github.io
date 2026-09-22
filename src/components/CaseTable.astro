@@ -1,0 +1,105 @@
+---
+interface Props {
+  caption?: string;
+  class?: string;
+}
+
+const { caption, class: className = "" } = Astro.props;
+---
+
+<figure class:list={["case-table", className]}>
+  <div class="case-table__frame">
+    <slot />
+  </div>
+  {
+    caption && (
+      <figcaption class="case-table__caption">{caption}</figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .case-table {
+    width: 100%;
+  }
+
+  .case-table__frame {
+    overflow-x: auto;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    background: color-mix(in oklab, var(--secondary) 55%, transparent);
+  }
+
+  .case-table :global(table) {
+    width: 100%;
+    min-width: 36rem;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  .case-table :global(th),
+  .case-table :global(td) {
+    padding: 0.85rem 1rem;
+    vertical-align: top;
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+    color: var(--muted-foreground);
+  }
+
+  .case-table :global(thead th) {
+    font-weight: 500;
+    color: var(--foreground);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .case-table :global(th:first-child),
+  .case-table :global(td:first-child) {
+    padding-left: 1.15rem;
+  }
+
+  .case-table :global(th:last-child),
+  .case-table :global(td:last-child) {
+    padding-right: 1.15rem;
+  }
+
+  .case-table :global(tbody tr + tr th),
+  .case-table :global(tbody tr + tr td) {
+    border-top: 1px solid var(--border);
+  }
+
+  /* Lead column (timing, labels) stays quieter so the content columns read first. */
+  .case-table :global(tbody th) {
+    font-weight: 500;
+    color: var(--foreground);
+    white-space: nowrap;
+  }
+
+  .case-table :global(td strong) {
+    color: var(--foreground);
+    font-weight: 500;
+  }
+
+  .case-table :global(td p) {
+    max-width: none;
+    margin: 0;
+  }
+
+  .case-table :global(td p + p) {
+    margin-top: 0.65rem;
+  }
+
+  .case-table__caption {
+    margin-inline: auto;
+    margin-top: 0.5rem;
+    max-width: 65ch;
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+  }
+
+  /* Equal-width columns (e.g. before/after comparisons). */
+  .case-table.equal-cols :global(table) {
+    table-layout: fixed;
+  }
+</style>
