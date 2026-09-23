@@ -16,6 +16,8 @@ type CaseImageProps = {
   linkLabel?: string
   /** Fill behind transparent images. Defaults to muted. */
   bgClassName?: string
+  /** Constrain the figure (e.g. `mx-auto max-w-xs` for phone crops). */
+  className?: string
 }
 
 function CaptionText({
@@ -57,11 +59,12 @@ export function CaseImage({
   href,
   linkLabel,
   bgClassName = "bg-muted",
+  className,
 }: CaseImageProps) {
   const [zoomed, setZoomed] = useState(false)
 
   return (
-    <figure>
+    <figure className={className}>
       <Dialog
         onOpenChange={(open) => {
           if (!open) setZoomed(false)

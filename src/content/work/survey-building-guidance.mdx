@@ -19,7 +19,7 @@ import { CaseVideo } from "../../components/CaseVideo";
   client:load
   src="/media/work/survey-building-guidance/SidePanel1.png"
   alt="Survey Builder with Issues and tips side panel open on Tips, showing Simplify question wording expanded beside a CSAT survey"
-  caption="The guidance side panel: Errors, Warnings, and Tips in context while you edit."
+  caption="Errors, Warnings, and Tips in context while you edit."
 />
 
 ## Outcome
@@ -36,7 +36,7 @@ In Qualtrics, you create surveys in the Survey Builder. Expert Review scores you
   client:load
   src="/media/work/survey-building-guidance/ExpertReview.png"
   alt="Expert Review modal showing a Fair score with methodology checks listed underneath"
-  caption="Expert Review: a single score backed by ~20 checks few people trusted."
+  caption="Expert Review: an opaque score in a modal."
 />
 
 Tasked with improving the feature, I opened an Amplitude investigation to understand the problem:
@@ -47,16 +47,9 @@ Tasked with improving the feature, I opened an Amplitude investigation to unders
 
 <CaseImage
   client:load
-  src="/media/work/survey-building-guidance/amplitude1.png"
-  alt="Amplitude chart of Expert Review score distribution with a spike near 66%"
-  caption="Score distribution: a dense cluster at 66% and a long empty band above it."
-/>
-
-<CaseImage
-  client:load
   src="/media/work/survey-building-guidance/amplitude2.png"
   alt="Amplitude analysis relating Expert Review score to survey completion rate"
-  caption="Above 80% completion the score tracked outcomes; below that, it barely differentiated."
+  caption="9% MAU, and a skewed score distribution."
 />
 
 Survey Builder PSAT had also dropped ~10% year over year (to ~66%), with ease of use as the top negative driver. Roughly $70–85K in annual cost-to-serve mapped to configuration and runtime issues in the same space.
@@ -70,7 +63,7 @@ The ask from product was broad: improve feedback and catch broken surveys. Two p
 
 A checklist of new metrics wouldn’t fix trust. I treated the ask as a design problem: redefine how guidance is categorized, then rebuild its interactions. That became a phased plan:
 
-<CaseTable caption="The work unfolded in quarters: framework first, then research, then the panel, with AI next.">
+<CaseTable>
   <table>
     <thead>
       <tr>
@@ -162,7 +155,7 @@ Across Qualtrics, guidance already lived in different shapes: inline footers, le
   client:load
   src="/media/work/survey-building-guidance/PrototypeOptions.png"
   alt="Three interaction concepts for survey guidance: modal, left pane, and right-hand side panel"
-  caption="Three concepts tested; the right-hand panel won for editing and reviewing in parallel."
+  caption="Three concepts tested and the right-hand panel won."
 />
 
 ## Prototyping deep interactions in the codebase
@@ -178,7 +171,7 @@ The biggest decision was IA: expand-in-place versus dedicated pages for metrics 
   width={1582}
   height={872}
   title="Code prototype of Survey Builder guidance side panel IA"
-  caption="Expand-in-place vs detail pages, tested against a real survey build in Cursor."
+  caption="Expand-in-place vs detail pages using a real survey."
 />
 
 ## Collaborating with a designer to create a design system pattern
@@ -191,7 +184,7 @@ After swapping notes, it was clear we shared the same underlying issues and that
   client:load
   src="/media/work/survey-building-guidance/CommsEmailSidePanel.png"
   alt="Communications email guidance side panel with expandable best-practice cards"
-  caption="The same expandable-card side panel pattern, shared with Distributions."
+  caption="The same expandable-card side panel pattern in Distributions."
 />
 
 I think design systems work best this way: not as top-down rules, but when teams solving real problems on their own find a chance to share. There’s a broader opportunity to make this guidance layer consistent across products, but a pattern that already fits two is the first step.
@@ -206,7 +199,7 @@ On the side panel that meant one-at-a-time accordion behavior, layout alignment,
   client:load
   src="/media/work/survey-building-guidance/jiramerge.png"
   alt="Jira ticket showing designer-owned implementation work merged into the Survey Builder branch"
-  caption="Implementation polish owned in-branch, not only through design critique."
+  caption="Design implementation owned by me."
 />
 
 ## Copy as part of interactions
@@ -215,7 +208,7 @@ One design-driven push I made was iterating the copy for each metric. The side p
 
 <CaseTable
   class="equal-cols"
-  caption="Same metric, rewritten into flag → impact → action."
+  caption="Same metric rewritten to (1) Flag, (2) Impact, (3) Action."
 >
   <table>
     <thead>
