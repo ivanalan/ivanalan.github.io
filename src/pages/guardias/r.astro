@@ -1,5 +1,5 @@
 ---
-/** Share landing page. App opens only via the Mi Guardia App button (custom scheme). */
+/** Share landing page. App opens only via the Interdía App button (custom scheme). */
 ---
 
 <!doctype html>
@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>A rotation schedule was shared with you — Mi Guardia</title>
+    <title>A rotation schedule was shared with you — Interdía</title>
     <meta
       name="description"
       content="See all shift dates and save it on your device."
@@ -45,7 +45,7 @@
         --cal-fg: #f2f2f2;
         --cal-muted: #6a6864;
         --cal-dow: #9a9894;
-        /* Match Mi Guardia: Instrument Serif headers, mono body (Inconsolata on web). */
+        /* Match Interdía: Instrument Serif headers, mono body (Inconsolata on web). */
         --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
         --font-mono: Inconsolata, ui-monospace, Menlo, monospace;
       }
@@ -432,7 +432,7 @@
           src="/media/side-projects/guardias/icon.png"
           width="102"
           height="102"
-          alt="Mi Guardia"
+          alt="Interdía"
         />
         <div class="share-head" id="share-head" hidden>
           <h1 class="share-label" id="label"></h1>
@@ -472,7 +472,7 @@
       <div class="copy" id="copy">
         <h1 id="title">A rotation was shared with you</h1>
         <p id="copy-body">
-          Install Mi Guardia to review the schedule and save it on your device.
+          Install Interdía to review the schedule and save it on your device.
         </p>
       </div>
       <div class="actions">
@@ -483,7 +483,7 @@
             href="https://apps.apple.com/app/id6803777786"
           >
             <ion-icon name="logo-apple" aria-hidden="true"></ion-icon>
-            Mi Guardia App
+            Interdía App
           </a>
           <button type="button" class="btn btn-secondary" id="gcal-btn" hidden>
             <ion-icon name="logo-google" aria-hidden="true"></ion-icon>
@@ -515,7 +515,7 @@
           height="18"
           alt=""
         />
-        <span>Mi Guardia</span>
+        <span>Interdía</span>
       </div>
     </div>
 
@@ -866,7 +866,7 @@
           var lines = [
             "BEGIN:VCALENDAR",
             "VERSION:2.0",
-            "PRODID:-//Mi Guardia//EN",
+            "PRODID:-//Interdía//EN",
             "CALSCALE:GREGORIAN",
             "METHOD:PUBLISH",
             "X-WR-CALNAME:" + summary,
@@ -892,7 +892,7 @@
                 "SUMMARY:" + summary,
                 "DESCRIPTION:" +
                   escapeIcsText(
-                    "Shared from Mi Guardia · " +
+                    "Shared from Interdía · " +
                       patternLabel(
                         draft.pattern.cycleDays,
                         draft.pattern.offset,
@@ -979,7 +979,7 @@
           params.set("dates", dates);
           params.set(
             "details",
-            "Shared from Mi Guardia · " +
+            "Shared from Interdía · " +
               patternLabel(draft.pattern.cycleDays, draft.pattern.offset),
           );
           params.set(
@@ -1292,7 +1292,7 @@
         if (copyEl) copyEl.classList.add("has-preview");
         if (copyBody) {
           copyBody.textContent =
-            "A rotation was shared with you. You can open it in the Mi Guardia app or export it with the options below.";
+            "A rotation was shared with you. You can open it in the Interdía app or export it with the options below.";
         }
         var icsPreview = buildIcs(activeDraft);
         if (icsPreview.count > 0) {

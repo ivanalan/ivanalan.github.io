@@ -2,7 +2,7 @@
 
 Design engineer portfolio at [alanmatias.com](https://alanmatias.com).
 
-Static Astro site, dark-only, deployed to GitHub Pages. The Guardias app legal pages stay at `/guardias/privacy.html` and `/guardias/terms.html`.
+Static Astro site, dark-only, deployed to GitHub Pages. The Interdía app legal pages stay at `/guardias/privacy.html` and `/guardias/terms.html`.
 
 ## Develop
 
