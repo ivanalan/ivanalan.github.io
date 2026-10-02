@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Article TOC — layout prototypes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gentium+Book+Basic:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #1a1b1c;
+      --surface: #232428;
+      --ink: #f4f3f2;
+      --muted: #b0b3ba;
+      --line: rgba(255, 255, 255, 0.07);
+      --ring: #228df2;
+      --accent: #8eb4c8;
+      --article-max: 42rem;
+      --toc-width: 14rem;
+      --gutter-gap: 2.5rem;
+      --page-pad: 1.5rem;
+      --sticky-top: 5.5rem;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --toc-side: left;
+      --toc-mode: gutter;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      color-scheme: dark;
+      scrollbar-gutter: stable;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    body {
+      margin: 0;
+      font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    h1, h2, h3 {
+      font-family: "Gentium Book Basic", ui-serif, Georgia, serif;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+    }
+
+    /* ——— Controls (fixed top bar) ——— */
+    .controls {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+      padding: 0.75rem var(--page-pad);
+    }
+
+    .controls-inner {
+      max-width: 72rem;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.65rem 1.25rem;
+    }
+
+    .controls h1 {
+      font-size: 0.95rem;
+      margin: 0;
+      font-family: "DM Sans", sans-serif;
+      font-weight: 600;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .control-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .control-group label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-right: 0.15rem;
+    }
+
+    .seg {
+      display: inline-flex;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    .seg button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.35rem 0.65rem;
+      cursor: pointer;
+      transition: background 0.15s var(--ease), color 0.15s var(--ease);
+    }
+
+    .seg button + button {
+      border-left: 1px solid var(--line);
+    }
+
+    .seg button[aria-pressed="true"] {
+      background: color-mix(in srgb, var(--accent) 18%, var(--surface));
+      color: var(--ink);
+    }
+
+    .seg button:hover {
+      color: var(--ink);
+    }
+
+    .hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    .hint kbd {
+      font: inherit;
+      font-size: 0.7rem;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      padding: 0.05rem 0.3rem;
+      color: var(--ink);
+    }
+
+    /* ——— Shell: article + optional TOC ———
+       Three layout strategies to compare on wide screens:
+
+       1. paired  — TOC + article as one centered unit (article shifts off true center)
+       2. margin  — article stays viewport-centered at site width; TOC only if margin fits
+       3. rail    — full-bleed page with a tinted TOC column pinned to the viewport edge
+    */
+    .shell {
+      position: relative;
+      width: 100%;
+      max-width: calc(var(--article-max) + 2 * var(--page-pad));
+      margin: 0 auto;
+      padding: 2.5rem var(--page-pad) 6rem;
+      transition: max-width 0.35s var(--ease);
+    }
+
+    @media (min-width: 1100px) {
+      /* Paired: widen shell, grid, center the pair together */
+      .shell[data-mode="paired"] {
+        max-width: calc(
+          var(--article-max) + var(--toc-width) + var(--gutter-gap) + 2 * var(--page-pad)
+        );
+        display: grid;
+        column-gap: var(--gutter-gap);
+        justify-content: center;
+      }
+
+      .shell[data-mode="paired"][data-side="left"] {
+        grid-template-columns: var(--toc-width) minmax(0, var(--article-max));
+      }
+
+      .shell[data-mode="paired"][data-side="right"] {
+        grid-template-columns: minmax(0, var(--article-max)) var(--toc-width);
+      }
+
+      .shell[data-mode="paired"][data-side="left"] .toc-wrap { grid-column: 1; grid-row: 1; }
+      .shell[data-mode="paired"][data-side="left"] .article { grid-column: 2; grid-row: 1; }
+      .shell[data-mode="paired"][data-side="right"] .article { grid-column: 1; grid-row: 1; }
+      .shell[data-mode="paired"][data-side="right"] .toc-wrap { grid-column: 2; grid-row: 1; }
+
+      /* Margin: keep today's article centering; park TOC in leftover space */
+      .shell[data-mode="margin"] {
+        max-width: calc(var(--article-max) + 2 * var(--page-pad));
+      }
+
+      .shell[data-mode="margin"] .toc-wrap {
+        position: fixed;
+        top: var(--sticky-top);
+        width: var(--toc-width);
+        max-height: calc(100vh - var(--sticky-top) - 2rem);
+        overflow: auto;
+        z-index: 20;
+      }
+
+      .shell[data-mode="margin"][data-side="left"] .toc-wrap {
+        left: max(
+          var(--page-pad),
+          calc(50vw - var(--article-max) / 2 - var(--gutter-gap) - var(--toc-width))
+        );
+      }
+
+      .shell[data-mode="margin"][data-side="right"] .toc-wrap {
+        right: max(
+          var(--page-pad),
+          calc(50vw - var(--article-max) / 2 - var(--gutter-gap) - var(--toc-width))
+        );
+        left: auto;
+      }
+
+      /* Rail: TOC hugs the viewport edge with a subtle vertical band */
+      .shell[data-mode="rail"] {
+        max-width: calc(var(--article-max) + 2 * var(--page-pad));
+      }
+
+      .shell[data-mode="rail"] .toc-wrap {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        width: calc(var(--toc-width) + 2rem);
+        max-height: none;
+        overflow: auto;
+        z-index: 20;
+        padding: var(--sticky-top) 1.25rem 2rem;
+        background: color-mix(in srgb, var(--surface) 55%, transparent);
+        border: 0;
+        border-color: var(--line);
+      }
+
+      .shell[data-mode="rail"][data-side="left"] .toc-wrap {
+        left: 0;
+        border-right: 1px solid var(--line);
+      }
+
+      .shell[data-mode="rail"][data-side="right"] .toc-wrap {
+        right: 0;
+        left: auto;
+        border-left: 1px solid var(--line);
+      }
+
+      /* Float: Maxime-style card — title collapses into sticky TOC with progress ring */
+      .shell[data-mode="float"] {
+        max-width: calc(var(--article-max) + 2 * var(--page-pad));
+      }
+
+      .shell[data-mode="float"] .toc-wrap {
+        --float-width: 17.5rem;
+        position: fixed;
+        top: var(--sticky-top);
+        width: var(--float-width);
+        max-height: calc(100vh - var(--sticky-top) - 2rem);
+        overflow: auto;
+        z-index: 25;
+        padding: 0.85rem 1rem 1rem;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(36, 38, 44, 0.72);
+        backdrop-filter: blur(16px) saturate(1.2);
+        -webkit-backdrop-filter: blur(16px) saturate(1.2);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.04) inset,
+          0 12px 40px rgba(0, 0, 0, 0.35);
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(0.4rem);
+        transition:
+          opacity 0.28s var(--ease),
+          transform 0.28s var(--ease);
+      }
+
+      .shell[data-mode="float"] .toc-wrap.is-visible {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+      }
+
+      .shell[data-mode="float"][data-side="left"] .toc-wrap {
+        left: max(
+          var(--page-pad),
+          calc(50vw - var(--article-max) / 2 - var(--gutter-gap) - var(--float-width))
+        );
+      }
+
+      .shell[data-mode="float"][data-side="right"] .toc-wrap {
+        right: max(
+          var(--page-pad),
+          calc(50vw - var(--article-max) / 2 - var(--gutter-gap) - var(--float-width))
+        );
+        left: auto;
+      }
+
+      .shell[data-mode="float"] .toc-label {
+        display: none;
+      }
+
+      .shell[data-mode="float"] .toc-header {
+        display: grid;
+      }
+
+      .shell[data-mode="float"] .toc-nav a {
+        border-left: 0;
+        padding: 0.4rem 0;
+        font-size: 0.8rem;
+      }
+
+      .shell[data-mode="float"] .toc-nav a[aria-current="true"] {
+        color: var(--ink);
+      }
+
+      .shell[data-mode="float"][data-collapsed="true"] .toc-body {
+        display: none;
+      }
+
+      .shell[data-mode="float"][data-collapsed="true"] .toc-wrap {
+        padding-bottom: 0.85rem;
+      }
+    }
+
+    /* Float header (progress ring + collapsed title) — hidden unless float mode */
+    .toc-header {
+      display: none;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 0.65rem;
+      width: 100%;
+      margin: 0 0 0.65rem;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .toc-header:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+
+    .toc-progress-ring {
+      width: 1.15rem;
+      height: 1.15rem;
+      flex-shrink: 0;
+    }
+
+    .toc-progress-ring circle {
+      fill: none;
+      stroke-width: 2.5;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+    }
+
+    .toc-progress-ring .track {
+      stroke: rgba(255, 255, 255, 0.14);
+    }
+
+    .toc-progress-ring .value {
+      stroke: var(--ink);
+      stroke-linecap: round;
+      stroke-dasharray: 100;
+      stroke-dashoffset: calc(100 - var(--read-progress, 0));
+      transition: stroke-dashoffset 0.15s linear;
+    }
+
+    .toc-collapsed-title {
+      font-family: "DM Sans", sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      line-height: 1.25;
+      color: var(--ink);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .toc-chevron {
+      width: 0.9rem;
+      height: 0.9rem;
+      color: var(--muted);
+      transition: transform 0.2s var(--ease);
+      flex-shrink: 0;
+    }
+
+    .shell[data-collapsed="true"] .toc-chevron {
+      transform: rotate(180deg);
+    }
+
+    .shell[data-mode="float"][data-collapsed="true"] .toc-header {
+      margin-bottom: 0;
+    }
+
+    /* Below breakpoint: TOC becomes a collapsible top block */
+    @media (max-width: 1099px) {
+      .toc-wrap {
+        margin-bottom: 2rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        padding: 0.85rem 1rem 1rem;
+      }
+
+      .toc-wrap[data-collapsed="true"] .toc-nav {
+        display: none;
+      }
+
+      /* Float on narrow: sticky progress card under the control bar */
+      .shell[data-mode="float"] .toc-wrap {
+        position: sticky;
+        top: 4.25rem;
+        z-index: 25;
+        margin-bottom: 1.5rem;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(36, 38, 44, 0.85);
+        backdrop-filter: blur(16px);
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .shell[data-mode="float"] .toc-label {
+        display: none;
+      }
+
+      .shell[data-mode="float"] .toc-header {
+        display: grid;
+      }
+
+      .shell[data-mode="float"][data-collapsed="true"] .toc-body {
+        display: none;
+      }
+    }
+
+    @media (min-width: 1100px) {
+      .toc-mobile-toggle { display: none; }
+
+      .toc-wrap {
+        position: sticky;
+        top: var(--sticky-top);
+        align-self: start;
+        max-height: calc(100vh - var(--sticky-top) - 1.5rem);
+        overflow: auto;
+        padding-top: 0.15rem;
+      }
+
+      /* Fixed modes — don't also sticky */
+      .shell[data-mode="margin"] .toc-wrap,
+      .shell[data-mode="rail"] .toc-wrap,
+      .shell[data-mode="float"] .toc-wrap {
+        position: fixed;
+        align-self: auto;
+      }
+    }
+
+    /* ——— TOC visuals ——— */
+    .toc-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 0.75rem;
+    }
+
+    .toc-mobile-toggle {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink);
+      font: inherit;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .toc-nav {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .toc-nav a {
+      display: block;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.35;
+      padding: 0.35rem 0;
+      border-left: 2px solid transparent;
+      transition: color 0.15s var(--ease), border-color 0.15s var(--ease),
+        background 0.15s var(--ease), padding-left 0.15s var(--ease);
+    }
+
+    .toc-nav a:hover {
+      color: var(--ink);
+    }
+
+    .toc-nav a:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+    }
+
+    /* Style: rail (default) — left rule + active fill */
+    .shell[data-style="rail"] .toc-nav a {
+      padding-left: 0.75rem;
+      margin-left: 0.1rem;
+    }
+
+    .shell[data-style="rail"] .toc-nav a[aria-current="true"] {
+      color: var(--ink);
+      border-left-color: var(--accent);
+    }
+
+    /* Style: quiet — no rail, weight shift only */
+    .shell[data-style="quiet"] .toc-nav a {
+      border-left: 0;
+      padding-left: 0;
+    }
+
+    .shell[data-style="quiet"] .toc-nav a[aria-current="true"] {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    /* Style: numbered */
+    .shell[data-style="numbered"] .toc-nav {
+      counter-reset: toc;
+    }
+
+    .shell[data-style="numbered"] .toc-nav a {
+      border-left: 0;
+      padding-left: 0;
+      display: grid;
+      grid-template-columns: 1.4rem 1fr;
+      column-gap: 0.35rem;
+    }
+
+    .shell[data-style="numbered"] .toc-nav a::before {
+      counter-increment: toc;
+      content: counter(toc);
+      font-variant-numeric: tabular-nums;
+      color: color-mix(in srgb, var(--muted) 70%, transparent);
+      font-size: 0.75rem;
+      padding-top: 0.08rem;
+    }
+
+    .shell[data-style="numbered"] .toc-nav a[aria-current="true"] {
+      color: var(--ink);
+    }
+
+    .shell[data-style="numbered"] .toc-nav a[aria-current="true"]::before {
+      color: var(--accent);
+    }
+
+    /* Style: progress — vertical progress track */
+    .shell[data-style="progress"] .toc-nav {
+      position: relative;
+      padding-left: 0.85rem;
+    }
+
+    .shell[data-style="progress"] .toc-nav::before {
+      content: "";
+      position: absolute;
+      left: 0.15rem;
+      top: 0.4rem;
+      bottom: 0.4rem;
+      width: 2px;
+      background: var(--line);
+      border-radius: 1px;
+    }
+
+    .shell[data-style="progress"] .toc-nav::after {
+      content: "";
+      position: absolute;
+      left: 0.15rem;
+      top: 0.4rem;
+      width: 2px;
+      height: var(--toc-progress, 0%);
+      background: var(--accent);
+      border-radius: 1px;
+      transition: height 0.2s var(--ease);
+    }
+
+    .shell[data-style="progress"] .toc-nav a {
+      border-left: 0;
+      padding-left: 0;
+      position: relative;
+    }
+
+    .shell[data-style="progress"] .toc-nav a::before {
+      content: "";
+      position: absolute;
+      left: -0.85rem;
+      top: 0.55rem;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1.5px solid color-mix(in srgb, var(--muted) 50%, transparent);
+      transform: translateX(-1px);
+    }
+
+    .shell[data-style="progress"] .toc-nav a[aria-current="true"] {
+      color: var(--ink);
+    }
+
+    .shell[data-style="progress"] .toc-nav a[aria-current="true"]::before {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    .shell[data-style="progress"] .toc-nav a[data-read="true"]::before {
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 55%, var(--surface));
+    }
+
+    /* ——— Article ——— */
+    .article header {
+      margin-bottom: 2.5rem;
+    }
+
+    .back {
+      display: inline-block;
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      margin-bottom: 1.5rem;
+    }
+
+    .back:hover { color: var(--ink); }
+
+    .article h1 {
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      line-height: 1.15;
+      margin: 0 0 0.5rem;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin: 0 0 1.25rem;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.35rem 1.25rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 1.25rem;
+      max-width: 28rem;
+    }
+
+    .meta-grid dt {
+      color: color-mix(in srgb, var(--muted) 75%, transparent);
+    }
+
+    .meta-grid dd { margin: 0; color: var(--ink); }
+
+    .article section {
+      margin-top: 2.75rem;
+      scroll-margin-top: calc(var(--sticky-top) + 0.5rem);
+    }
+
+    .article section:first-of-type {
+      margin-top: 0;
+    }
+
+    .article h2 {
+      font-size: 1.45rem;
+      margin: 0 0 0.65rem;
+      color: var(--ink);
+    }
+
+    .article p,
+    .article li {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 40rem;
+    }
+
+    .article p { margin: 0 0 1rem; }
+
+    .article ul, .article ol {
+      margin: 0 0 1rem;
+      padding-left: 1.35em;
+      max-width: 40rem;
+    }
+
+    .article li + li { margin-top: 0.5rem; }
+
+    .article strong { color: var(--ink); font-weight: 600; }
+
+    .figure {
+      margin: 1.25rem 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background:
+        linear-gradient(145deg, color-mix(in srgb, var(--accent) 8%, var(--surface)), var(--surface));
+      aspect-ratio: 16 / 9;
+      display: grid;
+      place-items: center;
+      color: color-mix(in srgb, var(--muted) 80%, transparent);
+      font-size: 0.8rem;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .figure-cap {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 0.5rem auto 1.25rem;
+      max-width: 36rem;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 1rem 0 1.5rem;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      color: var(--muted);
+    }
+
+    th {
+      color: var(--ink);
+      font-weight: 600;
+      background: color-mix(in srgb, var(--surface) 80%, transparent);
+    }
+
+    tr:last-child td, tr:last-child th { border-bottom: 0; }
+
+    .callout {
+      margin: 1.25rem 0;
+      padding: 0.85rem 1rem;
+      border-left: 2px solid var(--accent);
+      background: color-mix(in srgb, var(--accent) 6%, transparent);
+      color: var(--muted);
+      font-size: 0.9rem;
+      max-width: 40rem;
+    }
+
+    /* Width ruler — shows when TOC appears */
+    .width-note {
+      position: fixed;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+      font-size: 0.7rem;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.35rem 0.85rem;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    @media (max-width: 1099px) {
+      .width-note::after { content: " · TOC collapses below 1100px"; }
+    }
+
+    @media (min-width: 1100px) {
+      .width-note::after { content: " · TOC visible in side layout"; }
+    }
+  </style>
+</head>
+<body>
+  <div class="controls" role="region" aria-label="Prototype controls">
+    <div class="controls-inner">
+      <h1>TOC prototypes</h1>
+
+      <div class="control-group">
+        <label id="side-label">Side</label>
+        <div class="seg" role="group" aria-labelledby="side-label">
+          <button type="button" data-set="side" data-value="left" aria-pressed="true">Left</button>
+          <button type="button" data-set="side" data-value="right" aria-pressed="false">Right</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label id="mode-label">Layout</label>
+        <div class="seg" role="group" aria-labelledby="mode-label">
+          <button type="button" data-set="mode" data-value="paired" aria-pressed="false" title="TOC + article as one centered unit">Paired</button>
+          <button type="button" data-set="mode" data-value="margin" aria-pressed="false" title="Article stays site-centered; TOC in leftover margin">Margin</button>
+          <button type="button" data-set="mode" data-value="rail" aria-pressed="false" title="Full-height band pinned to the viewport edge">Rail</button>
+          <button type="button" data-set="mode" data-value="float" aria-pressed="true" title="Floating card: title collapses with progress ring (Maxime-style)">Float</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label id="style-label">Style</label>
+        <div class="seg" role="group" aria-labelledby="style-label">
+          <button type="button" data-set="style" data-value="rail" aria-pressed="false">Rail</button>
+          <button type="button" data-set="style" data-value="quiet" aria-pressed="true">Quiet</button>
+          <button type="button" data-set="style" data-value="numbered" aria-pressed="false">Numbered</button>
+          <button type="button" data-set="style" data-value="progress" aria-pressed="false">Progress</button>
+        </div>
+      </div>
+
+      <p class="hint">Scroll past the title · <kbd>L</kbd>/<kbd>R</kbd> side</p>
+    </div>
+  </div>
+
+  <div class="shell" id="shell" data-side="left" data-mode="float" data-style="quiet" data-collapsed="false">
+    <aside class="toc-wrap" id="toc-wrap" aria-label="On this page">
+      <p class="toc-label">
+        <span>On this page</span>
+        <button type="button" class="toc-mobile-toggle" id="toc-toggle" aria-expanded="true" aria-controls="toc-nav">Hide</button>
+      </p>
+
+      <button type="button" class="toc-header" id="toc-header" aria-expanded="true" aria-controls="toc-body">
+        <svg class="toc-progress-ring" viewBox="0 0 36 36" aria-hidden="true">
+          <circle class="track" cx="18" cy="18" r="15.9155" />
+          <circle class="value" cx="18" cy="18" r="15.9155" pathLength="100" />
+        </svg>
+        <span class="toc-collapsed-title" id="toc-collapsed-title">Revamping an opaque score into clear guidance</span>
+        <svg class="toc-chevron" viewBox="0 0 16 16" aria-hidden="true">
+          <path fill="currentColor" d="M3.2 10.2a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 1 1-1.06 1.06L8 6.56 4.26 10.2a.75.75 0 0 1-1.06 0Z"/>
+        </svg>
+      </button>
+
+      <div class="toc-body" id="toc-body">
+        <nav>
+          <ol class="toc-nav" id="toc-nav">
+            <!-- filled by script from h2s -->
+          </ol>
+        </nav>
+      </div>
+    </aside>
+
+    <article class="article" id="main">
+      <a class="back" href="/work/survey-building-guidance">← Back to case study</a>
+      <header>
+        <h1>Revamping an opaque score into clear guidance</h1>
+        <p class="meta">~12 min read · Qualtrics · 2026</p>
+        <dl class="meta-grid">
+          <dt>Role</dt><dd>Designer</dd>
+          <dt>Team</dt><dd>1 PM, 1 researcher, 2 eng leads, 3 engineers</dd>
+        </dl>
+      </header>
+
+      <section id="outcome">
+        <h2>Outcome</h2>
+        <ol>
+          <li>Turned an untrusted health score into Errors / Warnings / Tips, ready for use in our Survey Builder AI harness.</li>
+          <li>Built the guidance side panel as a shared design-system pattern with Distributions, grounded in joint research rather than two one-off designs.</li>
+          <li>Post-launch stats TBD</li>
+        </ol>
+      </section>
+
+      <section id="a-score-that-didnt-earn-trust">
+        <h2>A score that didn’t earn trust</h2>
+        <p>In Qualtrics, you create surveys in the Survey Builder. Expert Review scores your survey “Great”, “Fair”, or “Poor” from a formula of ~20 checks. For example, an incomplete translation on a question could drop you from “Great” to “Fair”.</p>
+        <div class="figure" aria-hidden="true">Image placeholder · Survey Builder + Fair badge</div>
+        <p class="figure-cap">This was the entry point to Expert Review.</p>
+        <div class="figure" aria-hidden="true">Image placeholder · Expert Review modal</div>
+        <p class="figure-cap">Expert Review: an opaque score in a modal.</p>
+        <p>Tasked with improving the feature, I opened an Amplitude investigation to understand the problem:</p>
+        <ul>
+          <li>Expert Review only reached about <strong>14–16% MAU</strong> among active survey builders.</li>
+          <li>The score correlated with completion rate above 80%, then flattened. Below that, a 20% survey and a 79% survey looked almost the same.</li>
+          <li>The distribution spiked where ~15% of surveys scored 66%, with almost no surveys between 67–93%, so fixing issues often produced no movement or a sudden jump.</li>
+        </ul>
+        <p>Survey Builder PSAT had also dropped ~10% year over year (to ~66%), with ease of use as the top negative driver. Roughly $70–85K in annual cost-to-serve mapped to configuration and runtime issues in the same space.</p>
+        <p>The ask from product was broad: improve feedback and catch broken surveys. Two problems were running in parallel, and they needed one trustworthy system.</p>
+        <ol>
+          <li>Methodology “health” (question readability, mobile optimization)</li>
+          <li>Real config failures (invalid references, build failures)</li>
+        </ol>
+      </section>
+
+      <section id="more-than-a-framework-doc">
+        <h2>More than a framework doc</h2>
+        <p>A checklist of new metrics wouldn’t fix trust. I treated the ask as a design problem: redefine how guidance is categorized, then rebuild its interactions. That became a phased plan:</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Timing</th>
+                <th scope="col">Phase</th>
+                <th scope="col">What shipped</th>
+                <th scope="col">Why it mattered</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Q1 2026</th>
+                <td>Align on a shared framework</td>
+                <td>Score replaced by Errors, Warnings, and Tips</td>
+                <td>Foundational architecture for the phases that followed</td>
+              </tr>
+              <tr>
+                <th scope="row">Q2 2026</th>
+                <td>Research and testing</td>
+                <td>Research report on key user needs and interaction patterns</td>
+                <td>Resolved concerns about a new pattern and clarified what mattered to builders</td>
+              </tr>
+              <tr>
+                <th scope="row">Q3 2026</th>
+                <td>Full deprecation and side panel launch</td>
+                <td>In-context side panel</td>
+                <td>Better interactions to match the new framework</td>
+              </tr>
+              <tr>
+                <th scope="row">Q4 2026</th>
+                <td>Next</td>
+                <td>AI agent in the same panel</td>
+                <td>Carry the framework into the AI era</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="aligning-on-a-simple-3-category-framework">
+        <h2>Aligning on a simple 3-category framework</h2>
+        <p>Expert Review metrics sat on two axes, issue type × severity, producing ~25 attribute combinations. Reviewing past user research, I proposed a simpler frame that sorted ~60 cases into three categories:</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th scope="col">Category</th><th scope="col">Definition</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Error</th><td>Data collection is impossible until resolved</td></tr>
+              <tr><th scope="row">Warning</th><td>Collection still happens, but something is compromised</td></tr>
+              <tr><th scope="row">Tip</th><td>Collection is fine; the survey can still improve</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>It took an entire quarter to align on that framework. The categories appealed to every stakeholder. The hard part was deciding which issues were important enough to be Errors (and block publish) versus softer Warnings.</p>
+        <p>For example, “Invalid display logic” means that at runtime the survey cannot show a question because its logic has invalid references. That breaks the survey definition, yet users had learned the behavior and sometimes used it intentionally to hide questions that were no longer relevant.</p>
+        <div class="callout">Those back-and-forths felt endless. I learned that instead of bringing engineering a finished framework, I should have facilitated co-design from the start so decisions were made collectively rather than handed down for review.</div>
+      </section>
+
+      <section id="a-surprising-result-from-research">
+        <h2>A surprising result from research</h2>
+        <p>While the framework already existed from prior research, I partnered with a researcher on remaining questions and interaction tests.</p>
+        <p>One concept we tested was blocking publish when a survey had errors, prompted by complaints about surveys going out with expired dates or silent logic failures. Participants confirmed they wouldn’t distribute an untakeable survey, but they were hesitant about being blocked from publishing.</p>
+        <p>That revealed publish was not the mental model we thought it was. People often used Publish to save an explicit version in history, even with autosave. It was a critical, unexpected update for the framework: the platform was not ready to block publish on errors until save and publish were decoupled. Most issues stayed Warnings, which did not block publishing.</p>
+      </section>
+
+      <section id="interaction-tests-before-shipping-at-qualtrics-scale">
+        <h2>Interaction tests before shipping at Qualtrics scale</h2>
+        <p>At this company size, shipping a pattern once is expensive to unwind. Easy to add one-off checks; hard to remove them, which is how Expert Review got outdated in the first place. So the second half of the research went into interaction testing.</p>
+        <p>Across Qualtrics, guidance already lived in different shapes: inline footers, left panes (Dashboard Spot Check), modals, checklists. There wasn’t one canonical pattern to copy. We tested three ideas and landed on a right-hand panel so builders could see the issue and edit the question at the same time.</p>
+        <div class="figure" aria-hidden="true">Image placeholder · Three interaction concepts</div>
+        <p class="figure-cap">Three concepts tested and the right-hand panel won.</p>
+      </section>
+
+      <section id="prototyping-deep-interactions-in-the-codebase">
+        <h2>Prototyping deep interactions in the codebase</h2>
+        <p>Building on that research decision, I started deeper interaction work in Figma, but iteration was slow. I needed to compare behaviors like sticky headers under long lists, accordion exclusivity, scroll and highlight sync, and cascading panes. So I switched to Cursor on a Survey Builder prototyping branch, putting low-fidelity panels on the real product and stacking those interactions against a realistic survey build.</p>
+        <p>The biggest decision was IA: expand-in-place versus dedicated pages for metrics like Invalid Display Logic. In Figma, a detail page looked cleaner. In the code prototype with real data, expand-in-place was faster. You could open metrics and see what was wrong at a glance. The detail page felt clunky, something much easier to discover in a working prototype.</p>
+      </section>
+
+      <section id="collaborating-with-a-designer-to-create-a-design-system-pattern">
+        <h2>Collaborating with a designer to create a design system pattern</h2>
+        <p>Around the same time, another team was solving a similar problem: helping users follow email best practices so survey invitations don’t land in spam. Their designer reached out so we could compare projects and look for collaboration.</p>
+        <p>After swapping notes, it was clear we shared the same underlying issues and that one solution could cover both. We designed a side panel with expandable cards: all feedback in one overview, with a way to expand into more detail or actions. Instead of building two separate products, we reused the same components and kept the experience consistent.</p>
+        <p>I think design systems work best this way: not as top-down rules, but when teams solving real problems on their own find a chance to share. There’s a broader opportunity to make this guidance layer consistent across products, but a pattern that already fits two is the first step.</p>
+      </section>
+
+      <section id="designer-owned-implementation">
+        <h2>Designer-owned implementation</h2>
+        <p>On an earlier feature, we launched using the classic loop: I submit specs → eng implements → I review pixels → wait → re-review. With this work, I cut the loop and directly owned implementation. Eng built the backend and base interactions, then handed the work to me so I could refine interactions and polish.</p>
+        <p>On the side panel that meant one-at-a-time accordion behavior, layout alignment, and flattening a nested information architecture. That pass became part of our SDLC instead of critique-only review, and it shortened the path to a UI that matched the intent of the design.</p>
+      </section>
+
+      <section id="copy-is-part-of-design">
+        <h2>Copy is part of design</h2>
+        <p>One design-driven push I made was iterating the copy for each metric. The side panel over the modal was a priority, but the copy mattered too: users needed to quickly see what was wrong, why, and what to do. I treated copy as part of the design (lower priority, but still design) and built a framework to turn unstructured metric descriptions into a scalable system. Every description gets three sentences: (1) why it was flagged, (2) why it matters, and (3) what to do.</p>
+      </section>
+
+      <section id="what-this-unlocked">
+        <h2>What this unlocked</h2>
+        <p>The Q1 work set the foundation for a simple Error, Warning, and Tip framework, where survey health is a clear, scalable system instead of an opaque score. Engineering could now add new issues without redesigning how they show up each time. Q2 research and testing made sure those early ideas would scale to Qualtrics’ user base and surfaced insights we needed. In Q3, we launched the side panel and deprecated Expert Review, making day-to-day survey building easier to iterate on.</p>
+        <p>More importantly, this laid groundwork for AI survey building in two ways: a stable Error / Warning / Tip harness that already fits the design system, and a right-hand side panel we can keep extending.</p>
+      </section>
+
+      <section id="what-id-do-differently">
+        <h2>What I’d do differently</h2>
+        <p>If I were to change just one thing in this project, I’d pull engineering into the framework earlier as co-authors of categorization, not late reviewers of a proposal. The UI work was comparatively straightforward; the real bottleneck was the framework itself. A kickoff workshop would have been invaluable.</p>
+      </section>
+
+      <section id="next">
+        <h2>Next</h2>
+        <p>Next up is the Survey Builder AI agent: built on this foundation to help users create surveys with sound methodology advice and solid logical configurations.</p>
+      </section>
+    </article>
+  </div>
+
+  <div class="width-note" id="width-note" aria-hidden="true"></div>
+
+  <script>
+    const shell = document.getElementById("shell");
+    const tocNav = document.getElementById("toc-nav");
+    const tocWrap = document.getElementById("toc-wrap");
+    const tocToggle = document.getElementById("toc-toggle");
+    const tocHeader = document.getElementById("toc-header");
+    const widthNote = document.getElementById("width-note");
+    const articleTitle = document.querySelector(".article header h1");
+    const sections = [...document.querySelectorAll(".article section[id]")];
+
+    // Build TOC from h2s
+    sections.forEach((section) => {
+      const heading = section.querySelector("h2");
+      if (!heading) return;
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = `#${section.id}`;
+      a.textContent = heading.textContent;
+      a.dataset.section = section.id;
+      li.appendChild(a);
+      tocNav.appendChild(li);
+    });
+
+    const links = [...tocNav.querySelectorAll("a")];
+
+    // Control segments
+    document.querySelectorAll(".seg button[data-set]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = btn.dataset.set;
+        const value = btn.dataset.value;
+        shell.dataset[key] = value;
+        btn.parentElement.querySelectorAll("button").forEach((b) => {
+          b.setAttribute("aria-pressed", String(b === btn));
+        });
+        // Float looks best quiet; sync style when switching into it
+        if (key === "mode" && value === "float" && shell.dataset.style === "rail") {
+          document.querySelector('[data-set="style"][data-value="quiet"]')?.click();
+        }
+        updateFloatVisibility();
+      });
+    });
+
+    // Keyboard L / R
+    window.addEventListener("keydown", (e) => {
+      if (e.target.matches("input, textarea, select, [contenteditable]")) return;
+      if (e.key === "l" || e.key === "L") {
+        document.querySelector('[data-set="side"][data-value="left"]')?.click();
+      }
+      if (e.key === "r" || e.key === "R") {
+        document.querySelector('[data-set="side"][data-value="right"]')?.click();
+      }
+    });
+
+    // Mobile collapse (non-float)
+    tocToggle.addEventListener("click", () => {
+      const collapsed = tocWrap.dataset.collapsed === "true";
+      tocWrap.dataset.collapsed = String(!collapsed);
+      tocToggle.setAttribute("aria-expanded", String(collapsed));
+      tocToggle.textContent = collapsed ? "Hide" : "Show";
+    });
+
+    // Float card: collapse TOC list under title + progress
+    tocHeader.addEventListener("click", () => {
+      const collapsed = shell.dataset.collapsed === "true";
+      shell.dataset.collapsed = String(!collapsed);
+      tocHeader.setAttribute("aria-expanded", String(collapsed));
+    });
+
+    // Scroll spy
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+
+        if (visible.length === 0) return;
+
+        const activeId = visible[0].target.id;
+        let activeIndex = 0;
+
+        links.forEach((link, i) => {
+          const isActive = link.dataset.section === activeId;
+          link.setAttribute("aria-current", isActive ? "true" : "false");
+          if (isActive) activeIndex = i;
+        });
+
+        links.forEach((link, i) => {
+          link.dataset.read = String(i < activeIndex);
+        });
+
+        const sectionProgress = sections.length <= 1
+          ? 100
+          : (activeIndex / (sections.length - 1)) * 100;
+        tocNav.style.setProperty("--toc-progress", `${sectionProgress}%`);
+      },
+      {
+        rootMargin: "-20% 0px -55% 0px",
+        threshold: [0, 0.25, 0.5, 1],
+      }
+    );
+
+    sections.forEach((s) => observer.observe(s));
+
+    // Reading progress for the ring (article scroll through main)
+    function updateReadProgress() {
+      const article = document.getElementById("main");
+      const rect = article.getBoundingClientRect();
+      const scrolled = -rect.top;
+      const total = rect.height - window.innerHeight;
+      const pct = total <= 0 ? 0 : Math.min(100, Math.max(0, (scrolled / total) * 100));
+      tocWrap.style.setProperty("--read-progress", pct.toFixed(1));
+    }
+
+    // Float: reveal once the in-page title has scrolled out
+    function updateFloatVisibility() {
+      if (shell.dataset.mode !== "float") {
+        tocWrap.classList.remove("is-visible");
+        return;
+      }
+      if (window.innerWidth < 1100) {
+        tocWrap.classList.add("is-visible");
+        return;
+      }
+      const titleBottom = articleTitle.getBoundingClientRect().bottom;
+      const show = titleBottom < 72;
+      tocWrap.classList.toggle("is-visible", show);
+    }
+
+    function onScroll() {
+      updateReadProgress();
+      updateFloatVisibility();
+    }
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", () => {
+      updateWidthNote();
+      updateFloatVisibility();
+    });
+
+    function updateWidthNote() {
+      widthNote.textContent = `${window.innerWidth}px`;
+    }
+    updateWidthNote();
+  </script>
+</body>
+</html>

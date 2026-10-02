@@ -67,9 +67,9 @@ The team aligned on three principles:
 
 While there was a parallel effort to define a 2–3 year design vision, I focused on what we could ship in six months. Early reviews were less about pixels and more about forcing scope decisions:
 
-- How curated should this MVP be versus a kitchen-sink port of legacy features?
-- How much should we support legacy power users versus designing for new users of this platform?
+- What is the core workflow we need to support for this customer?
 - Which pieces of Metadata>Portal, Express>It, and Control>Center had to transfer for this workflow?
+- Since this MVP is shipping for one customer, how bespoke should it be versus a more general purpose prototype of our larger vision?
 
 <CaseImage
   client:load
@@ -78,7 +78,7 @@ While there was a parallel effort to define a 2–3 year design vision, I focuse
   caption='Aligning early on what "unified" meant for an MVP, not the full vision.'
 />
 
-We landed on a wrangling-first MVP: find data, transform it, and schedule it — enough to replace the three-product handoff without boiling the ocean. Everything else stayed on the longer vision track.
+We landed on an MVP that supported one basic workflow: data-wrangling. We decided that scaling for large datasets or large organizations (e.g. approval workflows, admin functions) could stay on the longer vision, so we could move fast on focus on a simple MVP.
 
 ## Navigating ambiguity without data or research
 
@@ -136,6 +136,6 @@ Weekly reviews with a working group of ~15 helped surface technical constraints 
 
 ## What I'd do differently
 
-As a junior designer, I expressed every design decision through detailed user workflows. That started as a set of ten screens. After updating them at every weekly sync, I was maintaining fifty just to describe the architecture of the platform.
+Because this shipped for a specific customer, I should have involved them earlier. I had a Technical Account Manager close to them, but I treated the customer as a consumer rather than a stakeholder - partly to avoid breaking norms around how we engaged customers.
 
-I should have started with a PRD, gotten stakeholders to sign off on objectives and user stories, and only then expressed them in design. The scoping questions above belonged in writing first — not only in wireframes.
+Instead of looping them in only at major milestones, I would have brought them into the initial scoping and requirements.
