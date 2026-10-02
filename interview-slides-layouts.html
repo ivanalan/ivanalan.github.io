@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>Slide layout &amp; visual prototypes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fustat:wght@400;500;600&family=Gentium+Book+Basic:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --background: oklch(18.561% 0.00161 197.742);
+      --secondary: oklch(24.705% 0.01511 285.224);
+      --muted: oklch(0.311 0 0);
+      --foreground: oklch(96.946% 0.00318 15.308);
+      --muted-foreground: oklch(76.092% 0.01027 273.305);
+      --border: oklch(0.919 0 0 / 7%);
+      --ring: oklch(0.638 0.177 252.2);
+      --radius: 0.625rem;
+      --font-heading: "Gentium Book Basic", ui-serif, Georgia, "Times New Roman", serif;
+      --font-sans: "Fustat", ui-sans-serif, system-ui, sans-serif;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --page-pad: 1.25rem;
+      --slide-pad: 2rem;
+      --notes: dock;
+      --theme: site;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      color-scheme: dark;
+      scrollbar-gutter: stable;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font-sans);
+      background: var(--background);
+      color: var(--foreground);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+
+    h1, h2, h3 {
+      font-family: var(--font-heading);
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      margin: 0;
+    }
+
+    /* ——— Controls ——— */
+    .controls {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: color-mix(in oklab, var(--background) 88%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem var(--page-pad);
+    }
+
+    .controls-inner {
+      max-width: 76rem;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.65rem 1.25rem;
+    }
+
+    .controls h1 {
+      font-size: 0.9rem;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .control-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .control-group > span {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted-foreground);
+      margin-right: 0.1rem;
+    }
+
+    .seg {
+      display: inline-flex;
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) * 0.8);
+      overflow: hidden;
+      background: var(--secondary);
+    }
+
+    .seg button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--muted-foreground);
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 0.35rem 0.65rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .seg button:hover { color: var(--foreground); }
+    .seg button[aria-pressed="true"] {
+      background: color-mix(in oklab, var(--ring) 22%, var(--secondary));
+      color: var(--foreground);
+    }
+    .seg button:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: -2px;
+      z-index: 1;
+    }
+
+    /* ——— Page ——— */
+    .page {
+      max-width: 76rem;
+      margin: 0 auto;
+      padding: 1.25rem var(--page-pad) 3rem;
+      display: grid;
+      gap: 1.25rem;
+    }
+
+    .meta-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .blurb {
+      color: var(--muted-foreground);
+      font-size: 0.92rem;
+      max-width: 42rem;
+      margin: 0;
+    }
+
+    .blurb strong { color: var(--foreground); font-weight: 600; }
+
+    .sample-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .sample-picker button {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--secondary);
+      color: var(--muted-foreground);
+      border-radius: 999px;
+      font: inherit;
+      font-size: 0.78rem;
+      padding: 0.3rem 0.7rem;
+      cursor: pointer;
+    }
+
+    .sample-picker button[aria-pressed="true"] {
+      border-color: color-mix(in oklab, var(--ring) 45%, var(--border));
+      color: var(--foreground);
+    }
+
+    /* ——— Stage frame ——— */
+    .stage-wrap {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--muted);
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      min-height: 22rem;
+      position: relative;
+    }
+
+    .stage {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      --slide-bg: var(--background);
+      --slide-fg: var(--foreground);
+      --slide-muted: var(--muted-foreground);
+      --slide-panel: var(--secondary);
+      --slide-line: var(--border);
+      --slide-accent: var(--ring);
+      --slide-radius: var(--radius);
+      --type-scale: 1;
+      --air: 1;
+      background: var(--slide-bg);
+      color: var(--slide-fg);
+      transition: background 0.25s var(--ease), color 0.25s var(--ease);
+    }
+
+    /* Theme variants */
+    [data-theme="site"] .stage {
+      --slide-bg: var(--background);
+      --slide-panel: var(--secondary);
+      --type-scale: 1;
+      --air: 1;
+    }
+
+    [data-theme="quiet"] .stage {
+      --slide-bg: oklch(16.5% 0.002 200);
+      --slide-panel: oklch(20% 0.008 280);
+      --slide-muted: oklch(70% 0.01 273);
+      --type-scale: 0.96;
+      --air: 1.35;
+      --slide-pad: calc(2.4rem * var(--air));
+    }
+
+    [data-theme="editorial"] .stage {
+      --slide-bg: var(--background);
+      --slide-panel: transparent;
+      --slide-line: transparent;
+      --type-scale: 1.12;
+      --air: 1.15;
+    }
+
+    [data-theme="panel"] .stage {
+      --slide-bg: var(--muted);
+      padding: 1.1rem;
+    }
+
+    [data-theme="panel"] .slide-chrome {
+      background: var(--background);
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) * 1.2);
+      overflow: hidden;
+      height: 100%;
+    }
+
+    [data-theme="ink"] .stage {
+      --slide-fg: oklch(98% 0.002 15);
+      --slide-muted: oklch(68% 0.01 273);
+      --slide-accent: oklch(78% 0.04 200);
+      --type-scale: 1.04;
+    }
+
+    .slide-chrome {
+      height: 100%;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      min-height: 0;
+    }
+
+    [data-notes="hidden"] .slide-chrome { grid-template-rows: 1fr; }
+    [data-notes="hidden"] .notes { display: none; }
+
+    [data-notes="overlay"] .slide-chrome { grid-template-rows: 1fr; }
+    [data-notes="overlay"] .notes {
+      position: absolute;
+      left: 1rem;
+      right: 1rem;
+      bottom: 1rem;
+      max-height: 34%;
+      border: 1px solid var(--slide-line);
+      border-radius: var(--slide-radius);
+      box-shadow: 0 12px 40px color-mix(in oklab, black 45%, transparent);
+      z-index: 5;
+    }
+
+    .slide-body {
+      min-height: 0;
+      overflow: hidden;
+      padding: calc(var(--slide-pad, 2rem) * var(--air, 1));
+      position: relative;
+    }
+
+    .notes {
+      border-top: 1px solid var(--slide-line);
+      background: var(--slide-panel);
+      padding: 0.65rem 1.25rem 0.75rem;
+      max-height: 26%;
+      overflow: auto;
+    }
+
+    .notes-label {
+      margin: 0 0 0.3rem;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--slide-accent);
+    }
+
+    .notes p {
+      margin: 0;
+      font-size: 0.78rem;
+      color: var(--slide-muted);
+      line-height: 1.4;
+    }
+
+    /* Shared slide type */
+    .kicker {
+      display: inline-block;
+      font-size: calc(0.72rem * var(--type-scale));
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--slide-accent);
+      margin-bottom: 0.55rem;
+    }
+
+    .slide-title {
+      font-size: calc(1.55rem * var(--type-scale));
+      line-height: 1.2;
+      color: var(--slide-fg);
+      margin-bottom: 0.45rem;
+      max-width: 22ch;
+    }
+
+    .slide-lede {
+      font-size: calc(0.95rem * var(--type-scale));
+      color: var(--slide-muted);
+      margin: 0;
+      max-width: 36rem;
+    }
+
+    .media {
+      background: var(--muted);
+      border: 1px solid var(--slide-line);
+      border-radius: var(--slide-radius);
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    /* ——— Layout: split ——— */
+    [data-layout="split"] .layout {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: calc(1.25rem * var(--air));
+      align-items: center;
+      height: 100%;
+    }
+
+    [data-layout="split"] .media { height: min(100%, 22rem); }
+
+    /* ——— Layout: media-bleed ——— */
+    [data-layout="bleed"] .layout {
+      position: absolute;
+      inset: 0;
+    }
+
+    [data-layout="bleed"] .media {
+      position: absolute;
+      inset: 0;
+      border: 0;
+      border-radius: 0;
+    }
+
+    [data-layout="bleed"] .media img {
+      object-fit: cover;
+      filter: brightness(0.55) saturate(0.9);
+    }
+
+    [data-layout="bleed"] .copy {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: calc(1.5rem * var(--air)) calc(var(--slide-pad, 2rem) * var(--air));
+      background: linear-gradient(transparent, color-mix(in oklab, black 72%, transparent));
+      z-index: 2;
+    }
+
+    [data-layout="bleed"] .slide-title {
+      max-width: 28ch;
+      font-size: calc(1.85rem * var(--type-scale));
+    }
+
+    [data-layout="bleed"] .slide-body { padding: 0; }
+
+    /* ——— Layout: statement ——— */
+    [data-layout="statement"] .layout {
+      height: 100%;
+      display: grid;
+      place-content: center;
+      text-align: center;
+      padding-inline: 8%;
+    }
+
+    [data-layout="statement"] .slide-title {
+      max-width: 18ch;
+      margin-inline: auto;
+      font-size: calc(2rem * var(--type-scale));
+      line-height: 1.18;
+    }
+
+    [data-layout="statement"] .slide-lede {
+      margin-inline: auto;
+      margin-top: 0.85rem;
+    }
+
+    [data-layout="statement"] .media { display: none; }
+
+    /* ——— Layout: decision ——— */
+    [data-layout="decision"] .layout {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: calc(1rem * var(--air));
+      height: 100%;
+    }
+
+    [data-layout="decision"] .triad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.65rem;
+      min-height: 0;
+    }
+
+    [data-layout="decision"] .cell {
+      background: var(--slide-panel);
+      border: 1px solid var(--slide-line);
+      border-radius: var(--slide-radius);
+      padding: 0.85rem 0.95rem;
+      min-height: 0;
+    }
+
+    [data-layout="decision"] .cell.chose {
+      box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--slide-accent) 28%, transparent);
+    }
+
+    [data-layout="decision"] .cell label {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--slide-muted);
+      margin-bottom: 0.35rem;
+    }
+
+    [data-layout="decision"] .cell p {
+      margin: 0;
+      font-size: calc(0.88rem * var(--type-scale));
+      color: var(--slide-muted);
+      line-height: 1.4;
+    }
+
+    [data-layout="decision"] .cell strong { color: var(--slide-fg); font-weight: 600; }
+    [data-layout="decision"] .media { display: none; }
+
+    /* ——— Layout: stats ——— */
+    [data-layout="stats"] .layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: calc(1.25rem * var(--air));
+      align-items: center;
+      height: 100%;
+    }
+
+    [data-layout="stats"] .stat-row {
+      display: grid;
+      gap: 0.55rem;
+      margin-top: 1rem;
+    }
+
+    [data-layout="stats"] .stat {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.75rem;
+      align-items: baseline;
+      padding: 0.65rem 0.8rem;
+      background: var(--slide-panel);
+      border: 1px solid var(--slide-line);
+      border-radius: var(--slide-radius);
+    }
+
+    [data-layout="stats"] .stat strong {
+      font-family: var(--font-heading);
+      font-size: calc(1.55rem * var(--type-scale));
+      color: var(--slide-fg);
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    [data-layout="stats"] .stat span {
+      font-size: 0.82rem;
+      color: var(--slide-muted);
+    }
+
+    [data-layout="stats"] .media { height: min(100%, 20rem); }
+
+    /* ——— Layout: compare ——— */
+    [data-layout="compare"] .layout {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: calc(0.85rem * var(--air));
+      height: 100%;
+    }
+
+    [data-layout="compare"] .pair {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 0.65rem;
+      align-items: stretch;
+      min-height: 0;
+    }
+
+    [data-layout="compare"] .pair .media { min-height: 0; }
+    [data-layout="compare"] .pair .media img { object-fit: contain; background: var(--muted); }
+
+    [data-layout="compare"] .arrow {
+      align-self: center;
+      color: var(--slide-muted);
+      font-size: 1.1rem;
+    }
+
+    [data-layout="compare"] .cap {
+      font-size: 0.72rem;
+      color: var(--slide-muted);
+      margin-top: 0.3rem;
+    }
+
+    /* ——— Layout: rail ——— */
+    [data-layout="rail"] .layout {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 0;
+      height: 100%;
+      margin: calc(-1 * var(--slide-pad, 2rem) * var(--air));
+      height: calc(100% + 2 * var(--slide-pad, 2rem) * var(--air));
+    }
+
+    [data-layout="rail"] .media {
+      border: 0;
+      border-radius: 0;
+      height: 100%;
+    }
+
+    [data-layout="rail"] .copy {
+      padding: calc(1.25rem * var(--air)) calc(1.1rem * var(--air));
+      background: var(--slide-panel);
+      border-left: 1px solid var(--slide-line);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    [data-layout="rail"] .slide-title { max-width: 14ch; font-size: calc(1.35rem * var(--type-scale)); }
+    [data-layout="rail"] .slide-body { padding: 0; overflow: hidden; }
+
+    /* ——— Layout: dossier ——— */
+    [data-layout="dossier"] .layout {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: calc(1.5rem * var(--air));
+      height: 100%;
+      align-items: start;
+    }
+
+    [data-layout="dossier"] .copy {
+      border-top: 1px solid var(--slide-line);
+      padding-top: 0.85rem;
+    }
+
+    [data-layout="dossier"] .slide-title {
+      max-width: 16ch;
+      font-size: calc(1.7rem * var(--type-scale));
+    }
+
+    [data-layout="dossier"] .bullets {
+      margin: 0.85rem 0 0;
+      padding-left: 1.1rem;
+      color: var(--slide-muted);
+      font-size: calc(0.88rem * var(--type-scale));
+    }
+
+    [data-layout="dossier"] .bullets li + li { margin-top: 0.4rem; }
+    [data-layout="dossier"] .media { height: 100%; max-height: 100%; }
+
+    /* Hide unused blocks per layout via CSS when possible */
+    [data-layout="split"] .triad,
+    [data-layout="split"] .stat-row,
+    [data-layout="split"] .pair,
+    [data-layout="split"] .bullets,
+    [data-layout="bleed"] .triad,
+    [data-layout="bleed"] .stat-row,
+    [data-layout="bleed"] .pair,
+    [data-layout="bleed"] .bullets,
+    [data-layout="statement"] .triad,
+    [data-layout="statement"] .stat-row,
+    [data-layout="statement"] .pair,
+    [data-layout="statement"] .bullets,
+    [data-layout="decision"] .stat-row,
+    [data-layout="decision"] .pair,
+    [data-layout="decision"] .bullets,
+    [data-layout="stats"] .triad,
+    [data-layout="stats"] .pair,
+    [data-layout="stats"] .bullets,
+    [data-layout="compare"] .triad,
+    [data-layout="compare"] .stat-row,
+    [data-layout="compare"] .bullets,
+    [data-layout="rail"] .triad,
+    [data-layout="rail"] .stat-row,
+    [data-layout="rail"] .pair,
+    [data-layout="rail"] .bullets,
+    [data-layout="dossier"] .triad,
+    [data-layout="dossier"] .stat-row,
+    [data-layout="dossier"] .pair {
+      display: none;
+    }
+
+    [data-layout="decision"] .triad { display: grid; }
+    [data-layout="stats"] .stat-row { display: grid; }
+    [data-layout="compare"] .pair { display: grid; }
+    [data-layout="dossier"] .bullets { display: block; }
+
+    /* ——— Legend ——— */
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+      gap: 0.75rem;
+    }
+
+    .legend article {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--secondary);
+      padding: 0.85rem 0.95rem;
+    }
+
+    .legend h3 {
+      font-size: 0.95rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .legend p {
+      margin: 0;
+      font-size: 0.8rem;
+      color: var(--muted-foreground);
+    }
+
+    .legend article[data-active="true"] {
+      box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ring) 35%, transparent);
+    }
+
+    .footer-hint {
+      font-size: 0.78rem;
+      color: var(--muted-foreground);
+      margin: 0;
+    }
+
+    @media (max-width: 900px) {
+      .meta-row { grid-template-columns: 1fr; }
+      .stage-wrap { aspect-ratio: auto; height: min(70vh, 28rem); }
+      [data-layout="split"] .layout,
+      [data-layout="stats"] .layout,
+      [data-layout="dossier"] .layout,
+      [data-layout="rail"] .layout,
+      [data-layout="compare"] .pair,
+      [data-layout="decision"] .triad {
+        grid-template-columns: 1fr;
+      }
+      [data-layout="compare"] .arrow { display: none; }
+      [data-layout="rail"] .layout {
+        margin: 0;
+        height: 100%;
+      }
+    }
+  </style>
+</head>
+<body data-layout="split" data-theme="site" data-notes="dock" data-sample="outcome">
+  <header class="controls">
+    <div class="controls-inner">
+      <h1>Slide layouts · visual probe</h1>
+
+      <div class="control-group" role="group" aria-label="Layout">
+        <span>Layout</span>
+        <div class="seg" id="layoutSeg">
+          <button type="button" data-layout="split" aria-pressed="true">Split</button>
+          <button type="button" data-layout="bleed">Bleed</button>
+          <button type="button" data-layout="statement">Statement</button>
+          <button type="button" data-layout="decision">Decision</button>
+          <button type="button" data-layout="stats">Stats</button>
+          <button type="button" data-layout="compare">Compare</button>
+          <button type="button" data-layout="rail">Rail</button>
+          <button type="button" data-layout="dossier">Dossier</button>
+        </div>
+      </div>
+
+      <div class="control-group" role="group" aria-label="Visual theme">
+        <span>Look</span>
+        <div class="seg" id="themeSeg">
+          <button type="button" data-theme="site" aria-pressed="true">Site</button>
+          <button type="button" data-theme="quiet">Quiet</button>
+          <button type="button" data-theme="editorial">Editorial</button>
+          <button type="button" data-theme="panel">Framed</button>
+          <button type="button" data-theme="ink">Ink</button>
+        </div>
+      </div>
+
+      <div class="control-group" role="group" aria-label="Notes placement">
+        <span>Notes</span>
+        <div class="seg" id="notesSeg">
+          <button type="button" data-notes="dock" aria-pressed="true">Dock</button>
+          <button type="button" data-notes="overlay">Overlay</button>
+          <button type="button" data-notes="hidden">Hidden</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="meta-row">
+      <p class="blurb" id="blurb">
+        <strong>Split</strong> — text and media side by side. Default for decision/outcome slides with one supporting visual.
+      </p>
+      <div class="sample-picker" id="samplePicker" role="group" aria-label="Sample content">
+        <button type="button" data-sample="outcome" aria-pressed="true">Outcome</button>
+        <button type="button" data-sample="hook">Hook</button>
+        <button type="button" data-sample="decision">Decision</button>
+        <button type="button" data-sample="system">DS compare</button>
+      </div>
+    </div>
+
+    <div class="stage-wrap">
+      <div class="stage" id="stage">
+        <div class="slide-chrome">
+          <div class="slide-body">
+            <div class="layout">
+              <div class="copy">
+                <p class="kicker" data-bind="kicker">Hook + outcome · 90 sec</p>
+                <h2 class="slide-title" data-bind="title">From an opaque score nobody used…</h2>
+                <p class="slide-lede" data-bind="lede">…to Errors / Warnings / Tips in context while you build.</p>
+                <ul class="bullets" data-bind="bullets">
+                  <li>10% → 40% MAU touching guidance</li>
+                  <li>Shared pattern with Distributions</li>
+                  <li>AI-ready Error / Warning / Tip harness</li>
+                </ul>
+                <div class="stat-row">
+                  <div class="stat"><strong>10% → 40%</strong><span>MAU touching guidance</span></div>
+                  <div class="stat"><strong>~30k → 200k</strong><span>events / month</span></div>
+                  <div class="stat"><strong>1 pattern</strong><span>shared with Distributions</span></div>
+                </div>
+                <div class="triad">
+                  <div class="cell chose">
+                    <label>Chose</label>
+                    <p><strong>Error / Warning / Tip</strong> — clear rules for ~60 cases.</p>
+                  </div>
+                  <div class="cell">
+                    <label>Rejected</label>
+                    <p>Add more metrics / tweak the health score.</p>
+                  </div>
+                  <div class="cell">
+                    <label>Tradeoff</label>
+                    <p>A quarter aligning severity. Framework was the bottleneck.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="media" data-media="primary">
+                <img data-bind="img" src="public/media/work/survey-building-guidance/SidePanel1.png" alt="" />
+              </div>
+
+              <div class="pair">
+                <div>
+                  <div class="media">
+                    <img data-bind="imgA" src="public/media/work/ab-initio-data-platform/bottom-sheet.png" alt="" />
+                  </div>
+                  <p class="cap" data-bind="capA">Legacy bottom sheet</p>
+                </div>
+                <div class="arrow" aria-hidden="true">→</div>
+                <div>
+                  <div class="media">
+                    <img data-bind="imgB" src="public/media/work/ab-initio-data-platform/side-panel.png" alt="" />
+                  </div>
+                  <p class="cap" data-bind="capB">QuickLook side panel</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <aside class="notes">
+            <p class="notes-label">Talking points</p>
+            <p data-bind="notes">Deliver problem + outcome in ~90 seconds, then earn the middle with decisions. Point at the side panel: in context while you edit.</p>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <section class="legend" id="legend" aria-label="Layout descriptions"></section>
+
+    <p class="footer-hint">
+      Throwaway probe · same tokens as the site (Gentium + Fustat, Anysphere dark).
+      Open from repo root so <code>public/media/…</code> resolves.
+      Pair with <code>interview-portfolio-outline.html</code> for content.
+    </p>
+  </main>
+
+  <script>
+    const layouts = {
+      split: {
+        name: "Split",
+        blurb: "Text and media side by side. Default for outcome and situation slides with one supporting visual.",
+        best: "Most narrative slides",
+      },
+      bleed: {
+        name: "Bleed",
+        blurb: "Full-bleed media with a gradient caption band. High atmosphere; use sparingly for hooks or opens.",
+        best: "Section openers",
+      },
+      statement: {
+        name: "Statement",
+        blurb: "Centered pull quote / stake. No media. Casey-style story beats.",
+        best: "Hooks & bridges",
+      },
+      decision: {
+        name: "Decision",
+        blurb: "Chose / rejected / tradeoff as three equal panels. The interview money slide.",
+        best: "Tradeoff moments",
+      },
+      stats: {
+        name: "Stats",
+        blurb: "Outcome numbers stacked as primary reading order, media secondary.",
+        best: "Results / impact",
+      },
+      compare: {
+        name: "Compare",
+        blurb: "Before → after media pair under a short headline. Strong for DS / pattern choices.",
+        best: "Pattern changes",
+      },
+      rail: {
+        name: "Rail",
+        blurb: "Media-dominant with a narrow copy rail. Product-feeling; keep copy short.",
+        best: "UI reveals",
+      },
+      dossier: {
+        name: "Dossier",
+        blurb: "Case-study article cadence: title + bullets + large media. Feels like your site writing.",
+        best: "Situation depth",
+      },
+    };
+
+    const themes = {
+      site: "Exact site tokens — safest for Figma parity with the portfolio.",
+      quiet: "More air, softer panels — calmer for long walkthroughs.",
+      editorial: "Larger type, almost no chrome — slides as typography.",
+      panel: "Slide sits in a framed card on muted ground — more ‘deck’.",
+      ink: "Stronger foreground, cooler accent — slightly more expressive.",
+    };
+
+    const samples = {
+      outcome: {
+        kicker: "Hook + outcome · 90 sec",
+        title: "From an opaque score nobody used…",
+        lede: "…to Errors / Warnings / Tips in context while you build.",
+        notes: "Deliver problem + outcome in ~90 seconds, then earn the middle. Point at the panel: advice beside the canvas.",
+        img: "public/media/work/survey-building-guidance/SidePanel1.png",
+        imgA: "public/media/work/survey-building-guidance/ExpertReview.png",
+        imgB: "public/media/work/survey-building-guidance/SidePanel1.png",
+        capA: "Expert Review modal",
+        capB: "In-context side panel",
+      },
+      hook: {
+        kicker: "Project 1 · Qualtrics",
+        title: "You can build a survey that nobody finishes — and the product will still let you ship it.",
+        lede: "That was the real problem. Not “improve Expert Review.”",
+        notes: "Open on stakes: 10 open-text questions; completion collapses after ~3. Pause before the outcome slide.",
+        img: "public/media/work/survey-building-guidance/SB_base.png",
+        imgA: "public/media/work/survey-building-guidance/SB_base.png",
+        imgB: "public/media/work/survey-building-guidance/ExpertReview.png",
+        capA: "Builder canvas",
+        capB: "Expert Review entry",
+      },
+      decision: {
+        kicker: "Decision 1 of 3 · 5–8 min",
+        title: "Stop scoring. Start categorizing.",
+        lede: "A checklist of new metrics wouldn’t fix trust.",
+        notes: "Spend time here. Eng vs PM on Invalid Logic severity is your stakeholder-conflict story.",
+        img: "public/media/work/survey-building-guidance/PrototypeOptions.png",
+        imgA: "public/media/work/survey-building-guidance/PrototypeOptions.png",
+        imgB: "public/media/work/survey-building-guidance/SidePanel1.png",
+        capA: "Three interaction concepts",
+        capB: "Shipped panel",
+      },
+      system: {
+        kicker: "Decision · design system",
+        title: "Consistency with a bad pattern isn’t worth it",
+        lede: "Reuse the legacy bottom sheet, or propose QuickLook for the new platform.",
+        notes: "Your DS depth slide — expand in Figma if interviewers lean systems.",
+        img: "public/media/work/ab-initio-data-platform/side-panel.png",
+        imgA: "public/media/work/ab-initio-data-platform/bottom-sheet.png",
+        imgB: "public/media/work/ab-initio-data-platform/side-panel.png",
+        capA: "Legacy bottom sheet",
+        capB: "QuickLook side panel",
+      },
+    };
+
+    const body = document.body;
+    const blurb = document.getElementById("blurb");
+    const legend = document.getElementById("legend");
+
+    function setSeg(segId, attr, value) {
+      const seg = document.getElementById(segId);
+      seg.querySelectorAll("button").forEach((btn) => {
+        btn.setAttribute("aria-pressed", String(btn.dataset[attr] === value));
+      });
+      body.dataset[attr] = value;
+    }
+
+    function applySample(key) {
+      const s = samples[key];
+      body.dataset.sample = key;
+      document.querySelectorAll("#samplePicker button").forEach((btn) => {
+        btn.setAttribute("aria-pressed", String(btn.dataset.sample === key));
+      });
+      document.querySelectorAll("[data-bind]").forEach((el) => {
+        const field = el.getAttribute("data-bind");
+        if (field === "bullets") return;
+        if (el.tagName === "IMG") {
+          el.src = s[field] || s.img;
+          el.alt = s.title;
+        } else if (s[field] != null) {
+          el.textContent = s[field];
+        }
+      });
+    }
+
+    function updateBlurb() {
+      const layout = layouts[body.dataset.layout];
+      const themeNote = themes[body.dataset.theme];
+      blurb.innerHTML = `<strong>${layout.name}</strong> — ${layout.blurb} <span style="opacity:.85">Look: ${themeNote}</span>`;
+      legend.querySelectorAll("article").forEach((el) => {
+        el.dataset.active = String(el.dataset.layout === body.dataset.layout);
+      });
+    }
+
+    function renderLegend() {
+      legend.innerHTML = Object.entries(layouts)
+        .map(
+          ([key, L]) => `
+        <article data-layout="${key}" data-active="${key === body.dataset.layout}">
+          <h3>${L.name}</h3>
+          <p>${L.blurb} <em style="color:var(--foreground);font-style:normal">Best for: ${L.best}.</em></p>
+        </article>`
+        )
+        .join("");
+
+      legend.addEventListener("click", (e) => {
+        const article = e.target.closest("article[data-layout]");
+        if (!article) return;
+        setSeg("layoutSeg", "layout", article.dataset.layout);
+        updateBlurb();
+      });
+    }
+
+    document.getElementById("layoutSeg").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-layout]");
+      if (!btn) return;
+      setSeg("layoutSeg", "layout", btn.dataset.layout);
+      updateBlurb();
+    });
+
+    document.getElementById("themeSeg").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-theme]");
+      if (!btn) return;
+      setSeg("themeSeg", "theme", btn.dataset.theme);
+      updateBlurb();
+    });
+
+    document.getElementById("notesSeg").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-notes]");
+      if (!btn) return;
+      setSeg("notesSeg", "notes", btn.dataset.notes);
+    });
+
+    document.getElementById("samplePicker").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-sample]");
+      if (!btn) return;
+      applySample(btn.dataset.sample);
+    });
+
+    renderLegend();
+    applySample("outcome");
+    updateBlurb();
+  </script>
+</body>
+</html>
