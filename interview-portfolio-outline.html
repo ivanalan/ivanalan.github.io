@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#181818" />
+  <title>Alan Matias · Portfolio walkthrough outline (throwaway)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fustat:wght@400;500;600&family=Gentium+Book+Basic:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    /* Mirrors src/styles/global.css — Dark Anysphere palette + site type */
+    :root {
+      --background: oklch(18.561% 0.00161 197.742);
+      --secondary: oklch(24.705% 0.01511 285.224);
+      --muted: oklch(0.311 0 0);
+      --foreground: oklch(96.946% 0.00318 15.308);
+      --muted-foreground: oklch(76.092% 0.01027 273.305);
+      --border: oklch(0.919 0 0 / 7%);
+      --ring: oklch(0.638 0.177 252.2);
+      --radius: 0.625rem;
+      --font-heading: "Gentium Book Basic", ui-serif, Georgia, "Times New Roman", serif;
+      --font-sans: "Fustat", ui-sans-serif, system-ui, sans-serif;
+      --slide-pad: clamp(1.25rem, 3.5vw, 2.75rem);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: var(--background);
+      color: var(--foreground);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+      color-scheme: dark;
+    }
+
+    .deck {
+      height: 100%;
+      display: grid;
+      grid-template-rows: 1fr auto;
+    }
+
+    .stage {
+      position: relative;
+      overflow: hidden;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      grid-template-rows: 1fr auto;
+      background: var(--background);
+      min-height: 0;
+    }
+
+    .slide.active { display: grid; }
+
+    .slide-body {
+      min-height: 0;
+      overflow: auto;
+      padding: var(--slide-pad);
+      padding-bottom: 1rem;
+    }
+
+    .slide-body.center {
+      display: grid;
+      place-content: center;
+      text-align: center;
+    }
+
+    .slide-body.split {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: clamp(1rem, 3vw, 2.5rem);
+      align-items: center;
+    }
+
+    .slide-body.media-full {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 0.85rem;
+    }
+
+    h1, h2, h3 {
+      font-family: var(--font-heading);
+      font-weight: 400;
+      margin: 0 0 0.55rem;
+      line-height: 1.2;
+      color: var(--foreground);
+    }
+
+    h1 { font-size: clamp(1.85rem, 4vw, 2.85rem); }
+    h2 { font-size: clamp(1.45rem, 2.8vw, 2.1rem); }
+    h3 { font-size: clamp(1.05rem, 1.6vw, 1.25rem); }
+
+    p, li {
+      font-size: clamp(0.95rem, 1.35vw, 1.1rem);
+      line-height: 1.5;
+      color: var(--muted-foreground);
+    }
+
+    p { margin: 0 0 0.7rem; }
+
+    .lede {
+      font-size: clamp(1.05rem, 1.7vw, 1.25rem);
+      color: var(--muted-foreground);
+      max-width: 38rem;
+    }
+
+    .center .lede { margin-inline: auto; }
+
+    .kicker {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ring);
+      margin-bottom: 0.7rem;
+    }
+
+    .meta {
+      color: var(--muted-foreground);
+      font-size: 0.9rem;
+    }
+
+    ul {
+      margin: 0.35rem 0 0;
+      padding-left: 1.2rem;
+    }
+
+    li { margin-bottom: 0.4rem; }
+    li strong { color: var(--foreground); font-weight: 600; }
+
+    .pull {
+      font-family: var(--font-heading);
+      font-size: clamp(1.45rem, 3vw, 2.15rem);
+      line-height: 1.25;
+      max-width: 28ch;
+      color: var(--foreground);
+    }
+
+    .center .pull { margin-inline: auto; }
+
+    .stat-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-top: 1.1rem;
+    }
+
+    .stat {
+      background: var(--secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.8rem 0.95rem;
+      min-width: 8.5rem;
+    }
+
+    .stat strong {
+      display: block;
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      line-height: 1.1;
+      color: var(--foreground);
+      font-weight: 400;
+    }
+
+    .stat span {
+      color: var(--muted-foreground);
+      font-size: 0.8rem;
+    }
+
+    .decision {
+      display: grid;
+      gap: 0.65rem;
+      margin-top: 0.9rem;
+    }
+
+    .decision > div {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.85rem 0.95rem;
+      background: var(--secondary);
+    }
+
+    .decision label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted-foreground);
+      margin-bottom: 0.3rem;
+    }
+
+    .decision p { margin: 0; color: var(--muted-foreground); }
+    .decision p strong { color: var(--foreground); }
+
+    .decision .chose {
+      border-color: color-mix(in oklab, var(--ring) 35%, var(--border));
+      box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ring) 18%, transparent);
+    }
+
+    .decision .alt {
+      opacity: 0.92;
+    }
+
+    .media-frame {
+      background: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      align-self: stretch;
+      display: grid;
+      place-items: center;
+      min-height: 0;
+    }
+
+    .media-frame img,
+    .media-frame video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      max-height: min(52vh, 480px);
+      background: var(--muted);
+    }
+
+    .media-full .media-frame img,
+    .media-full .media-frame video {
+      max-height: min(44vh, 420px);
+    }
+
+    .caption {
+      font-size: 0.8rem;
+      color: var(--muted-foreground);
+      margin: 0;
+    }
+
+    .trio {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.6rem;
+      min-height: 0;
+    }
+
+    .trio figure { margin: 0; min-height: 0; }
+    .trio img {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) * 0.8);
+      background: var(--muted);
+      max-height: min(36vh, 280px);
+      object-fit: cover;
+      object-position: top;
+    }
+    .trio figcaption {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      margin-top: 0.3rem;
+    }
+
+    .time {
+      display: inline-block;
+      margin-left: 0.45rem;
+      padding: 0.12rem 0.45rem;
+      border-radius: 999px;
+      background: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted-foreground);
+      vertical-align: middle;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: calc(var(--radius) * 0.8);
+      background: var(--muted);
+      border: 1px solid var(--border);
+      color: var(--muted-foreground);
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin-bottom: 0.7rem;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 0.9rem;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.85rem 0.95rem;
+      background: var(--secondary);
+    }
+
+    .card h3 { margin-bottom: 0.35rem; }
+    .card p { margin: 0; }
+
+    /* Comments strip — facilitator only, not presentation content */
+    .comments {
+      border-top: 1px solid var(--border);
+      background: var(--secondary);
+      padding: 0.75rem var(--slide-pad) 0.9rem;
+      max-height: min(28vh, 220px);
+      overflow: auto;
+    }
+
+    .comments-label {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin: 0 0 0.4rem;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ring);
+    }
+
+    .comments-label::before {
+      content: "";
+      width: 0.4rem;
+      height: 0.4rem;
+      border-radius: 999px;
+      background: var(--ring);
+      flex-shrink: 0;
+    }
+
+    .comments ul {
+      margin: 0;
+      padding-left: 1.1rem;
+    }
+
+    .comments li {
+      font-size: 0.82rem;
+      line-height: 1.4;
+      color: var(--muted-foreground);
+      margin-bottom: 0.28rem;
+    }
+
+    .comments li:last-child { margin-bottom: 0; }
+    .comments li strong { color: var(--foreground); font-weight: 600; }
+
+    .chrome {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.6rem 1rem;
+      background: color-mix(in oklab, var(--background) 70%, black);
+      border-top: 1px solid var(--border);
+      color: var(--muted-foreground);
+      font-size: 0.8rem;
+    }
+
+    .chrome button {
+      appearance: none;
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) * 0.8);
+      background: var(--secondary);
+      color: var(--foreground);
+      padding: 0.35rem 0.7rem;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .chrome button:hover {
+      border-color: color-mix(in oklab, var(--ring) 40%, var(--border));
+    }
+
+    .chrome button:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+    }
+
+    .chrome #counter { color: var(--foreground); }
+    .chrome .hint { color: var(--muted-foreground); opacity: 0.8; }
+
+    @media (max-width: 860px) {
+      .slide-body.split { grid-template-columns: 1fr; }
+      .trio { grid-template-columns: 1fr; }
+      .two-col { grid-template-columns: 1fr; }
+      .comments { max-height: 32vh; }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck">
+    <div class="stage" id="stage">
+
+      <!-- ========== INTRO ========== -->
+      <section class="slide active" data-section="Intro">
+        <div class="slide-body center">
+          <div>
+            <p class="kicker">45–60 min portfolio walkthrough · lo-fi outline</p>
+            <h1>Alan Matias</h1>
+            <p class="lede">Product designer and engineer. I connect decisions to outcomes — especially when the problem is messy and the team is small.</p>
+            <p class="meta" style="margin-top:1.15rem">Qualtrics · Survey Builder (~250k MAU) → looking for ownership, faster iteration, data-driven product</p>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li><strong>Say (60–90 sec):</strong> CS background · ~3 years B2B · Qualtrics Survey Builder at scale · biggest win = guidance 10%→40% MAU · before that Ab Initio sole designer / PM-adjacent ownership.</li>
+            <li><strong>Close the intro on them:</strong> looking for faster iteration, smaller team, data-driven decisions — that’s why this role is interesting.</li>
+            <li>Don’t preview the whole portfolio yet. Land the human, then the agenda.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Intro">
+        <div class="slide-body">
+          <p class="kicker">Agenda <span class="time">~1 min</span></p>
+          <h2>Today’s story arc</h2>
+          <ul>
+            <li><strong>Guidance &amp; errors</strong> — Qualtrics · outcomes at scale (~22–25 min)</li>
+            <li><strong>Unified data platform</strong> — Ab Initio · shipping under ambiguity (~18–20 min)</li>
+            <li>Questions throughout — interrupt me anytime</li>
+          </ul>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li><strong>Promise a story, not a process tour:</strong> “Two projects where the outcome hinged on a small number of hard decisions.”</li>
+            <li>Invite interruptions now — panels will dive on decisions; don’t fight it.</li>
+            <li>If short on time later, cut Platform decisions 2–3 before cutting Guidance outcomes.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <!-- ========== PROJECT 1 ========== -->
+      <section class="slide" data-section="Guidance">
+        <div class="slide-body center">
+          <div>
+            <p class="kicker">Project 1 · Qualtrics · Survey Builder</p>
+            <h1 class="pull">You can build a survey that nobody finishes — and the product will still let you ship it.</h1>
+            <p class="lede" style="margin-top:1rem">That was the real problem. Not “improve Expert Review.”</p>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li><strong>Open on stakes:</strong> concrete scene — 10 open-text questions; past ~3, completion collapses.</li>
+            <li>Then name the feature: Expert Review scored surveys, but it didn’t reach builders.</li>
+            <li>Pause one beat before the outcome slide — let the problem land.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Guidance">
+        <div class="slide-body split">
+          <div>
+            <p class="kicker">Hook + outcome upfront <span class="time">90 sec</span></p>
+            <h2>From an opaque score nobody used…</h2>
+            <p class="lede">…to Errors / Warnings / Tips in context while you build.</p>
+            <div class="stat-row">
+              <div class="stat"><strong>10% → 40%</strong><span>MAU touching guidance</span></div>
+              <div class="stat"><strong>~30k → 200k</strong><span>events / month</span></div>
+              <div class="stat"><strong>1 pattern</strong><span>shared with Distributions</span></div>
+            </div>
+          </div>
+          <div class="media-frame">
+            <img src="public/media/work/survey-building-guidance/SidePanel1.png" alt="Issues and tips side panel in Survey Builder" />
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li><strong>Deliver problem + outcome in ~90 seconds</strong>, then earn the middle with decisions.</li>
+            <li>Point at the side panel: “in context while you edit” — contrast with the modal you’re about to show.</li>
+            <li>Verify Amplitude numbers before the interview if they’ve moved.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Guidance">
+        <div class="slide-body split">
+          <div>
+            <p class="kicker">Situation</p>
+            <h2>Expert Review lived in a modal</h2>
+            <ul>
+              <li>~20 checks → one “Great / Fair / Poor” score</li>
+              <li>~25 label combinations — hard to trust what “Fair” meant</li>
+              <li>Jump between advice and the canvas</li>
+              <li>~84–90% of builders never touched it</li>
+            </ul>
+          </div>
+          <div class="media-frame">
+            <img src="public/media/work/survey-building-guidance/ExpertReview.png" alt="Expert Review modal with Fair score" />
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Walk the modal: opaque score, long list, no canvas context.</li>
+            <li><strong>Extra beat if asked:</strong> score correlated with completion above 80%, then flattened; fixing issues often didn’t move the score — or jumped suddenly.</li>
+            <li>Bridge: “So I started with Amplitude, not a redesign.”</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Guidance">
+        <div class="slide-body split">
+          <div>
+            <p class="kicker">Evidence</p>
+            <h2>Amplitude made the trust problem visible</h2>
+            <ul>
+              <li>Low reach among active builders</li>
+              <li>Skewed score distribution (~15% of surveys stuck at 66%)</li>
+              <li>PSAT ~66%, ease-of-use as top negative driver</li>
+              <li>~$70–85k cost-to-serve tied to config / runtime issues</li>
+            </ul>
+          </div>
+          <div class="media-frame">
+            <img src="public/media/work/survey-building-guidance/amplitude2.png" alt="Amplitude analysis of Expert Review score vs completion" />
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li><strong>Frame as two problems in one feature:</strong> methodology “health” vs real config failures — one trustworthy system had to hold both.</li>
+            <li>Business language: PSAT + cost-to-serve, not only “users were confused.”</li>
+            <li>Ask was vague: improve feedback / catch broken surveys. You turned it into a framework problem.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Guidance">
+        <div class="slide-body">
+          <p class="kicker">Role &amp; constraints</p>
+          <h2>Vague ask. Clear job.</h2>
+          <div class="two-col">
+            <div class="card">
+              <h3>My role</h3>
+              <p>Designer owning the framework + interaction direction. PM on leave early on. Partnered with research later. Designer-owned UI implementation at the end.</p>
+            </div>
+            <div class="card">
+              <h3>Constraints</h3>
+              <p>Scale (expensive to unwind a pattern). Existing Expert Review metrics. Org appetite for blocking publish. Need something AI could inherit later.</p>
+            </div>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li><strong>Task line:</strong> “Improve Expert Review with a simple, scalable framework — raise usage and PSAT.”</li>
+            <li>Own the ambiguity: PM leave meant you drove framing, then re-synced when PM returned.</li>
+            <li>Plant the AI seed lightly — you’ll close the loop on results.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Guidance">
+        <div class="slide-body">
+          <p class="kicker">Decision 1 of 3 <span class="time">5–8 min</span></p>
+          <h2>Stop scoring. Start categorizing.</h2>
+          <div class="decision">
+            <div class="chose">
+              <label>Chose</label>
+              <p><strong>Error / Warning / Tip</strong> — clear rules for ~60 cases. Errors block collection; Warnings compromise; Tips improve.</p>
+            </div>
+            <div class="alt">
+              <label>Rejected</label>
+              <p>Add more metrics / tweak the health score. Wouldn’t fix trust — just more opaque math.</p>
+            </div>
+            <div>
+              <label>Tradeoff</label>
+              <p>A full quarter aligning severity (esp. Invalid Display Logic as Error vs Warning). Framework was the bottleneck; UI was comparatively easy.</p>
+            </div>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Spend time here — this is the core of the project, not the panel chrome.</li>
+            <li><strong>Stakeholder conflict ready:</strong> Eng = Invalid Logic must be Error (API). PM = don’t block publish for existing users. Options: Error-not-blocking (dilutes), Warning (UI cost).</li>
+            <li>Honest reverse later: should have co-designed categories with eng from day one.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Guidance">
+        <div class="slide-body">
+          <p class="kicker">Plot twist · research</p>
+          <h2>“Will users accept being blocked by errors?”</h2>
+          <p class="lede">They wouldn’t ship an untakeable survey — but they still hesitated to be blocked from <em>Publish</em>.</p>
+          <ul>
+            <li>Publish ≠ final send. Often “save a version in history.”</li>
+            <li>Autosave existed; Publish still carried meaning.</li>
+            <li><strong>Update:</strong> platform wasn’t ready to block publish until save/publish decoupled → most issues stayed Warnings.</li>
+          </ul>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Lead with the surprise — don’t bury it under “we ran a study.”</li>
+            <li>Name the research question out loud; say you partnered with a researcher to prioritize questions.</li>
+            <li>Show judgment: evidence changed the framework, not just the UI.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Guidance">
+        <div class="slide-body media-full">
+          <div>
+            <p class="kicker">Decision 2 of 3</p>
+            <h2>Guidance had to live next to the work</h2>
+            <div class="decision" style="max-width:52rem">
+              <div class="chose"><label>Chose</label><p><strong>Right-hand side panel</strong> — see the issue and edit the question together.</p></div>
+              <div class="alt"><label>Also tested</label><p>Modal (status quo), left pane, inline feedback (preferred by some, distracting for power users).</p></div>
+            </div>
+          </div>
+          <div class="media-frame">
+            <img src="public/media/work/survey-building-guidance/PrototypeOptions.png" alt="Three interaction concepts: modal, left pane, right panel" />
+          </div>
+          <p class="caption">Three concepts. Right panel won for in-context building without leaving the canvas.</p>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>At Qualtrics scale, shipping a pattern once is expensive to unwind — interaction research was risk management.</li>
+            <li><strong>Inline vs panel:</strong> people preferred inline, but it distracted power users → panel was the tradeoff.</li>
+            <li>Gesture at the three concepts; don’t pixel-tour them.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Guidance">
+        <div class="slide-body split">
+          <div>
+            <p class="kicker">Decision 3 of 3 · how I validated</p>
+            <h2>Figma was too slow for the real interaction fights</h2>
+            <ul>
+              <li>Sticky headers, accordion exclusivity, scroll/highlight sync</li>
+              <li>IA: expand-in-place vs detail pages</li>
+              <li>Code prototype on a real Survey Builder branch → expand-in-place felt faster with real data</li>
+            </ul>
+          </div>
+          <div class="media-frame">
+            <video controls playsinline poster="public/media/work/survey-building-guidance/prototype-ia-poster.webp" src="public/media/work/survey-building-guidance/prototype-ia.mp4"></video>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li><strong>Line to say:</strong> “In Figma, detail pages looked cleaner. In the product with real data, they felt clunky.”</li>
+            <li>Signal designer-who-ships without turning the talk into a tools demo — play 5–8 sec of the video max.</li>
+            <li>If asked about AI: used Cursor to explore interactions after the problem was clear.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Guidance">
+        <div class="slide-body split">
+          <div>
+            <p class="kicker">Collaboration · design system</p>
+            <h2>Same problem, different product → one pattern</h2>
+            <ul>
+              <li>Distributions: emails going to spam</li>
+              <li>We shared underlying issues → expandable-card side panel</li>
+              <li>Design systems as bottom-up: teams solving real problems find each other</li>
+            </ul>
+          </div>
+          <div class="media-frame">
+            <img src="public/media/work/survey-building-guidance/emailSidePanel2.png" alt="Communications email guidance side panel" />
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Emphasize collaboration, not ownership theater — another designer reached out; you converged.</li>
+            <li>Point: pattern that fits two products is the first step toward a guidance layer across Qualtrics.</li>
+            <li>Good answer fuel for “how do you work cross-team?”</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Guidance">
+        <div class="slide-body split">
+          <div>
+            <p class="kicker">How it shipped</p>
+            <h2>I owned the UI pass in the SDLC</h2>
+            <ul>
+              <li>Eng: backend + base interactions</li>
+              <li>Me: accordion behavior, layout, flattening nested IA</li>
+              <li>Copy as design: Flag → Impact → Action (3 sentences)</li>
+            </ul>
+          </div>
+          <div class="media-frame">
+            <img src="public/media/work/survey-building-guidance/jiramerge.png" alt="Jira showing designer-owned implementation merge" />
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Contrast classic loop (spec → eng → pixel review) vs owning the polish pass.</li>
+            <li><strong>If they ask what’s design-owned:</strong> Invalid Display Logic before/after copy (Flag / Impact / Action).</li>
+            <li>Keep handoff philosophy ready: handoff starts at project start via frequent shares.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Guidance">
+        <div class="slide-body">
+          <p class="kicker">Results</p>
+          <h2>What changed</h2>
+          <div class="stat-row">
+            <div class="stat"><strong>10% → 40%</strong><span>MAU on guidance</span></div>
+            <div class="stat"><strong>Shared pattern</strong><span>Survey Builder + Distributions</span></div>
+            <div class="stat"><strong>AI-ready</strong><span>Error/Warning/Tip harness + panel</span></div>
+          </div>
+          <div class="two-col" style="margin-top:1.15rem">
+            <div class="card">
+              <h3>What I’d reverse</h3>
+              <p>Build this as guardrails inside an AI survey-building agent / AI side panel — not a separate classic guidance panel.</p>
+            </div>
+            <div class="card">
+              <h3>What I’d change in process</h3>
+              <p>Co-design the framework with eng from day one — not deliver a finished taxonomy for review.</p>
+            </div>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Close the loop to the opening outcome numbers — don’t invent new claims.</li>
+            <li>One honest reverse is enough; don’t stack self-critique.</li>
+            <li><strong>Bridge:</strong> “That’s scale in a big org. Next is the opposite — sole designer, six months, no research.”</li>
+          </ul>
+        </aside>
+      </section>
+
+      <!-- ========== PROJECT 2 ========== -->
+      <section class="slide" data-section="Platform">
+        <div class="slide-body center">
+          <div>
+            <p class="kicker">Project 2 · Ab Initio</p>
+            <h1 class="pull">We lost a deal on UX. Leadership finally put experience first.</h1>
+            <p class="lede" style="margin-top:1rem">Same company that sold on technical prestige. Different mandate overnight.</p>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Open on stakes + irony — not “three products in the suite.”</li>
+            <li>Set role fast: sole designer, eng-heavy org just starting to invest in UX/PM.</li>
+            <li>One breath, then outcome slide.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Platform">
+        <div class="slide-body split">
+          <div>
+            <p class="kicker">Outcome upfront <span class="time">90 sec</span></p>
+            <h2>One platform. Six months. On time.</h2>
+            <div class="stat-row">
+              <div class="stat"><strong>3 → 1</strong><span>products in the workflow</span></div>
+              <div class="stat"><strong>6 months</strong><span>shipped for Crédit Agricole</span></div>
+              <div class="stat"><strong>Vision + MVP</strong><span>curated, persona-based nav</span></div>
+            </div>
+            <p class="meta" style="margin-top:1rem">Sole designer · 1 PM · 2 dev leads · ~15 developers</p>
+          </div>
+          <div class="media-frame">
+            <img src="public/media/work/ab-initio-data-platform/redesign-overview.png" alt="Unified data platform overview" />
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Again: outcome early, then unpack how.</li>
+            <li><strong>Say the principles:</strong> Unified · Curated · Consistent — then show why the old world failed them.</li>
+            <li>Name the customer release (Crédit Agricole) to make the deadline real.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Platform">
+        <div class="slide-body media-full">
+          <div>
+            <p class="kicker">Situation</p>
+            <h2>One job. Three products. Three mental models.</h2>
+            <p class="lede">Find raw data → transform → schedule refresh. Every handoff lost context.</p>
+          </div>
+          <div class="trio">
+            <figure>
+              <img src="public/media/work/ab-initio-data-platform/MetadataPortal.png" alt="Metadata Portal" />
+              <figcaption>Metadata&gt;Portal — find</figcaption>
+            </figure>
+            <figure>
+              <img src="public/media/work/ab-initio-data-platform/ExpressIt.png" alt="Express It" />
+              <figcaption>Express&gt;It — transform</figcaption>
+            </figure>
+            <figure>
+              <img src="public/media/work/ab-initio-data-platform/ControlCenter.png" alt="Control Center" />
+              <figcaption>Control&gt;Center — schedule</figcaption>
+            </figure>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Sweep left→right: find, transform, schedule. Emphasize context loss at each handoff.</li>
+            <li>Add: packed with features most users never touched; no formal DS → three UIs.</li>
+            <li>Don’t linger on screenshots — they’re proof of fragmentation, not a product tour.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Platform">
+        <div class="slide-body">
+          <p class="kicker">Task</p>
+          <h2>MVP for one bank. Vision for three years.</h2>
+          <div class="two-col">
+            <div class="card">
+              <h3>My job</h3>
+              <p>Own the MVP experience for Crédit Agricole: turn PM’s multi-year vision into concrete flows we could debate against a hard deadline.</p>
+            </div>
+            <div class="card">
+              <h3>Eng’s job</h3>
+              <p>Technical feasibility. Weekly working group of ~15 — timeboxed agendas, lower-fi when talks drifted into implementation.</p>
+            </div>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li><strong>Reviews forced scope, not pixels:</strong> What core workflow? Which pieces must transfer? How bespoke vs general vision?</li>
+            <li>Your value: interpolating between 3-year vision and shippable MVP.</li>
+            <li>Good “how do you work with PMs?” material.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Platform">
+        <div class="slide-body split">
+          <div>
+            <p class="kicker">Decision 1 of 3</p>
+            <h2>Wrangling-first — not a Frankenstein</h2>
+            <div class="decision">
+              <div class="chose">
+                <label>Chose</label>
+                <p><strong>Find → transform → schedule</strong> as the MVP spine. Admin, approvals, org scale stayed on the longer vision.</p>
+              </div>
+              <div class="alt">
+                <label>Rejected</label>
+                <p>Port every feature from three products into one shell. Looks “complete,” ships late, still incoherent.</p>
+              </div>
+              <div>
+                <label>Tradeoff</label>
+                <p>Said no to a lot of “but we already have that.” Curated beat comprehensive for a six-month release.</p>
+              </div>
+            </div>
+          </div>
+          <div class="media-frame">
+            <img src="public/media/work/ab-initio-data-platform/lofi-wireframes.png" alt="Early wireframes for unified platform home" />
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>This is the business/user balance story: shipping late for unused features helps no one.</li>
+            <li>Reference lo-fi: aligning on what “unified” meant for MVP, not full vision.</li>
+            <li>If pressed on cut scope: admin / approvals / large-org scale stayed on the longer roadmap.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Platform">
+        <div class="slide-body split">
+          <div>
+            <p class="kicker">Working without research</p>
+            <h2>Make the evidence gap visible</h2>
+            <ul>
+              <li>No user data / formal research — UX was a new investment</li>
+              <li>Read docs, met other teams, frequent 1:1s with PM + eng leads</li>
+              <li>Wrote research questions + assumptions so debates weren’t circular</li>
+            </ul>
+          </div>
+          <div class="media-frame">
+            <video controls playsinline poster="public/media/work/ab-initio-data-platform/assumptions-doc-poster.webp" src="public/media/work/ab-initio-data-platform/assumptions-doc.mp4"></video>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li><strong>Strength story:</strong> scrappy under ambiguity — without pretending research existed.</li>
+            <li>Writing assumptions down made the gap a shared artifact, not a recurring fight.</li>
+            <li>Pair later with growth area (product analytics) if they ask strengths/weaknesses.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Platform">
+        <div class="slide-body split">
+          <div>
+            <p class="kicker">Decision 2 of 3 · design system</p>
+            <h2>Consistency with a bad pattern isn’t worth it</h2>
+            <div class="decision">
+              <div class="chose">
+                <label>Chose</label>
+                <p><strong>QuickLook side panel</strong> for preview + context — better model for this product.</p>
+              </div>
+              <div class="alt">
+                <label>Rejected (initially tempting)</label>
+                <p>Reuse the legacy bottom-sheet inspect pattern for “consistency.”</p>
+              </div>
+              <div>
+                <label>Tradeoff</label>
+                <p>Short-term visual inconsistency across products. Long-term candidate for the emerging design system.</p>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="media-frame" style="margin-bottom:0.55rem">
+              <img src="public/media/work/ab-initio-data-platform/bottom-sheet.png" alt="Legacy bottom sheet pattern" />
+            </div>
+            <p class="caption">Legacy bottom sheet →</p>
+            <div class="media-frame">
+              <img src="public/media/work/ab-initio-data-platform/side-panel.png" alt="QuickLook side panel" />
+            </div>
+            <p class="caption">QuickLook side panel</p>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>This is your DS depth slide — expand with extra Figma frames if interviewers lean systems.</li>
+            <li><strong>Line:</strong> “Consistency with a weak pattern wasn’t worth it.”</li>
+            <li>Connect to Guidance: you’ve shipped side-panel patterns in two very different orgs.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Platform">
+        <div class="slide-body split">
+          <div>
+            <p class="kicker">Decision 3 of 3 · collaboration</p>
+            <h2>Translate vision into flows people can fight about</h2>
+            <ul>
+              <li>PM owned 2–3 year direction</li>
+              <li>I turned direction into concrete flows vs MVP deadline</li>
+              <li>Weekly working group: stay on the decision, not the pixel</li>
+            </ul>
+          </div>
+          <div class="media-frame">
+            <img src="public/media/work/ab-initio-data-platform/user-flow.png" alt="Low-fidelity user flow for data wrangling" />
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Show the flow artifact: higher level when you need feedback on structure, not screens.</li>
+            <li><strong>Trio habits:</strong> light continuous updates; ask PM for metrics when undefined; ask eng feasibility early.</li>
+            <li>Timeboxed agendas when ~15 people drift into implementation detail.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Platform">
+        <div class="slide-body">
+          <p class="kicker">Results</p>
+          <h2>Shipped. Unified. Set the longer trail.</h2>
+          <div class="stat-row">
+            <div class="stat"><strong>On time</strong><span>CAI release in 6 months</span></div>
+            <div class="stat"><strong>Unified</strong><span>3-product workflow → 1 platform</span></div>
+            <div class="stat"><strong>North star</strong><span>curated, persona-based nav</span></div>
+          </div>
+          <div class="card" style="margin-top:1.15rem; max-width:40rem">
+            <h3>What I’d reverse</h3>
+            <p>Bring the customer into initial scoping — not only milestone reviews. I had a TAM close to them; I treated the customer as a consumer of the MVP instead of a co-author of requirements.</p>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Keep the reverse specific and short — one pattern you’re changing.</li>
+            <li>If they ask “advocate for the user”: TAM existed; norms around customer engagement made you too cautious.</li>
+            <li>Optional bridge to close: through-line of outcomes + decisions under constraint.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <!-- ========== CLOSE ========== -->
+      <section class="slide" data-section="Close">
+        <div class="slide-body">
+          <p class="kicker">Through-line</p>
+          <h2>How I work, compressed</h2>
+          <div class="two-col">
+            <div class="card">
+              <h3>Outcomes</h3>
+              <p>Baseline → change. Usage, completion, time-to-value when we can instrument.</p>
+            </div>
+            <div class="card">
+              <h3>Decisions</h3>
+              <p>Name the alternative and the tradeoff out loud. That’s the interview.</p>
+            </div>
+            <div class="card">
+              <h3>Ambiguity</h3>
+              <p>Write assumptions down. Force scope early. Stay scrappy without pretending research existed.</p>
+            </div>
+            <div class="card">
+              <h3>Builder</h3>
+              <p>Design thinking first; code when fidelity or handoff needs it.</p>
+            </div>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>This is a summary, not a new case — keep it under 2 minutes.</li>
+            <li><strong>Backup offline:</strong> Decision Flows (sole designer, eng-first 15-page doc → PlayStation interest; funding cut). Only if they ask for a third.</li>
+            <li>Invite their questions, or offer 2–3 of yours next.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Close">
+        <div class="slide-body center">
+          <div>
+            <p class="kicker">Questions for them · pick 2–3</p>
+            <h2>How does design actually operate here?</h2>
+            <ul style="text-align:left; display:inline-block">
+              <li>Who owns problem framing vs. solution quality in the product trio?</li>
+              <li>What gets researched vs. shipped with lighter validation?</li>
+              <li>How does critique work — and how do designers incorporate it?</li>
+              <li>What makes someone thrive vs. struggle on this team?</li>
+            </ul>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Pick 2–3 max. Prefer questions that reveal how design actually operates.</li>
+            <li><strong>End:</strong> thank them; offer to go deeper on AI tooling, a11y via DS, or Decision Flows.</li>
+            <li>Salary if early screen: focused on fit; happy to sync bands later — ask for their range.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="Close">
+        <div class="slide-body">
+          <span class="badge">Facilitator only — don’t present</span>
+          <p class="kicker">Storycraft checklist</p>
+          <h2>Before you rebuild this in Figma</h2>
+          <ul>
+            <li><strong>Hook → stakes → outcome early → 2–3 decisions → result → one honest reverse</strong></li>
+            <li>One idea per slide; talking points stay in comments / speaker notes</li>
+            <li>Decision slides always show: chose / rejected / tradeoff</li>
+            <li>Prefer concrete scenes (“10 open texts”) over process nouns (“ideation”)</li>
+            <li>Warmth &gt; jokes: make complicated feel simple; surprise beats status reports</li>
+            <li>Protect time for interruption — panels will dive on decisions</li>
+            <li>Target ~12–14 Figma slides for Guidance, ~10–12 for Platform</li>
+          </ul>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>This slide is for you only — skip in the interview.</li>
+            <li>When porting to Figma: slide body = what they see; these comments = speaker notes.</li>
+            <li>Rehearse aloud timed; cut Platform depth before Guidance outcomes if over time.</li>
+          </ul>
+        </aside>
+      </section>
+
+    </div>
+
+    <div class="chrome">
+      <div>
+        <button type="button" id="prev" aria-label="Previous slide">← Prev</button>
+        <button type="button" id="next" aria-label="Next slide">Next →</button>
+      </div>
+      <div id="counter" aria-live="polite">1 / 1</div>
+      <div class="hint">← → · comments = what to say · body = what they see</div>
+    </div>
+  </div>
+
+  <script>
+    const slides = [...document.querySelectorAll(".slide")];
+    const counter = document.getElementById("counter");
+    const prevBtn = document.getElementById("prev");
+    const nextBtn = document.getElementById("next");
+    let i = 0;
+
+    function show(n) {
+      i = Math.max(0, Math.min(slides.length - 1, n));
+      slides.forEach((s, idx) => s.classList.toggle("active", idx === i));
+      const section = slides[i].dataset.section || "";
+      counter.textContent = `${i + 1} / ${slides.length} · ${section}`;
+      history.replaceState(null, "", `#${i + 1}`);
+    }
+
+    prevBtn.addEventListener("click", () => show(i - 1));
+    nextBtn.addEventListener("click", () => show(i + 1));
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+        e.preventDefault();
+        show(i + 1);
+      } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+        e.preventDefault();
+        show(i - 1);
+      } else if (e.key === "Home") {
+        show(0);
+      } else if (e.key === "End") {
+        show(slides.length - 1);
+      }
+    });
+
+    document.getElementById("stage").addEventListener("click", (e) => {
+      if (e.target.closest("a, button, video, .comments")) return;
+      const mid = e.currentTarget.getBoundingClientRect().width / 2;
+      show(e.clientX < mid ? i - 1 : i + 1);
+    });
+
+    const fromHash = parseInt(location.hash.replace("#", ""), 10);
+    show(Number.isFinite(fromHash) && fromHash > 0 ? fromHash - 1 : 0);
+  </script>
+</body>
+</html>
