@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Click-zoom + pan — control iterations</title>
+  <style>
+    :root {
+      --bg: #f4f2ee;
+      --ink: #1a1917;
+      --muted: #6b6660;
+      --panel: #fff;
+      --line: #e4e0d8;
+      --accent: #0f766e;
+      --overlay: rgba(0, 0, 0, 0.72);
+      --radius: 12px;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse 80% 50% at 10% -10%, #e8efe8 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 100% 0%, #efe8e0 0%, transparent 50%),
+        var(--bg);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 52rem;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 4rem;
+    }
+
+    h1 {
+      font-size: clamp(1.75rem, 4vw, 2.4rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.5rem;
+    }
+
+    .lede {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 42rem;
+      margin: 0 0 2rem;
+    }
+
+    .demo {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .demo-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.5rem 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .demo h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+
+    .badge {
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 12%, white);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .notes {
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 0 0 1rem;
+    }
+
+    .notes strong { color: var(--ink); font-weight: 600; }
+
+    .thumb {
+      display: block;
+      width: 100%;
+      max-width: 28rem;
+      margin: 0;
+      padding: 0;
+      border: none;
+      border-radius: var(--radius);
+      background: #0f766e;
+      cursor: zoom-in;
+      overflow: hidden;
+    }
+
+    .thumb img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* —— Lightbox —— */
+    .lb {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      background: var(--overlay);
+      backdrop-filter: blur(4px);
+    }
+
+    .lb.open { display: flex; }
+
+    .lb-panel {
+      position: relative;
+      background: var(--panel);
+      border-radius: var(--radius);
+      padding: 0.75rem;
+      width: min(90vw, 72rem);
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+    }
+
+    .lb-close {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      z-index: 6;
+      width: 2rem;
+      height: 2rem;
+      border: none;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.55);
+      color: #fff;
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .lb-close:hover { background: rgba(0, 0, 0, 0.75); }
+
+    .lb-caption {
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 0;
+      padding: 0 0.25rem;
+    }
+
+    .lb-hint {
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin: 0;
+      padding: 0 0.25rem 0.15rem;
+    }
+
+    .viewer {
+      position: relative;
+      display: grid;
+      gap: 0.6rem;
+    }
+
+    .frame {
+      position: relative;
+      background: #0f766e;
+      border-radius: calc(var(--radius) - 2px);
+      height: min(72vh, 820px);
+      overflow: hidden;
+      touch-action: none;
+      cursor: zoom-in;
+    }
+
+    .lb.zoomed .frame { cursor: grab; }
+    .lb.zoomed .frame.dragging { cursor: grabbing; }
+
+    .zoom-stage {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform-origin: 0 0;
+      will-change: transform;
+      transition: transform 0.28s var(--ease);
+    }
+
+    .zoom-stage.no-anim { transition: none; }
+
+    .zoom-stage img {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      user-select: none;
+      -webkit-user-drag: none;
+      pointer-events: none;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem 0.75rem;
+      font-family: ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.8rem;
+      color: var(--ink);
+      padding: 0 0.15rem;
+    }
+
+    .toolbar .group {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .toolbar button,
+    .chip {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 0.35rem 0.55rem;
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .toolbar button:hover,
+    .chip:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+
+    .toolbar button:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    .chip.active {
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 12%, white);
+      color: var(--accent);
+    }
+
+    .zoom-readout {
+      min-width: 3.2rem;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .slider {
+      width: 8rem;
+      accent-color: var(--accent);
+    }
+
+    /* Minimap */
+    .minimap {
+      position: absolute;
+      right: 0.65rem;
+      bottom: 0.65rem;
+      z-index: 4;
+      width: 7.5rem;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+      background: #0a5c56;
+      cursor: pointer;
+      touch-action: none;
+      display: none;
+    }
+
+    .lb.zoomed .minimap.show-when-zoomed,
+    .minimap.always { display: block; }
+
+    .minimap img {
+      display: block;
+      width: 100%;
+      height: auto;
+      opacity: 0.92;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .minimap-viewport {
+      position: absolute;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+      background: rgba(255, 255, 255, 0.18);
+      pointer-events: none;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 9.5rem;
+      gap: 0.6rem;
+      align-items: stretch;
+    }
+
+    @media (max-width: 720px) {
+      .split { grid-template-columns: 1fr; }
+      .side-preview { order: -1; max-width: 10rem; }
+    }
+
+    .side-preview {
+      position: relative;
+      border-radius: calc(var(--radius) - 2px);
+      overflow: hidden;
+      background: #0a5c56;
+      border: 1px solid var(--line);
+      align-self: start;
+      cursor: pointer;
+      touch-action: none;
+    }
+
+    .side-preview img {
+      display: block;
+      width: 100%;
+      height: auto;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .side-preview .minimap-viewport {
+      border-width: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Click-zoom + pan — controls</h1>
+    <p class="lede">
+      Iterations on pattern B (click to zoom at cursor, drag to pan).
+      Adds variable zoom levels and preview / minimap options.
+      Same Interdía screenshot throughout.
+    </p>
+
+    <section class="demo">
+      <div class="demo-header">
+        <h2>B0. Baseline</h2>
+        <span class="badge">Your pick</span>
+      </div>
+      <p class="notes">
+        <strong>How:</strong> Click zooms to 2.25× at cursor; drag pans; click resets.
+        No extra chrome — control reference.
+      </p>
+      <button type="button" class="thumb" data-open="b0" aria-label="Open baseline B">
+        <img src="media/side-projects/guardias/app-screens.png" alt="Interdía app screens" />
+      </button>
+    </section>
+
+    <section class="demo">
+      <div class="demo-header">
+        <h2>B1. Zoom steps (− / +)</h2>
+      </div>
+      <p class="notes">
+        <strong>How:</strong> Same click/pan, plus toolbar buttons for 1× · 1.5× · 2× · 3× and − / +.
+        Click still zooms toward the pointer if you’re at 1×.
+      </p>
+      <button type="button" class="thumb" data-open="b1" aria-label="Open zoom steps">
+        <img src="media/side-projects/guardias/app-screens.png" alt="Interdía app screens" />
+      </button>
+    </section>
+
+    <section class="demo">
+      <div class="demo-header">
+        <h2>B2. Continuous slider</h2>
+      </div>
+      <p class="notes">
+        <strong>How:</strong> Slider from 1×–4×; zoom keeps the current center (or last click focus).
+        Drag to pan while zoomed; Fit resets.
+      </p>
+      <button type="button" class="thumb" data-open="b2" aria-label="Open zoom slider">
+        <img src="media/side-projects/guardias/app-screens.png" alt="Interdía app screens" />
+      </button>
+    </section>
+
+    <section class="demo">
+      <div class="demo-header">
+        <h2>B3. Corner minimap preview</h2>
+      </div>
+      <p class="notes">
+        <strong>How:</strong> When zoomed, a small overview appears in the corner with a viewport rectangle.
+        Drag the minimap (or click it) to jump; main view still click-zooms and pans.
+      </p>
+      <button type="button" class="thumb" data-open="b3" aria-label="Open corner minimap">
+        <img src="media/side-projects/guardias/app-screens.png" alt="Interdía app screens" />
+      </button>
+    </section>
+
+    <section class="demo">
+      <div class="demo-header">
+        <h2>B4. Side preview + zoom chips</h2>
+      </div>
+      <p class="notes">
+        <strong>How:</strong> Persistent side overview (always visible) + 1× / 2× / 3× chips.
+        Click overview to pan the main view; click main image to zoom toward cursor.
+      </p>
+      <button type="button" class="thumb" data-open="b4" aria-label="Open side preview">
+        <img src="media/side-projects/guardias/app-screens.png" alt="Interdía app screens" />
+      </button>
+    </section>
+
+    <section class="demo">
+      <div class="demo-header">
+        <h2>B5. Kitchen sink</h2>
+        <span class="badge">Full</span>
+      </div>
+      <p class="notes">
+        <strong>How:</strong> Slider + −/+ + Fit + corner minimap.
+        Most control; densest chrome — useful to see where “too much” starts.
+      </p>
+      <button type="button" class="thumb" data-open="b5" aria-label="Open kitchen sink">
+        <img src="media/side-projects/guardias/app-screens.png" alt="Interdía app screens" />
+      </button>
+    </section>
+  </div>
+
+  <!-- Lightboxes injected by script for DRY structure -->
+  <template id="lb-template">
+    <div class="lb" role="dialog" aria-modal="true" hidden>
+      <div class="lb-panel">
+        <button type="button" class="lb-close" data-close aria-label="Close">×</button>
+        <div class="toolbar" data-toolbar></div>
+        <div class="viewer" data-viewer>
+          <div class="frame" data-frame>
+            <div class="zoom-stage" data-stage>
+              <img src="media/side-projects/guardias/app-screens.png" alt="" />
+            </div>
+            <div class="minimap show-when-zoomed" data-minimap hidden>
+              <img src="media/side-projects/guardias/app-screens.png" alt="" />
+              <div class="minimap-viewport" data-mini-vp></div>
+            </div>
+          </div>
+        </div>
+        <p class="lb-caption" data-caption></p>
+        <p class="lb-hint" data-hint></p>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const IMG = "media/side-projects/guardias/app-screens.png";
+    const DRAG_THRESHOLD = 5;
+
+    const PROTOS = {
+      b0: {
+        title: "B0 · Baseline — click zoom, drag pan, click reset",
+        hint: "Esc closes · no extra controls",
+        features: { steps: false, slider: false, minimap: false, side: false, fit: false },
+        defaultScale: 2.25,
+        maxScale: 2.25,
+      },
+      b1: {
+        title: "B1 · Zoom steps — chips and − / +",
+        hint: "Esc closes · click image at 1× to zoom toward cursor",
+        features: { steps: true, slider: false, minimap: false, side: false, fit: true },
+        steps: [1, 1.5, 2, 3],
+        defaultScale: 2,
+        maxScale: 3,
+      },
+      b2: {
+        title: "B2 · Continuous slider 1×–4×",
+        hint: "Esc closes · Fit resets · drag to pan when zoomed",
+        features: { steps: false, slider: true, minimap: false, side: false, fit: true },
+        defaultScale: 2,
+        maxScale: 4,
+      },
+      b3: {
+        title: "B3 · Corner minimap — drag/click overview to jump",
+        hint: "Esc closes · minimap appears when zoomed",
+        features: { steps: false, slider: false, minimap: true, side: false, fit: true },
+        defaultScale: 2.25,
+        maxScale: 3,
+      },
+      b4: {
+        title: "B4 · Side preview + zoom chips",
+        hint: "Esc closes · click side preview to pan",
+        features: { steps: true, slider: false, minimap: false, side: true, fit: true },
+        steps: [1, 2, 3],
+        defaultScale: 2,
+        maxScale: 3,
+      },
+      b5: {
+        title: "B5 · Kitchen sink — slider, buttons, minimap",
+        hint: "Esc closes · densest chrome",
+        features: { steps: true, slider: true, minimap: true, side: false, fit: true },
+        steps: [1, 1.5, 2, 3, 4],
+        defaultScale: 2,
+        maxScale: 4,
+      },
+    };
+
+    const states = {};
+    let active = null;
+
+    function createLightbox(id) {
+      const cfg = PROTOS[id];
+      const node = document.getElementById("lb-template").content.firstElementChild.cloneNode(true);
+      node.id = "lb-" + id;
+      node.querySelector("[data-caption]").textContent = cfg.title;
+      node.querySelector("[data-hint]").textContent = cfg.hint;
+      node.querySelector("[data-caption]").id = "cap-" + id;
+      node.setAttribute("aria-labelledby", "cap-" + id);
+
+      const toolbar = node.querySelector("[data-toolbar]");
+      const viewer = node.querySelector("[data-viewer]");
+      const frame = node.querySelector("[data-frame]");
+      const minimap = node.querySelector("[data-minimap]");
+
+      if (!cfg.features.steps && !cfg.features.slider && !cfg.features.fit) {
+        toolbar.remove();
+      } else {
+        let html = "";
+        if (cfg.features.fit) {
+          html += `<div class="group"><button type="button" data-act="fit">Fit</button></div>`;
+        }
+        if (cfg.features.steps) {
+          html += `<div class="group" data-steps>`;
+          html += `<button type="button" data-act="minus" aria-label="Zoom out">−</button>`;
+          (cfg.steps || []).forEach((s) => {
+            html += `<button type="button" class="chip" data-act="step" data-scale="${s}">${formatZoom(s)}</button>`;
+          });
+          html += `<button type="button" data-act="plus" aria-label="Zoom in">+</button>`;
+          html += `</div>`;
+        }
+        if (cfg.features.slider) {
+          html += `<div class="group">
+            <span class="zoom-readout" data-readout>100%</span>
+            <input class="slider" type="range" min="1" max="${cfg.maxScale}" step="0.05" value="1" data-slider aria-label="Zoom level" />
+          </div>`;
+        }
+        toolbar.innerHTML = html;
+      }
+
+      if (cfg.features.side) {
+        viewer.classList.add("split");
+        const side = document.createElement("div");
+        side.className = "side-preview";
+        side.dataset.side = "";
+        side.innerHTML = `<img src="${IMG}" alt="" /><div class="minimap-viewport" data-side-vp></div>`;
+        viewer.appendChild(side);
+      }
+
+      if (cfg.features.minimap) {
+        minimap.hidden = false;
+        minimap.classList.add("show-when-zoomed");
+      } else {
+        minimap.remove();
+      }
+
+      document.body.appendChild(node);
+      return node;
+    }
+
+    function formatZoom(s) {
+      if (Number.isInteger(s)) return s + "×";
+      return s.toFixed(1).replace(/\.0$/, "") + "×";
+    }
+
+    Object.keys(PROTOS).forEach(createLightbox);
+
+    function parts(id) {
+      const lb = document.getElementById("lb-" + id);
+      return {
+        lb,
+        frame: lb.querySelector("[data-frame]"),
+        stage: lb.querySelector("[data-stage]"),
+        img: lb.querySelector("[data-stage] img"),
+        minimap: lb.querySelector("[data-minimap]"),
+        miniVp: lb.querySelector("[data-mini-vp]"),
+        side: lb.querySelector("[data-side]"),
+        sideVp: lb.querySelector("[data-side-vp]"),
+        slider: lb.querySelector("[data-slider]"),
+        readout: lb.querySelector("[data-readout]"),
+        chips: [...lb.querySelectorAll("[data-act='step']")],
+      };
+    }
+
+    function ensure(id) {
+      if (!states[id]) {
+        states[id] = {
+          scale: 1,
+          x: 0,
+          y: 0,
+          focusX: 0.5,
+          focusY: 0.5,
+          dragging: false,
+          moved: false,
+          startX: 0,
+          startY: 0,
+          lastX: 0,
+          lastY: 0,
+          imgW: 0,
+          imgH: 0,
+          frameW: 0,
+          frameH: 0,
+        };
+      }
+      return states[id];
+    }
+
+    function measure(id) {
+      const p = parts(id);
+      const s = ensure(id);
+      const fr = p.frame.getBoundingClientRect();
+      s.frameW = fr.width;
+      s.frameH = fr.height;
+      // Natural image size scaled to "fit" inside frame (object-fit contain)
+      const nw = p.img.naturalWidth || 1;
+      const nh = p.img.naturalHeight || 1;
+      const fit = Math.min(s.frameW / nw, s.frameH / nh);
+      s.imgW = nw * fit;
+      s.imgH = nh * fit;
+    }
+
+    function clamp(id) {
+      const s = ensure(id);
+      if (s.scale <= 1.001) {
+        s.scale = 1;
+        s.x = 0;
+        s.y = 0;
+        return;
+      }
+      // Keep image overlapping the frame
+      const scaledW = s.imgW * s.scale;
+      const scaledH = s.imgH * s.scale;
+      const ox = (s.frameW - s.imgW) / 2;
+      const oy = (s.frameH - s.imgH) / 2;
+      // Stage is full frame; image centered inside stage before transform.
+      // Transform origin 0,0 on stage.
+      const minX = s.frameW - (ox + s.imgW) * s.scale - (s.frameW - scaledW) * 0.05;
+      const maxX = ox * s.scale + (s.frameW - scaledW) * 0.05;
+      const minY = s.frameH - (oy + s.imgH) * s.scale - (s.frameH - scaledH) * 0.05;
+      const maxY = oy * s.scale + (s.frameH - scaledH) * 0.05;
+      // Softer clamp: allow some over-pan but not infinite
+      const pad = Math.max(s.frameW, s.frameH) * 0.35;
+      s.x = Math.min(pad, Math.max(-scaledW + s.frameW - pad, s.x));
+      s.y = Math.min(pad, Math.max(-scaledH + s.frameH - pad, s.y));
+    }
+
+    function apply(id, { animate = true } = {}) {
+      const p = parts(id);
+      const s = ensure(id);
+      const cfg = PROTOS[id];
+
+      if (!animate) p.stage.classList.add("no-anim");
+      else p.stage.classList.remove("no-anim");
+
+      p.stage.style.transform = `translate(${s.x}px, ${s.y}px) scale(${s.scale})`;
+
+      if (s.scale > 1.01) p.lb.classList.add("zoomed");
+      else p.lb.classList.remove("zoomed");
+
+      if (p.slider) p.slider.value = String(s.scale);
+      if (p.readout) p.readout.textContent = Math.round(s.scale * 100) + "%";
+
+      p.chips.forEach((chip) => {
+        const v = Number(chip.dataset.scale);
+        chip.classList.toggle("active", Math.abs(v - s.scale) < 0.05);
+      });
+
+      updateMinimap(id);
+      updateSide(id);
+
+      // force reflow then re-enable anim for next gesture if we disabled it
+      if (!animate) {
+        void p.stage.offsetWidth;
+        requestAnimationFrame(() => p.stage.classList.remove("no-anim"));
+      }
+    }
+
+    function updateMinimap(id) {
+      const p = parts(id);
+      if (!p.minimap || !p.miniVp) return;
+      const s = ensure(id);
+      const mini = p.minimap.getBoundingClientRect();
+      if (!mini.width || !s.imgW) return;
+
+      // Map frame viewport into minimap image coords
+      // Fitted image sits centered in frame; minimap shows full image.
+      const scaleX = mini.width / s.imgW;
+      const scaleY = mini.height / s.imgH;
+      const ox = (s.frameW - s.imgW) / 2;
+      const oy = (s.frameH - s.imgH) / 2;
+
+      // Visible rect in stage/image space before zoom transform:
+      // A point on stage maps to screen as: screen = origin + translate + p * scale
+      // Visible stage coords: (-x/scale) .. ((frameW - x)/scale)
+      const visLeft = -s.x / s.scale;
+      const visTop = -s.y / s.scale;
+      const visRight = (s.frameW - s.x) / s.scale;
+      const visBottom = (s.frameH - s.y) / s.scale;
+
+      const imgLeft = (visLeft - ox) * scaleX;
+      const imgTop = (visTop - oy) * scaleY;
+      const imgW = (visRight - visLeft) * scaleX;
+      const imgH = (visBottom - visTop) * scaleY;
+
+      p.miniVp.style.left = imgLeft + "px";
+      p.miniVp.style.top = imgTop + "px";
+      p.miniVp.style.width = Math.max(8, imgW) + "px";
+      p.miniVp.style.height = Math.max(8, imgH) + "px";
+    }
+
+    function updateSide(id) {
+      const p = parts(id);
+      if (!p.side || !p.sideVp) return;
+      // Reuse minimap math against side element
+      const s = ensure(id);
+      const mini = p.side.getBoundingClientRect();
+      if (!mini.width || !s.imgW) return;
+      const scaleX = mini.width / s.imgW;
+      const scaleY = mini.height / s.imgH;
+      const ox = (s.frameW - s.imgW) / 2;
+      const oy = (s.frameH - s.imgH) / 2;
+      const visLeft = -s.x / s.scale;
+      const visTop = -s.y / s.scale;
+      const visRight = (s.frameW - s.x) / s.scale;
+      const visBottom = (s.frameH - s.y) / s.scale;
+      p.sideVp.style.left = (visLeft - ox) * scaleX + "px";
+      p.sideVp.style.top = (visTop - oy) * scaleY + "px";
+      p.sideVp.style.width = Math.max(8, (visRight - visLeft) * scaleX) + "px";
+      p.sideVp.style.height = Math.max(8, (visBottom - visTop) * scaleY) + "px";
+    }
+
+    function setScaleAround(id, nextScale, clientX, clientY, { animate = true } = {}) {
+      const p = parts(id);
+      const s = ensure(id);
+      const cfg = PROTOS[id];
+      measure(id);
+
+      nextScale = Math.min(cfg.maxScale, Math.max(1, nextScale));
+      const prev = s.scale;
+      if (Math.abs(nextScale - prev) < 0.001) return;
+
+      const rect = p.frame.getBoundingClientRect();
+      const mx = clientX != null ? clientX - rect.left : s.frameW / 2;
+      const my = clientY != null ? clientY - rect.top : s.frameH / 2;
+
+      if (nextScale === 1) {
+        s.scale = 1;
+        s.x = 0;
+        s.y = 0;
+      } else {
+        const ratio = nextScale / prev;
+        s.x = mx - (mx - s.x) * ratio;
+        s.y = my - (my - s.y) * ratio;
+        s.scale = nextScale;
+        s.focusX = mx / s.frameW;
+        s.focusY = my / s.frameH;
+        clamp(id);
+      }
+      apply(id, { animate });
+    }
+
+    function zoomToPoint(id, clientX, clientY) {
+      const cfg = PROTOS[id];
+      const p = parts(id);
+      const s = ensure(id);
+      measure(id);
+      const rect = p.frame.getBoundingClientRect();
+      const mx = clientX - rect.left;
+      const my = clientY - rect.top;
+      const scale = cfg.defaultScale;
+      s.scale = scale;
+      s.x = mx - mx * scale;
+      s.y = my - my * scale;
+      s.focusX = mx / s.frameW;
+      s.focusY = my / s.frameH;
+      clamp(id);
+      apply(id);
+    }
+
+    function reset(id) {
+      const s = ensure(id);
+      const p = parts(id);
+      s.scale = 1;
+      s.x = 0;
+      s.y = 0;
+      s.dragging = false;
+      s.moved = false;
+      p.frame.classList.remove("dragging");
+      apply(id);
+    }
+
+    function openLb(id) {
+      closeLb();
+      const p = parts(id);
+      active = id;
+      p.lb.hidden = false;
+      p.lb.classList.add("open");
+      document.body.style.overflow = "hidden";
+
+      const ready = () => {
+        measure(id);
+        reset(id);
+      };
+      if (p.img.complete) ready();
+      else p.img.addEventListener("load", ready, { once: true });
+    }
+
+    function closeLb() {
+      if (!active) return;
+      const id = active;
+      const p = parts(id);
+      reset(id);
+      p.lb.classList.remove("open");
+      p.lb.hidden = true;
+      active = null;
+      document.body.style.overflow = "";
+    }
+
+    document.querySelectorAll("[data-open]").forEach((btn) => {
+      btn.addEventListener("click", () => openLb(btn.dataset.open));
+    });
+
+    document.querySelectorAll("[data-close]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        closeLb();
+      });
+    });
+
+    document.querySelectorAll(".lb").forEach((lb) => {
+      lb.addEventListener("click", (e) => {
+        if (e.target === lb) closeLb();
+      });
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && active) closeLb();
+    });
+
+    // Wire each prototype
+    Object.keys(PROTOS).forEach((id) => {
+      const cfg = PROTOS[id];
+      const p = parts(id);
+      const s = ensure(id);
+
+      // Main frame: click zoom / pan
+      p.frame.addEventListener("pointerdown", (e) => {
+        if (e.button !== 0) return;
+        if (e.target.closest("[data-minimap]")) return;
+        p.frame.setPointerCapture(e.pointerId);
+        s.startX = e.clientX;
+        s.startY = e.clientY;
+        s.lastX = e.clientX;
+        s.lastY = e.clientY;
+        s.moved = false;
+        s.dragging = s.scale > 1;
+        if (s.dragging) p.frame.classList.add("dragging");
+      });
+
+      p.frame.addEventListener("pointermove", (e) => {
+        if (!p.frame.hasPointerCapture(e.pointerId)) return;
+        if (Math.hypot(e.clientX - s.startX, e.clientY - s.startY) > DRAG_THRESHOLD) {
+          s.moved = true;
+        }
+        if (s.dragging && s.scale > 1) {
+          s.x += e.clientX - s.lastX;
+          s.y += e.clientY - s.lastY;
+          s.lastX = e.clientX;
+          s.lastY = e.clientY;
+          clamp(id);
+          apply(id, { animate: false });
+        }
+      });
+
+      function endMain(e) {
+        if (!p.frame.hasPointerCapture(e.pointerId)) return;
+        p.frame.releasePointerCapture(e.pointerId);
+        p.frame.classList.remove("dragging");
+        const moved = s.moved;
+        const wasDrag = s.dragging;
+        s.dragging = false;
+        if (wasDrag && moved) return;
+
+        if (s.scale <= 1.01) zoomToPoint(id, e.clientX, e.clientY);
+        else reset(id);
+      }
+
+      p.frame.addEventListener("pointerup", endMain);
+      p.frame.addEventListener("pointercancel", (e) => {
+        if (p.frame.hasPointerCapture(e.pointerId)) p.frame.releasePointerCapture(e.pointerId);
+        s.dragging = false;
+        p.frame.classList.remove("dragging");
+      });
+
+      // Toolbar
+      p.lb.querySelector("[data-toolbar]")?.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-act]");
+        if (!btn) return;
+        const act = btn.dataset.act;
+        measure(id);
+        const cx = p.frame.getBoundingClientRect().left + s.frameW * (s.focusX || 0.5);
+        const cy = p.frame.getBoundingClientRect().top + s.frameH * (s.focusY || 0.5);
+
+        if (act === "fit") reset(id);
+        if (act === "step") setScaleAround(id, Number(btn.dataset.scale), cx, cy);
+        if (act === "minus") setScaleAround(id, s.scale - 0.25, cx, cy);
+        if (act === "plus") {
+          if (s.scale <= 1.01) zoomToPoint(id, cx, cy);
+          else setScaleAround(id, s.scale + 0.25, cx, cy);
+        }
+      });
+
+      p.slider?.addEventListener("input", () => {
+        measure(id);
+        const cx = p.frame.getBoundingClientRect().left + s.frameW * (s.focusX || 0.5);
+        const cy = p.frame.getBoundingClientRect().top + s.frameH * (s.focusY || 0.5);
+        setScaleAround(id, Number(p.slider.value), cx, cy, { animate: false });
+      });
+
+      // Minimap navigation
+      function bindOverview(el, getVp) {
+        if (!el) return;
+        let dragging = false;
+
+        function jump(clientX, clientY) {
+          measure(id);
+          const rect = el.getBoundingClientRect();
+          const nx = (clientX - rect.left) / rect.width; // 0..1 on image
+          const ny = (clientY - rect.top) / rect.height;
+          const ox = (s.frameW - s.imgW) / 2;
+          const oy = (s.frameH - s.imgH) / 2;
+          // Center view on this image point
+          const stageX = ox + nx * s.imgW;
+          const stageY = oy + ny * s.imgH;
+          if (s.scale <= 1.01) {
+            s.scale = cfg.defaultScale;
+          }
+          s.x = s.frameW / 2 - stageX * s.scale;
+          s.y = s.frameH / 2 - stageY * s.scale;
+          s.focusX = 0.5;
+          s.focusY = 0.5;
+          clamp(id);
+          apply(id, { animate: false });
+        }
+
+        el.addEventListener("pointerdown", (e) => {
+          if (e.button !== 0) return;
+          e.stopPropagation();
+          el.setPointerCapture(e.pointerId);
+          dragging = true;
+          jump(e.clientX, e.clientY);
+        });
+        el.addEventListener("pointermove", (e) => {
+          if (!dragging) return;
+          jump(e.clientX, e.clientY);
+        });
+        el.addEventListener("pointerup", (e) => {
+          dragging = false;
+          if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId);
+        });
+        el.addEventListener("pointercancel", () => { dragging = false; });
+      }
+
+      bindOverview(p.minimap);
+      bindOverview(p.side);
+
+      window.addEventListener("resize", () => {
+        if (active === id) {
+          measure(id);
+          clamp(id);
+          apply(id, { animate: false });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
