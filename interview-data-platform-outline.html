@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <title>Alan Matias · Unified data platform outline</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fustat:wght@400;500;600&family=Gentium+Book+Basic:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    /* Dark editorial slide language — matches SB guidance reference + site type */
+    :root {
+      --background: #0a0a0a;
+      --secondary: #141414;
+      --muted: #1c1c1c;
+      --foreground: #f2f2f0;
+      --muted-foreground: #a8a8a3;
+      --border: rgba(255, 255, 255, 0.08);
+      --ring: oklch(0.638 0.177 252.2);
+      --radius: 0.625rem;
+      --font-heading: "Gentium Book Basic", ui-serif, Georgia, "Times New Roman", serif;
+      --font-sans: "Fustat", ui-sans-serif, system-ui, sans-serif;
+      --slide-pad: clamp(1.5rem, 4vw, 3.25rem);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: var(--background);
+      color: var(--foreground);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+      color-scheme: dark;
+    }
+
+    .deck {
+      height: 100%;
+      display: grid;
+      grid-template-rows: 1fr auto;
+    }
+
+    .stage {
+      position: relative;
+      overflow: hidden;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      grid-template-rows: 1fr auto;
+      background: var(--background);
+      min-height: 0;
+    }
+
+    .slide.active { display: grid; }
+
+    .slide-body {
+      position: relative;
+      min-height: 0;
+      overflow: auto;
+      padding: var(--slide-pad);
+      padding-bottom: 1rem;
+    }
+
+    .slide-body.center {
+      display: grid;
+      place-content: center;
+      text-align: center;
+    }
+
+    .slide-body.split {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: clamp(1.25rem, 3.5vw, 3rem);
+      align-items: center;
+    }
+
+    .slide-body.media-full {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 1rem;
+      align-content: center;
+    }
+
+    .slide-body.rail {
+      display: grid;
+      grid-template-columns: minmax(14rem, 0.7fr) 1.3fr;
+      gap: clamp(1rem, 3vw, 2.5rem);
+      align-items: center;
+    }
+
+    h1, h2, h3 {
+      font-family: var(--font-heading);
+      font-weight: 400;
+      margin: 0 0 0.55rem;
+      line-height: 1.18;
+      color: var(--foreground);
+      letter-spacing: -0.01em;
+    }
+
+    h1 { font-size: clamp(2rem, 4.5vw, 3.1rem); }
+    h2 { font-size: clamp(1.55rem, 3vw, 2.35rem); }
+    h3 { font-size: clamp(1.05rem, 1.6vw, 1.25rem); }
+
+    p, li {
+      font-size: clamp(0.95rem, 1.35vw, 1.1rem);
+      line-height: 1.5;
+      color: var(--muted-foreground);
+    }
+
+    p { margin: 0 0 0.7rem; }
+
+    .lede {
+      font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+      color: var(--muted-foreground);
+      max-width: 36rem;
+    }
+
+    .center .lede { margin-inline: auto; }
+
+    /* SB-style section label */
+    .section {
+      position: absolute;
+      top: var(--slide-pad);
+      left: var(--slide-pad);
+      margin: 0;
+      font-size: 0.8rem;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      color: color-mix(in oklab, var(--muted-foreground) 85%, transparent);
+    }
+
+    .kicker {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted-foreground);
+      margin-bottom: 0.65rem;
+    }
+
+    .meta {
+      color: var(--muted-foreground);
+      font-size: 0.9rem;
+    }
+
+    ul {
+      margin: 0.35rem 0 0;
+      padding-left: 1.2rem;
+    }
+
+    li { margin-bottom: 0.4rem; }
+    li strong { color: var(--foreground); font-weight: 600; }
+
+    .pull {
+      font-family: var(--font-heading);
+      font-size: clamp(1.65rem, 3.6vw, 2.6rem);
+      line-height: 1.22;
+      max-width: 22ch;
+      color: var(--foreground);
+      margin: 0;
+    }
+
+    .center .pull {
+      margin-inline: auto;
+      max-width: 26ch;
+    }
+
+    .stat-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-top: 1.15rem;
+    }
+
+    .stat {
+      background: var(--secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.85rem 1rem;
+      min-width: 8.5rem;
+    }
+
+    .stat strong {
+      display: block;
+      font-family: var(--font-heading);
+      font-size: 1.45rem;
+      line-height: 1.1;
+      color: var(--foreground);
+      font-weight: 400;
+    }
+
+    .stat span {
+      color: var(--muted-foreground);
+      font-size: 0.8rem;
+    }
+
+    .decision {
+      display: grid;
+      gap: 0.65rem;
+      margin-top: 0.9rem;
+    }
+
+    .decision > div {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.85rem 0.95rem;
+      background: var(--secondary);
+    }
+
+    .decision label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted-foreground);
+      margin-bottom: 0.3rem;
+    }
+
+    .decision p { margin: 0; color: var(--muted-foreground); }
+    .decision p strong { color: var(--foreground); }
+
+    .decision .chose {
+      border-color: color-mix(in oklab, var(--ring) 35%, var(--border));
+      box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ring) 18%, transparent);
+    }
+
+    .media-frame {
+      background: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      align-self: stretch;
+      display: grid;
+      place-items: center;
+      min-height: 0;
+    }
+
+    .media-frame img,
+    .media-frame video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      max-height: min(54vh, 500px);
+      background: var(--muted);
+    }
+
+    .media-full .media-frame img,
+    .media-full .media-frame video {
+      max-height: min(48vh, 460px);
+    }
+
+    .caption {
+      font-size: 0.8rem;
+      color: var(--muted-foreground);
+      margin: 0.35rem 0 0;
+    }
+
+    .trio {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.7rem;
+      min-height: 0;
+    }
+
+    .trio figure { margin: 0; min-height: 0; }
+    .trio img {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) * 0.8);
+      background: var(--muted);
+      max-height: min(38vh, 300px);
+      object-fit: cover;
+      object-position: top;
+    }
+    .trio figcaption {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      margin-top: 0.35rem;
+    }
+
+    .compare {
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .compare .arrow {
+      text-align: center;
+      color: var(--muted-foreground);
+      font-size: 0.85rem;
+      margin: 0.1rem 0;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+      margin-top: 0.9rem;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.9rem 1rem;
+      background: var(--secondary);
+    }
+
+    .card h3 { margin-bottom: 0.35rem; }
+    .card p { margin: 0; }
+
+    .impact-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(1.5rem, 4vw, 3rem);
+      align-items: start;
+      margin-top: 2.5rem;
+    }
+
+    .impact-pair .media-frame img {
+      max-height: min(28vh, 220px);
+    }
+
+    .impact-pair h2 {
+      margin-top: 0.85rem;
+      font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+    }
+
+    .time {
+      display: inline-block;
+      margin-left: 0.45rem;
+      padding: 0.12rem 0.45rem;
+      border-radius: 999px;
+      background: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted-foreground);
+      vertical-align: middle;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: calc(var(--radius) * 0.8);
+      background: var(--muted);
+      border: 1px solid var(--border);
+      color: var(--muted-foreground);
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin-bottom: 0.7rem;
+    }
+
+    .scope-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+      margin-top: 1rem;
+    }
+
+    .scope-list h3 {
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted-foreground);
+      margin-bottom: 0.45rem;
+    }
+
+    .comments {
+      border-top: 1px solid var(--border);
+      background: var(--secondary);
+      padding: 0.75rem var(--slide-pad) 0.9rem;
+      max-height: min(28vh, 220px);
+      overflow: auto;
+    }
+
+    .comments-label {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin: 0 0 0.4rem;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ring);
+    }
+
+    .comments-label::before {
+      content: "";
+      width: 0.4rem;
+      height: 0.4rem;
+      border-radius: 999px;
+      background: var(--ring);
+      flex-shrink: 0;
+    }
+
+    .comments ul {
+      margin: 0;
+      padding-left: 1.1rem;
+    }
+
+    .comments li {
+      font-size: 0.82rem;
+      line-height: 1.4;
+      color: var(--muted-foreground);
+      margin-bottom: 0.28rem;
+    }
+
+    .comments li:last-child { margin-bottom: 0; }
+    .comments li strong { color: var(--foreground); font-weight: 600; }
+
+    .chrome {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.6rem 1rem;
+      background: color-mix(in oklab, var(--background) 70%, black);
+      border-top: 1px solid var(--border);
+      color: var(--muted-foreground);
+      font-size: 0.8rem;
+    }
+
+    .chrome button {
+      appearance: none;
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) * 0.8);
+      background: var(--secondary);
+      color: var(--foreground);
+      padding: 0.35rem 0.7rem;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .chrome button:hover {
+      border-color: color-mix(in oklab, var(--ring) 40%, var(--border));
+    }
+
+    .chrome button:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+    }
+
+    .chrome #counter { color: var(--foreground); }
+    .chrome .hint { color: var(--muted-foreground); opacity: 0.8; }
+
+    @media (max-width: 860px) {
+      .slide-body.split,
+      .slide-body.rail,
+      .impact-pair,
+      .scope-list,
+      .two-col { grid-template-columns: 1fr; }
+      .trio { grid-template-columns: 1fr; }
+      .comments { max-height: 32vh; }
+      .section { position: static; margin-bottom: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck">
+    <div class="stage" id="stage">
+
+      <!-- ========== BRIDGE ========== -->
+      <section class="slide active" data-section="Bridge">
+        <div class="slide-body center">
+          <p class="section">Project 2 · Ab Initio</p>
+          <div>
+            <h1 class="pull">Launching a unified platform from 3 products and teams</h1>
+            <p class="lede" style="margin-top:1.1rem">Sole designer · 1 PM · 2 dev leads · 15 developers · 2024 · ~18–20 min</p>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Bridge from Guidance if this is project 2: opposite muscle — sole designer, six months, no research.</li>
+            <li>Invite interruptions — this story lives in scope and pattern decisions.</li>
+            <li>Arc matches the case study: outcome → three products → deal lost → MVP scope → ambiguity → reuse vs redesign → collaboration → reverse.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <!-- ========== 1. OUTCOME ========== -->
+      <section class="slide" data-section="1. Outcome">
+        <div class="slide-body center">
+          <p class="section">1. Outcome</p>
+          <h1 class="pull">One platform. Six months. On time.</h1>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Lead with outcome like the article — then earn the middle.</li>
+            <li>Release for a European bank; don’t over-index on customer name unless asked.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="1. Outcome">
+        <div class="slide-body split">
+          <p class="section">1. Outcome</p>
+          <div>
+            <p class="kicker">Outcome upfront <span class="time">90 sec</span></p>
+            <h2>What shipped</h2>
+            <ul>
+              <li><strong>New product in six months</strong> — on time, for a European bank</li>
+              <li><strong>3 → 1</strong> — unified a three-product workflow into one platform</li>
+              <li><strong>Longer trail</strong> — curated, persona-based navigation as the vision</li>
+            </ul>
+            <p class="meta" style="margin-top:1rem">Sole designer · 1 PM · 2 dev leads · 15 developers</p>
+          </div>
+          <div class="media-frame">
+            <img src="public/media/work/ab-initio-data-platform/redesign-overview.png" alt="The redesigned platform: datasets, refresh schedule, and node editor all in one place" />
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Point at the overview: datasets, refresh schedule, and node editor in one place.</li>
+            <li>Then go back to why three products made that hard.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <!-- ========== 2. ONE JOB, THREE PRODUCTS ========== -->
+      <section class="slide" data-section="2. Three products">
+        <div class="slide-body center">
+          <p class="section">2. One job, three products</p>
+          <h1 class="pull">One job. Three products. Three mental models.</h1>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Ab Initio collects, organizes, and transforms enterprise data at scale.</li>
+            <li>Doing that took at least three separate products.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="2. Three products">
+        <div class="slide-body media-full">
+          <p class="section">2. One job, three products</p>
+          <div>
+            <h2>Find → transform → schedule</h2>
+            <p class="lede">Every handoff meant losing context and starting over with a new mental model.</p>
+          </div>
+          <div class="trio">
+            <figure>
+              <img src="public/media/work/ab-initio-data-platform/MetadataPortal.png" alt="Start in Metadata Portal to find the raw data" />
+              <figcaption>Metadata&gt;Portal — find the raw data</figcaption>
+            </figure>
+            <figure>
+              <img src="public/media/work/ab-initio-data-platform/ExpressIt.png" alt="Switch to Express It to transform and enrich" />
+              <figcaption>Express&gt;It — transform and enrich</figcaption>
+            </figure>
+            <figure>
+              <img src="public/media/work/ab-initio-data-platform/ControlCenter.png" alt="Switch again to Control Center to put it on a schedule" />
+              <figcaption>Control&gt;Center — put it on a schedule</figcaption>
+            </figure>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Sweep left→right with the article captions: find → transform → schedule.</li>
+            <li>Each product was overwhelming — packed with features most users never touched.</li>
+            <li>No formal design system → three distinct user experiences.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="2. Three products">
+        <div class="slide-body">
+          <p class="section">2. One job, three products</p>
+          <div style="margin-top:2.5rem; max-width:40rem">
+            <h2>Why it hurt</h2>
+            <ul>
+              <li><strong>Fragmented</strong> — workflow disrupted; context lost at every switch</li>
+              <li><strong>Overwhelming</strong> — excessive features most users never touched</li>
+              <li><strong>Inconsistent</strong> — three products, three looks and feels; no design system</li>
+            </ul>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Keep this as one slide — don’t dwell on three separate pain screens unless they ask.</li>
+            <li>Bridge: “Then we lost a deal on UX — and the mandate flipped.”</li>
+          </ul>
+        </aside>
+      </section>
+
+      <!-- ========== 3. A DEAL LOST ON UX ========== -->
+      <section class="slide" data-section="3. Deal lost">
+        <div class="slide-body center">
+          <p class="section">3. A deal lost on UX</p>
+          <h1 class="pull">We lost a deal on UX.</h1>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Ab Initio had always sold on technical prestige.</li>
+            <li>Proof that experience moves revenue, not just satisfaction.</li>
+            <li>That gave leadership support to put UX at the forefront of a new product.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="3. Deal lost">
+        <div class="slide-body split">
+          <p class="section">3. A deal lost on UX</p>
+          <div>
+            <h2>Unified · Curated · Consistent</h2>
+            <ul>
+              <li><strong>Unified</strong> — support the workflow in one platform instead of three products</li>
+              <li><strong>Curated</strong> — focus on user tasks instead of exposing every tool</li>
+              <li><strong>Consistent</strong> — one UI and, over time, one design system</li>
+            </ul>
+          </div>
+          <div class="media-frame">
+            <img src="public/media/work/ab-initio-data-platform/redesign-overview.png" alt="Unified platform embodying the three principles" />
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Use the article wording — these principles guided every scope cut later.</li>
+            <li>Don’t invent a separate “ask” headline; the deal + principles are the mandate.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <!-- ========== 4. SCOPING THE MVP ========== -->
+      <section class="slide" data-section="4. Scoping MVP">
+        <div class="slide-body center">
+          <p class="section">4. Scoping the MVP</p>
+          <h1 class="pull">What could we ship in six months?</h1>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Parallel effort: 2–3 year design vision. Your focus: the six-month release.</li>
+            <li>Early reviews were less about pixels and more about forcing scope decisions.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="4. Scoping MVP">
+        <div class="slide-body split">
+          <p class="section">4. Scoping the MVP</p>
+          <div>
+            <h2>Reviews forced scope, not pixels</h2>
+            <ul>
+              <li>What is the core workflow for this customer?</li>
+              <li>Which pieces of Metadata&gt;Portal, Express&gt;It, and Control&gt;Center had to transfer?</li>
+              <li>How bespoke vs a general-purpose prototype of the larger vision?</li>
+            </ul>
+          </div>
+          <div class="media-frame">
+            <img src="public/media/work/ab-initio-data-platform/lofi-wireframes.png" alt="Early wireframe aligning what unified meant for an MVP, not the full vision" />
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Caption from the article: aligning early on what “unified” meant for an MVP, not the full vision.</li>
+            <li>Lo-fi home still shows persona switcher / broader vision — useful contrast with the cut you made.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="4. Scoping MVP">
+        <div class="slide-body split">
+          <p class="section">4. Scoping the MVP</p>
+          <div>
+            <p class="kicker">Decision 1 of 3</p>
+            <h2>Data-wrangling — not a Frankenstein</h2>
+            <div class="decision">
+              <div class="chose">
+                <label>Chose</label>
+                <p><strong>One basic workflow: data-wrangling.</strong> Find → transform → schedule as the MVP spine.</p>
+              </div>
+              <div>
+                <label>Left on the vision</label>
+                <p>Scaling for large datasets or large orgs — approval workflows, admin functions.</p>
+              </div>
+              <div>
+                <label>Tradeoff</label>
+                <p>Move fast on a simple MVP. Curated beat comprehensive for a six-month release.</p>
+              </div>
+            </div>
+          </div>
+          <div class="media-frame">
+            <img src="public/media/work/ab-initio-data-platform/lofi-wireframes.png" alt="MVP scope alignment wireframes" />
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Article line: we decided scaling for large datasets/orgs could stay on the longer vision.</li>
+            <li>Said no to a lot of “but we already have that.”</li>
+          </ul>
+        </aside>
+      </section>
+
+      <!-- ========== 5. AMBIGUITY ========== -->
+      <section class="slide" data-section="5. Ambiguity">
+        <div class="slide-body center">
+          <p class="section">5. Navigating ambiguity</p>
+          <h1 class="pull">No user data. No research. Keep moving.</h1>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Org was just starting to invest in UX — don’t pretend research existed.</li>
+            <li>Scrappy: docs, other teams, frequent 1:1s with PM and eng leads.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="5. Ambiguity">
+        <div class="slide-body split">
+          <p class="section">5. Navigating ambiguity</p>
+          <div>
+            <h2>Make the evidence gap visible</h2>
+            <p class="lede">Research questions I would have asked. Hypotheses from assumptions. Keep moving.</p>
+            <ul>
+              <li>Read documentation to learn the technical landscape</li>
+              <li>Met other teams about problems they’d already solved</li>
+              <li>Wrote the gap down so it stopped being a recurring fight</li>
+            </ul>
+          </div>
+          <div class="media-frame">
+            <video controls playsinline poster="public/media/work/ab-initio-data-platform/assumptions-doc-poster.webp" src="public/media/work/ab-initio-data-platform/assumptions-doc.mp4"></video>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Article caption: making assumptions and gaps visible to all stakeholders.</li>
+            <li>Writing it down made the gap visible instead of always being a tension point in discussion.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <!-- ========== 6. REUSE VS REDESIGN ========== -->
+      <section class="slide" data-section="6. Reuse vs redesign">
+        <div class="slide-body center">
+          <p class="section">6. Reuse vs. redesign</p>
+          <h1 class="pull">Consistency with a bad pattern isn’t worth it.</h1>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>No design system → every pattern was a choice: copy what existed, or propose something better.</li>
+            <li>Tried reuse first for continuity — then rejected it.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="6. Reuse vs redesign">
+        <div class="slide-body split">
+          <p class="section">6. Reuse vs. redesign</p>
+          <div>
+            <p class="kicker">Decision 2 of 3 · design system</p>
+            <h2>QuickLook over the legacy bottom sheet</h2>
+            <div class="decision">
+              <div class="chose">
+                <label>Chose</label>
+                <p><strong>Side panel</strong> that better supported preview and context.</p>
+              </div>
+              <div>
+                <label>Rejected</label>
+                <p>Reuse the legacy bottom panel used elsewhere to inspect data.</p>
+              </div>
+              <div>
+                <label>Tradeoff</label>
+                <p>Short-term inconsistency across products. Candidate for the in-progress design system later.</p>
+              </div>
+            </div>
+          </div>
+          <div class="compare">
+            <div class="media-frame">
+              <img src="public/media/work/ab-initio-data-platform/bottom-sheet.png" alt="An existing inspect-data pattern I considered reusing" />
+            </div>
+            <p class="arrow">→</p>
+            <div class="media-frame">
+              <img src="public/media/work/ab-initio-data-platform/side-panel.png" alt="The QuickLook panel: a better model for this product" />
+            </div>
+            <p class="caption">Legacy inspect pattern → QuickLook side panel</p>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Reuse kept visual continuity but propagated a weak experience.</li>
+            <li>Accepted short-term inconsistency so this product didn’t inherit a bad pattern.</li>
+            <li>That pattern could later land in the DS and roll out to other products.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <!-- ========== 7. COLLABORATING ========== -->
+      <section class="slide" data-section="7. Collaborating">
+        <div class="slide-body center">
+          <p class="section">7. Collaborating on the vision</p>
+          <h1 class="pull">Translate vision into flows people can fight about.</h1>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>PM led the vision: where the platform should be in three years, which products fold in, why it mattered.</li>
+            <li>Many eng managers had trouble seeing immediate value in that vision — UX was a new investment.</li>
+            <li>Your job: turn direction into concrete flows vs the MVP deadline.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="7. Collaborating">
+        <div class="slide-body rail">
+          <p class="section">7. Collaborating on the vision</p>
+          <div>
+            <p class="kicker">Decision 3 of 3 · collaboration</p>
+            <h2>Structure before screens</h2>
+            <p class="lede">Higher level when I needed feedback on structure, not screens.</p>
+            <ul>
+              <li>Interpolate: vision → realistic flow → MVP feedback → revisit vision</li>
+              <li>Weekly working group of ~15 surfaced constraints early</li>
+              <li>Timeboxed agendas + lower-fi when talks drifted into implementation</li>
+            </ul>
+          </div>
+          <div class="media-frame">
+            <img src="public/media/work/ab-initio-data-platform/user-flow.png" alt="Low-fidelity user flow for data wrangling" />
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Stay on the decision at hand — not the pixel.</li>
+            <li>Good “how do you work with PMs / eng?” material.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <!-- ========== 8. IMPACT / REVERSE ========== -->
+      <section class="slide" data-section="8. Impact">
+        <div class="slide-body center">
+          <p class="section">8. Impact</p>
+          <h1 class="pull">Shipped. Unified. Set the longer trail.</h1>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Close the loop on the three outcome bullets from the article.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="8. Impact">
+        <div class="slide-body">
+          <p class="section">8. Impact</p>
+          <div class="impact-pair">
+            <div>
+              <div class="media-frame">
+                <img src="public/media/work/ab-initio-data-platform/redesign-overview.png" alt="Unified platform" />
+              </div>
+              <h2>3 → 1</h2>
+              <p class="lede">Three-product workflow into one platform — on time for a European bank.</p>
+            </div>
+            <div>
+              <div class="media-frame">
+                <img src="public/media/work/ab-initio-data-platform/side-panel.png" alt="QuickLook pattern shipped" />
+              </div>
+              <h2>North star</h2>
+              <p class="lede">Longer-term vision for curated, persona-based navigation — without jamming it into the MVP.</p>
+            </div>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Hard outcomes only — match the article’s three bullets.</li>
+            <li>Optional: QuickLook as a pattern that could outlive the release.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="8. Impact">
+        <div class="slide-body">
+          <p class="section">8. What I’d do differently</p>
+          <div style="margin-top:2.5rem; max-width:40rem">
+            <h2>Involve the customer earlier</h2>
+            <div class="card" style="margin-top:1rem">
+              <p>Because this shipped for a specific customer, I should have involved them earlier. I had a Technical Account Manager close to them, but I treated the customer as a consumer rather than a stakeholder — partly to avoid breaking norms around how we engaged customers.</p>
+            </div>
+            <p class="lede" style="margin-top:1rem">Instead of looping them in only at major milestones, I would have brought them into the initial scoping and requirements.</p>
+          </div>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>One honest reverse — don’t stack self-critique.</li>
+            <li>If they ask “advocate for the user”: TAM existed; engagement norms made you too cautious.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="slide" data-section="8. Impact">
+        <div class="slide-body center">
+          <p class="section">8. Impact</p>
+          <h1 class="pull">Document assumptions. Force scope. Ship the spine.</h1>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Optional close beat — through-line for ambiguity work.</li>
+            <li>Open for questions.</li>
+          </ul>
+        </aside>
+      </section>
+
+      <!-- ========== FACILITATOR ========== -->
+      <section class="slide" data-section="Facilitator">
+        <div class="slide-body">
+          <span class="badge">Facilitator only — don’t present</span>
+          <p class="kicker">Aligned to case study · ~18–20 min</p>
+          <h2>Cut order</h2>
+          <ul>
+            <li><strong>Keep:</strong> Outcome → three products → deal + principles → wrangling MVP → assumptions → QuickLook → collaboration flow → reverse</li>
+            <li><strong>Cut first:</strong> “Why it hurt” bullets · separate scope-questions slide if decision slide already covers it</li>
+            <li><strong>Article order:</strong> Outcome → One job three products → Deal lost → Scoping MVP → Ambiguity → Reuse vs redesign → Collaborating → Differently</li>
+            <li><strong>Figma target:</strong> ~10–12 slides once compressed</li>
+          </ul>
+        </div>
+        <aside class="comments">
+          <p class="comments-label">Talking points</p>
+          <ul>
+            <li>Skip this slide in the interview.</li>
+            <li>Slide body = what they see; comments = speaker notes.</li>
+          </ul>
+        </aside>
+      </section>
+
+    </div>
+
+    <div class="chrome">
+      <div>
+        <button type="button" id="prev" aria-label="Previous slide">← Prev</button>
+        <button type="button" id="next" aria-label="Next slide">Next →</button>
+      </div>
+      <div id="counter" aria-live="polite">1 / 1</div>
+      <div class="hint">← → · comments = what to say · body = what they see</div>
+    </div>
+  </div>
+
+  <script>
+    const slides = [...document.querySelectorAll(".slide")];
+    const counter = document.getElementById("counter");
+    const prevBtn = document.getElementById("prev");
+    const nextBtn = document.getElementById("next");
+    let i = 0;
+
+    function show(n) {
+      i = Math.max(0, Math.min(slides.length - 1, n));
+      slides.forEach((s, idx) => s.classList.toggle("active", idx === i));
+      const section = slides[i].dataset.section || "";
+      counter.textContent = `${i + 1} / ${slides.length} · ${section}`;
+      history.replaceState(null, "", `#${i + 1}`);
+    }
+
+    prevBtn.addEventListener("click", () => show(i - 1));
+    nextBtn.addEventListener("click", () => show(i + 1));
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") {
+        e.preventDefault();
+        show(i + 1);
+      } else if (e.key === "ArrowLeft" || e.key === "PageUp") {
+        e.preventDefault();
+        show(i - 1);
+      } else if (e.key === "Home") {
+        show(0);
+      } else if (e.key === "End") {
+        show(slides.length - 1);
+      }
+    });
+
+    document.getElementById("stage").addEventListener("click", (e) => {
+      if (e.target.closest("a, button, video, .comments")) return;
+      const mid = e.currentTarget.getBoundingClientRect().width / 2;
+      show(e.clientX < mid ? i - 1 : i + 1);
+    });
+
+    const fromHash = parseInt(location.hash.replace("#", ""), 10);
+    show(Number.isFinite(fromHash) && fromHash > 0 ? fromHash - 1 : 0);
+  </script>
+</body>
+</html>
