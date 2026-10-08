@@ -404,7 +404,60 @@
       }
       #cal-btn ion-icon {
         font-size: 1em;
-        margin-left: 0.1rem;
+        flex-shrink: 0;
+        transition: transform 0.2s ease;
+      }
+      #cal-btn[aria-expanded="true"] ion-icon {
+        transform: rotate(90deg);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #cal-btn ion-icon {
+          transition: none;
+        }
+      }
+      .png-sheet {
+        position: fixed;
+        inset: 0;
+        z-index: 40;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding: 1rem;
+        box-sizing: border-box;
+        background: color-mix(in srgb, #000 55%, transparent);
+      }
+      .png-sheet[hidden] {
+        display: none !important;
+      }
+      .png-sheet-panel {
+        width: min(22rem, 100%);
+        max-height: min(90dvh, 40rem);
+        overflow: auto;
+        background: var(--bg);
+        border: 1px solid var(--card-border);
+        border-radius: 1.25rem;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      .png-sheet-panel img {
+        width: 100%;
+        height: auto;
+        border-radius: 0.85rem;
+        display: block;
+        background: #171616;
+        -webkit-touch-callout: default;
+      }
+      .png-sheet-hint {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.35;
+        text-align: center;
+      }
+      .png-sheet-hint[hidden] {
+        display: none !important;
       }
       /* Offscreen export: narrow, height hugs stacked months. */
       .export-sheet {
@@ -549,7 +602,7 @@
               name="logo-apple"
               aria-hidden="true"
             ></ion-icon>
-            <span id="store-btn-label">Open on iOS App Store</span>
+            <span id="store-btn-label">Open in iOS App Store</span>
           </a>
           <div class="store-pair" id="store-pair" hidden>
             <a
@@ -580,8 +633,8 @@
               aria-expanded="false"
               aria-controls="cal-menu-list"
             >
+              <ion-icon name="chevron-forward" aria-hidden="true"></ion-icon>
               Add to calendar
-              <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
             </button>
             <div class="cal-menu-list" id="cal-menu-list" hidden role="menu">
               <button type="button" id="gcal-btn" role="menuitem">
@@ -615,6 +668,26 @@
           alt=""
         />
         <span>DeGuardia</span>
+      </div>
+    </div>
+
+    <div class="png-sheet" id="png-sheet" hidden>
+      <div
+        class="png-sheet-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="png-sheet-title"
+      >
+        <p class="png-sheet-hint" id="png-sheet-title">
+          Long-press the image to save to Photos
+        </p>
+        <img id="png-sheet-img" alt="Rotation schedule" />
+        <button type="button" class="btn" id="png-share-btn" hidden>
+          Share image
+        </button>
+        <button type="button" class="btn btn-secondary" id="png-close-btn">
+          Close
+        </button>
       </div>
     </div>
 
@@ -1232,9 +1305,94 @@
           }
         }
 
+        function isMobilePlatform(): boolean {
+          return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || "");
+        }
+
+        function dataUrlToBlob(dataUrl: string): Blob {
+          var comma = dataUrl.indexOf(",");
+          var header = dataUrl.slice(0, comma);
+          var data = dataUrl.slice(comma + 1);
+          var mimeMatch = /data:([^;]+)/.exec(header);
+          var mime = mimeMatch ? mimeMatch[1] : "image/png";
+          var binary = atob(data);
+          var bytes = new Uint8Array(binary.length);
+          for (var i = 0; i < binary.length; i += 1) {
+            bytes[i] = binary.charCodeAt(i);
+          }
+          return new Blob([bytes], { type: mime });
+        }
+
+        function triggerBlobDownload(blob: Blob, filename: string): void {
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement("a");
+          a.href = url;
+          a.download = filename;
+          document.body.append(a);
+          a.click();
+          a.remove();
+          window.setTimeout(function () {
+            URL.revokeObjectURL(url);
+          }, 2000);
+        }
+
+        var pngSheetObjectUrl: string | null = null;
+
+        function closePngSheet(): void {
+          var sheetEl = document.getElementById("png-sheet");
+          var imgEl = document.getElementById(
+            "png-sheet-img",
+          ) as HTMLImageElement | null;
+          if (sheetEl) sheetEl.hidden = true;
+          if (imgEl) imgEl.removeAttribute("src");
+          if (pngSheetObjectUrl) {
+            URL.revokeObjectURL(pngSheetObjectUrl);
+            pngSheetObjectUrl = null;
+          }
+        }
+
+        function showPngSheet(blob: Blob, file: File, title: string): void {
+          var sheetEl = document.getElementById("png-sheet");
+          var imgEl = document.getElementById(
+            "png-sheet-img",
+          ) as HTMLImageElement | null;
+          var shareBtn = document.getElementById(
+            "png-share-btn",
+          ) as HTMLButtonElement | null;
+          var closeBtn = document.getElementById("png-close-btn");
+          if (!sheetEl || !imgEl || !shareBtn || !closeBtn) {
+            triggerBlobDownload(blob, file.name);
+            return;
+          }
+
+          if (pngSheetObjectUrl) URL.revokeObjectURL(pngSheetObjectUrl);
+          pngSheetObjectUrl = URL.createObjectURL(blob);
+          imgEl.src = pngSheetObjectUrl;
+          imgEl.alt = title;
+
+          var canShareFiles =
+            typeof navigator.canShare === "function" &&
+            navigator.canShare({ files: [file] });
+          shareBtn.hidden = !canShareFiles;
+          shareBtn.onclick = function () {
+            if (!canShareFiles) return;
+            navigator
+              .share({ files: [file], title: title })
+              .catch(function () {});
+          };
+          closeBtn.onclick = closePngSheet;
+          sheetEl.onclick = function (event) {
+            if (event.target === sheetEl) closePngSheet();
+          };
+          sheetEl.hidden = false;
+        }
+
         function downloadPng(draft: Draft, sheet: HTMLElement): Promise<void> {
           // Capture the offscreen sheet; force the clone on-screen and opaque
           // (mutating opacity:0 on the live node paints a blank PNG).
+          // Mobile browsers often ignore <a download> after async work, so we
+          // use the share sheet / an in-page image the user can long-press.
+          var filename = slugFilename(draft.label, ".png");
           return document.fonts.ready
             .then(function () {
               return toPng(sheet, {
@@ -1254,12 +1412,33 @@
               });
             })
             .then(function (dataUrl) {
-              var a = document.createElement("a");
-              a.href = dataUrl;
-              a.download = slugFilename(draft.label, ".png");
-              document.body.append(a);
-              a.click();
-              a.remove();
+              var blob = dataUrlToBlob(dataUrl);
+              var file = new File([blob], filename, { type: "image/png" });
+              var canShareFiles =
+                typeof navigator.canShare === "function" &&
+                navigator.canShare({ files: [file] });
+
+              if (!isMobilePlatform()) {
+                triggerBlobDownload(blob, filename);
+                return;
+              }
+
+              if (canShareFiles) {
+                return navigator
+                  .share({ files: [file], title: draft.label })
+                  .catch(function (err: unknown) {
+                    var name =
+                      err && typeof err === "object" && "name" in err
+                        ? String((err as { name: string }).name)
+                        : "";
+                    if (name === "AbortError") return;
+                    // Gesture often expires after toPng — show a sheet so the
+                    // next tap can share, or the user can long-press to save.
+                    showPngSheet(blob, file, draft.label);
+                  });
+              }
+
+              showPngSheet(blob, file, draft.label);
             });
         }
 
@@ -1316,12 +1495,12 @@
             if (storeBtnIcon)
               storeBtnIcon.setAttribute("name", "logo-google-playstore");
             if (storeBtnLabel)
-              storeBtnLabel.textContent = "Open on Google Play";
+              storeBtnLabel.textContent = "Open in Google Play";
           } else {
             if (storeBtnIcon)
               storeBtnIcon.setAttribute("name", "logo-apple");
             if (storeBtnLabel)
-              storeBtnLabel.textContent = "Open on iOS App Store";
+              storeBtnLabel.textContent = "Open in iOS App Store";
           }
 
           storeBtn.addEventListener("click", function (event) {
