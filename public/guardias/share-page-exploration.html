@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Share page exploration — DeGuardia</title>
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#171616" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@300;400&family=Instrument+Serif&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --fg: #f2f2f2;
+        --muted: #aaa;
+        --bg: #0f0e0e;
+        --panel: #171616;
+        --cal-bg: #1c1b1a;
+        --cta: #f2f2f2;
+        --ink: #171616;
+        --line: color-mix(in srgb, #fff 12%, transparent);
+        --shift: #dc211e;
+        --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+        --font-mono: Inconsolata, ui-monospace, Menlo, monospace;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--font-mono);
+        font-weight: 300;
+        -webkit-font-smoothing: antialiased;
+      }
+      .page {
+        width: min(56rem, 100%);
+        margin: 0 auto;
+        padding: 2.5rem 1.25rem 3rem;
+      }
+      h1 {
+        margin: 0;
+        font-family: var(--font-serif);
+        font-size: clamp(1.8rem, 4vw, 2.4rem);
+        font-weight: 400;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+      }
+      .lede {
+        margin: 0.75rem 0 0;
+        color: var(--muted);
+        max-width: 38rem;
+        line-height: 1.4;
+        font-size: 0.95rem;
+      }
+      .tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 1.75rem 0 1.25rem;
+      }
+      .tabs button {
+        appearance: none;
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--fg);
+        border-radius: 999px;
+        padding: 0.55rem 0.9rem;
+        font: inherit;
+        font-size: 0.85rem;
+        font-weight: 400;
+        cursor: pointer;
+      }
+      .tabs button[aria-pressed="true"] {
+        background: var(--cta);
+        color: var(--ink);
+        border-color: transparent;
+      }
+      .stage {
+        display: grid;
+        grid-template-columns: minmax(0, 17rem) minmax(0, 1fr);
+        gap: 1.75rem;
+        align-items: start;
+      }
+      @media (max-width: 720px) {
+        .stage {
+          grid-template-columns: 1fr;
+        }
+      }
+      .phone {
+        width: min(17rem, 100%);
+        background: var(--panel);
+        border-radius: 1.75rem;
+        padding: 1.35rem 1rem 1.15rem;
+        min-height: 28rem;
+      }
+      .label {
+        margin: 0;
+        font-family: var(--font-serif);
+        font-size: 1.55rem;
+        line-height: 1.05;
+        font-weight: 400;
+      }
+      .meta {
+        margin: 0.4rem 0 0.9rem;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+      .cal {
+        background: var(--cal-bg);
+        border-radius: 1.15rem;
+        padding: 0.85rem 0.75rem 0.95rem;
+        margin-bottom: 1rem;
+      }
+      .cal-month {
+        margin: 0 0 0.55rem;
+        font-family: var(--font-serif);
+        font-size: 1.25rem;
+        text-transform: lowercase;
+        font-weight: 400;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.2rem;
+      }
+      .dow {
+        color: #9a9894;
+        font-size: 0.7rem;
+        text-align: center;
+      }
+      .day {
+        aspect-ratio: 1;
+        border-radius: 0.4rem;
+        display: grid;
+        place-items: center;
+        font-size: 0.7rem;
+        color: #6a6864;
+      }
+      .day.on {
+        background: var(--shift);
+        color: #fff;
+      }
+      .copy {
+        margin: 0 0 0.85rem;
+        color: var(--muted);
+        font-size: 0.8rem;
+        line-height: 1.35;
+      }
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .pill {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 0.7rem 0.85rem;
+        font-size: 0.78rem;
+        font-weight: 400;
+        text-align: center;
+        border: 1px solid transparent;
+      }
+      .pill.primary {
+        background: var(--cta);
+        color: var(--ink);
+      }
+      .pill.secondary {
+        background: transparent;
+        color: var(--fg);
+        border-color: var(--line);
+      }
+      .pill.ghost {
+        background: transparent;
+        color: var(--muted);
+        border: none;
+        padding: 0.4rem;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        cursor: pointer;
+        font: inherit;
+        font-size: 0.78rem;
+      }
+      .split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+      }
+      .menu {
+        border: 1px solid var(--line);
+        border-radius: 0.9rem;
+        overflow: hidden;
+      }
+      .menu button {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: transparent;
+        border: 0;
+        border-bottom: 1px solid var(--line);
+        color: var(--fg);
+        padding: 0.7rem 0.85rem;
+        font: inherit;
+        font-size: 0.78rem;
+        cursor: pointer;
+      }
+      .menu button:last-child {
+        border-bottom: 0;
+      }
+      .side {
+        padding-top: 0.25rem;
+      }
+      .side h2 {
+        margin: 0 0 0.55rem;
+        font-family: var(--font-serif);
+        font-size: 1.65rem;
+        font-weight: 400;
+        letter-spacing: -0.02em;
+      }
+      .side .blurb {
+        margin: 0 0 0.9rem;
+        color: var(--muted);
+        line-height: 1.4;
+        font-size: 0.95rem;
+      }
+      .side ul {
+        margin: 0;
+        padding-left: 1.15rem;
+        color: var(--fg);
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+      .side li + li {
+        margin-top: 0.45rem;
+      }
+      .tradeoff {
+        margin: 1rem 0 0;
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.4;
+      }
+      .back {
+        display: inline-block;
+        margin-top: 2rem;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <h1>Share page exploration</h1>
+      <p class="lede">
+        Too many peer buttons on the rotation share page. Pick a direction to
+        compare hierarchy — same preview, fewer competing asks.
+      </p>
+
+      <div class="tabs" role="group" aria-label="Presentation direction">
+        <button type="button" aria-pressed="true" data-dir="current">
+          Current
+        </button>
+        <button type="button" aria-pressed="false" data-dir="one">
+          One CTA
+        </button>
+        <button type="button" aria-pressed="false" data-dir="two">
+          Two paths
+        </button>
+        <button type="button" aria-pressed="false" data-dir="more">
+          More ways
+        </button>
+        <button type="button" aria-pressed="false" data-dir="smart">
+          Smart collapse
+        </button>
+        <button type="button" aria-pressed="false" data-dir="intent">
+          Ask intent
+        </button>
+      </div>
+
+      <div class="stage">
+        <div class="phone" id="phone" aria-live="polite"></div>
+        <div class="side">
+          <h2 id="title">Current stack</h2>
+          <p class="blurb" id="blurb"></p>
+          <ul id="points"></ul>
+          <p class="tradeoff" id="tradeoff"></p>
+        </div>
+      </div>
+
+      <a class="back" href="/guardias/r/?d=eyJsYWJlbCI6IkludGVybmFsIE1lZGljaW5lIiwic3RhcnREYXRlIjoiMjAyNi0wOS0wMSIsImVuZERhdGUiOiIyMDI2LTEwLTMxIiwicGF0dGVybiI6eyJjeWNsZURheXMiOjQsIm9mZnNldCI6IkEifSwiZmlyc3RTaGlmdERhdGUiOiIyMDI2LTA5LTA0IiwidmFjYXRpb25TdGFydERhdGUiOm51bGwsInZhY2F0aW9uRW5kRGF0ZSI6bnVsbCwic2hpZnRTdGFydFRpbWUiOiIwNzowMCIsImNvbG9yIjoiI0RDMjExRSJ9"
+        >Open live share page →</a
+      >
+    </div>
+
+    <script>
+      (function () {
+        var days = Array.from({ length: 28 }, function (_, i) {
+          return i + 1;
+        });
+        var shift = { 4: 1, 8: 1, 12: 1, 16: 1, 20: 1, 24: 1, 28: 1 };
+
+        function calHtml() {
+          var dows = ["L", "M", "M", "J", "V", "S", "D"]
+            .map(function (d) {
+              return '<span class="dow">' + d + "</span>";
+            })
+            .join("");
+          var cells = days
+            .map(function (d) {
+              return (
+                '<span class="day' +
+                (shift[d] ? " on" : "") +
+                '">' +
+                d +
+                "</span>"
+              );
+            })
+            .join("");
+          return (
+            '<div class="cal"><p class="cal-month">october</p><div class="grid">' +
+            dows +
+            cells +
+            "</div></div>"
+          );
+        }
+
+        function head() {
+          return (
+            '<p class="label">Internal Medicine</p><p class="meta">Sep 1 – Oct 31</p>' +
+            calHtml()
+          );
+        }
+
+        var dirs = {
+          current: {
+            title: "Current stack",
+            blurb:
+              "Every export is a full-width secondary button. On desktop you can hit five pills before deciding.",
+            points: [
+              "App, Play/App Store, Google Calendar, .ics, and image all compete at the same visual weight",
+              "No hierarchy between “save in DeGuardia” and “take the dates elsewhere”",
+              "Works, but reads like a settings menu",
+            ],
+            tradeoff:
+              "Honest baseline. Good for seeing the clutter; bad as a destination.",
+            phone: function () {
+              return (
+                head() +
+                '<p class="copy">Open in DeGuardia or export below.</p>' +
+                '<div class="stack">' +
+                '<div class="pill primary">DeGuardia App</div>' +
+                '<div class="pill secondary">Google Play</div>' +
+                '<div class="pill secondary">Google Calendar</div>' +
+                '<div class="pill secondary">Download .ics</div>' +
+                '<div class="pill secondary">Download image</div>' +
+                "</div>"
+              );
+            },
+          },
+          one: {
+            title: "One CTA + quiet overflow",
+            blurb:
+              "One job above the fold: open/save in DeGuardia. Everything else is a single text control.",
+            points: [
+              "Primary: Open in DeGuardia (scheme → store fallback)",
+              "Secondary text: “Export instead” opens a small menu (Calendar, .ics, image)",
+              "Store choice stays inside the primary path, not a second pill",
+            ],
+            tradeoff:
+              "Strongest brand path. Slightly hides exports — fine if most recipients should install.",
+            phone: function () {
+              return (
+                head() +
+                '<p class="copy">Save this rotation in DeGuardia.</p>' +
+                '<div class="stack">' +
+                '<div class="pill primary">Open in DeGuardia</div>' +
+                '<button type="button" class="pill ghost" id="export-toggle">Export instead</button>' +
+                '<div class="menu" id="export-menu" hidden>' +
+                '<button type="button">Add to Google Calendar</button>' +
+                '<button type="button">Download .ics</button>' +
+                '<button type="button">Download image</button>' +
+                "</div></div>"
+              );
+            },
+          },
+          two: {
+            title: "Two paths",
+            blurb:
+              "Make the fork explicit: app vs calendar. Image becomes tertiary.",
+            points: [
+              "Left/right or stacked pair: Open in app · Add to calendar",
+              "Calendar path can smart-pick GCal vs .ics (vacation gap → .ics)",
+              "Image lives as a quiet link under the pair",
+            ],
+            tradeoff:
+              "Best if many people never install and just need dates. App feels equal, not superior.",
+            phone: function () {
+              return (
+                head() +
+                '<p class="copy">Keep it in the app, or drop it on a calendar.</p>' +
+                '<div class="stack"><div class="split">' +
+                '<div class="pill primary">Open app</div>' +
+                '<div class="pill secondary">Calendar</div>' +
+                "</div>" +
+                '<div class="pill ghost">Download image</div></div>'
+              );
+            },
+          },
+          more: {
+            title: 'Progressive “More ways”',
+            blurb:
+              "Keep one primary. Collapse the three exports behind one disclosure.",
+            points: [
+              "Primary stays full-width and obvious",
+              "One secondary: More ways to save → reveals GCal / .ics / image",
+              "Same information, half the initial chrome",
+            ],
+            tradeoff:
+              "Smallest change from today. Still two levels of decision for exporters.",
+            phone: function () {
+              return (
+                head() +
+                '<p class="copy">A rotation was shared with you.</p>' +
+                '<div class="stack">' +
+                '<div class="pill primary">Open in DeGuardia</div>' +
+                '<button type="button" class="pill secondary" id="more-toggle">More ways to save</button>' +
+                '<div class="menu" id="more-menu" hidden>' +
+                '<button type="button">Google Calendar</button>' +
+                '<button type="button">Download .ics</button>' +
+                '<button type="button">Download image</button>' +
+                "</div></div>"
+              );
+            },
+          },
+          smart: {
+            title: "Smart collapse",
+            blurb:
+              "Don’t show every option to every person. Merge and platform-filter.",
+            points: [
+              "Android → Play fallback; iOS → App Store; desktop → one Get the app that lists both lightly",
+              "Merge GCal + .ics into Add to calendar (you already branch on vacation gaps)",
+              "Image stays optional / overflow",
+            ],
+            tradeoff:
+              "Usually 2 visible actions. Needs good platform detection and clear calendar behavior.",
+            phone: function () {
+              return (
+                head() +
+                '<p class="copy">Open in the app, or add the shifts to your calendar.</p>' +
+                '<div class="stack">' +
+                '<div class="pill primary">Open in DeGuardia</div>' +
+                '<div class="pill secondary">Add to calendar</div>' +
+                '<div class="pill ghost">Save as image</div></div>'
+              );
+            },
+          },
+          intent: {
+            title: "Ask intent first",
+            blurb: "Before buttons, a soft choice that routes the UI.",
+            points: [
+              "“I use DeGuardia” → deep link / install CTA only",
+              "“I just need the dates” → calendar + image, no store noise",
+              "Highest clarity; one extra tap for everyone",
+            ],
+            tradeoff:
+              "Elegant for mixed audiences. Slightly slower for the common “just open it” case.",
+            phone: function () {
+              return (
+                head() +
+                '<p class="copy">How do you want this schedule?</p>' +
+                '<div class="stack">' +
+                '<div class="pill primary">I use DeGuardia</div>' +
+                '<div class="pill secondary">Just the dates</div></div>'
+              );
+            },
+          },
+        };
+
+        var phone = document.getElementById("phone");
+        var title = document.getElementById("title");
+        var blurb = document.getElementById("blurb");
+        var points = document.getElementById("points");
+        var tradeoff = document.getElementById("tradeoff");
+        var buttons = document.querySelectorAll(".tabs button");
+
+        function wireMenus() {
+          var exportToggle = phone.querySelector("#export-toggle");
+          var exportMenu = phone.querySelector("#export-menu");
+          if (exportToggle && exportMenu) {
+            exportToggle.addEventListener("click", function () {
+              exportMenu.hidden = !exportMenu.hidden;
+            });
+          }
+          var moreToggle = phone.querySelector("#more-toggle");
+          var moreMenu = phone.querySelector("#more-menu");
+          if (moreToggle && moreMenu) {
+            moreToggle.addEventListener("click", function () {
+              moreMenu.hidden = !moreMenu.hidden;
+            });
+          }
+        }
+
+        function render(key) {
+          var d = dirs[key];
+          title.textContent = d.title;
+          blurb.textContent = d.blurb;
+          points.replaceChildren();
+          d.points.forEach(function (t) {
+            var li = document.createElement("li");
+            li.textContent = t;
+            points.append(li);
+          });
+          tradeoff.textContent = d.tradeoff;
+          phone.innerHTML = d.phone();
+          wireMenus();
+          buttons.forEach(function (b) {
+            b.setAttribute(
+              "aria-pressed",
+              String(b.getAttribute("data-dir") === key),
+            );
+          });
+        }
+
+        buttons.forEach(function (b) {
+          b.addEventListener("click", function () {
+            render(b.getAttribute("data-dir"));
+          });
+        });
+        render("current");
+      })();
+    </script>
+  </body>
+</html>
