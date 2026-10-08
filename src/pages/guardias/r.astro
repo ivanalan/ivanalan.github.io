@@ -1,5 +1,5 @@
 ---
-/** Share landing page. App opens only via the DeGuardia App button (custom scheme). */
+/** Share landing page. App opens via DeGuardia App button (custom scheme), then store fallback. */
 ---
 
 <!doctype html>
@@ -116,10 +116,6 @@
         margin-bottom: 1.75rem;
       }
       .copy.has-preview {
-        margin-top: 0.25rem;
-        text-align: left;
-      }
-      .copy.has-preview #title {
         display: none;
       }
       h1 {
@@ -334,15 +330,81 @@
         color: var(--fg);
         border: 1px solid var(--card-border);
       }
+      a.btn-ghost,
+      button.btn-ghost {
+        background: transparent;
+        color: var(--muted);
+        border: none;
+        padding: 0.45rem 0.5rem;
+        text-decoration: underline;
+        text-underline-offset: 0.15em;
+        font-weight: 300;
+      }
       .btn[hidden] {
         display: none !important;
       }
-      .soon {
-        margin: 0;
+      .store-pair {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
         width: 100%;
-        text-align: center;
-        font-size: 0.85rem;
-        color: var(--muted);
+      }
+      .store-pair[hidden] {
+        display: none !important;
+      }
+      .store-pair .btn {
+        font-size: 0.78rem;
+        padding: 0.85rem 0.5rem;
+      }
+      .cal-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+      }
+      .cal-menu[hidden] {
+        display: none !important;
+      }
+      .cal-menu-list {
+        border: 1px solid var(--card-border);
+        border-radius: 1rem;
+        overflow: hidden;
+        width: 100%;
+      }
+      .cal-menu-list[hidden] {
+        display: none !important;
+      }
+      .cal-menu-list button {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        width: 100%;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0.85rem 1rem;
+        border: none;
+        border-bottom: 1px solid var(--card-border);
+        background: transparent;
+        color: var(--fg);
+        font-family: var(--font-mono);
+        font-weight: 400;
+        font-size: 0.88rem;
+        text-align: left;
+        cursor: pointer;
+      }
+      .cal-menu-list button:last-child {
+        border-bottom: none;
+      }
+      .cal-menu-list button:hover {
+        background: color-mix(in srgb, #fff 8%, transparent);
+      }
+      .cal-menu-list ion-icon {
+        font-size: 1.15em;
+        flex-shrink: 0;
+      }
+      #cal-btn ion-icon {
+        font-size: 1em;
+        margin-left: 0.1rem;
       }
       /* Offscreen export: narrow, height hugs stacked months. */
       .export-sheet {
@@ -482,23 +544,60 @@
             id="store-btn"
             href="https://apps.apple.com/app/id6803777786"
           >
-            <ion-icon name="logo-apple" aria-hidden="true"></ion-icon>
-            DeGuardia App
+            <ion-icon
+              id="store-btn-icon"
+              name="logo-apple"
+              aria-hidden="true"
+            ></ion-icon>
+            <span id="store-btn-label">Open on iOS App Store</span>
           </a>
-          <button type="button" class="btn btn-secondary" id="gcal-btn" hidden>
-            <ion-icon name="logo-google" aria-hidden="true"></ion-icon>
-            Google Calendar
-          </button>
-          <button type="button" class="btn btn-secondary" id="ics-btn" hidden>
-            <ion-icon name="download-outline" aria-hidden="true"></ion-icon>
-            Download .ics calendar file
-          </button>
-          <button type="button" class="btn btn-secondary" id="png-btn" hidden>
-            <ion-icon name="image-outline" aria-hidden="true"></ion-icon>
-            Download image
+          <div class="store-pair" id="store-pair" hidden>
+            <a
+              class="btn"
+              id="ios-store-btn"
+              href="https://apps.apple.com/app/id6803777786"
+            >
+              <ion-icon name="logo-apple" aria-hidden="true"></ion-icon>
+              iOS App Store
+            </a>
+            <a
+              class="btn"
+              id="play-store-btn"
+              href="https://play.google.com/store/apps/details?id=com.alanmatias.guardias"
+            >
+              <ion-icon
+                name="logo-google-playstore"
+                aria-hidden="true"
+              ></ion-icon>
+              Google Play
+            </a>
+          </div>
+          <div class="cal-menu" id="cal-menu" hidden>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="cal-btn"
+              aria-expanded="false"
+              aria-controls="cal-menu-list"
+            >
+              Add to calendar
+              <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
+            </button>
+            <div class="cal-menu-list" id="cal-menu-list" hidden role="menu">
+              <button type="button" id="gcal-btn" role="menuitem">
+                <ion-icon name="logo-google" aria-hidden="true"></ion-icon>
+                Google Calendar
+              </button>
+              <button type="button" id="ics-btn" role="menuitem">
+                <ion-icon name="download-outline" aria-hidden="true"></ion-icon>
+                Download .ics file
+              </button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-ghost" id="png-btn" hidden>
+            Save as image
           </button>
         </div>
-        <p class="soon">Coming soon to Google Play</p>
       </div>
     </main>
 
@@ -1165,19 +1264,66 @@
         }
 
         var APP_STORE_URL = "https://apps.apple.com/app/id6803777786";
+        var PLAY_STORE_URL =
+          "https://play.google.com/store/apps/details?id=com.alanmatias.guardias";
         var APP_OPEN_TIMEOUT_MS = 1600;
 
+        function detectPlatform(): "android" | "ios" | "other" {
+          var ua = navigator.userAgent || "";
+          if (/android/i.test(ua)) return "android";
+          if (/iPad|iPhone|iPod/.test(ua)) return "ios";
+          return "other";
+        }
+
         /**
-         * Try the custom scheme first; if the page is still visible shortly
-         * after, assume the app is not installed and go to the App Store.
+         * Mobile: one “Open in DeGuardia App” button — try miguardia://, then
+         * the matching store. Desktop: side-by-side iOS / Google Play (no
+         * custom-scheme attempt; desktop can’t open the phone app).
          */
         function wireOpenInAppButton(payload: string) {
           var storeBtn = document.getElementById(
             "store-btn",
           ) as HTMLAnchorElement | null;
-          if (!storeBtn) return;
+          var storePair = document.getElementById("store-pair");
+          var iosStoreBtn = document.getElementById(
+            "ios-store-btn",
+          ) as HTMLAnchorElement | null;
+          var playStoreBtn = document.getElementById(
+            "play-store-btn",
+          ) as HTMLAnchorElement | null;
+          if (!storeBtn || !storePair) return;
 
-          storeBtn.href = APP_STORE_URL;
+          var platform = detectPlatform();
+
+          if (platform === "other") {
+            storeBtn.hidden = true;
+            storePair.hidden = false;
+            if (iosStoreBtn) iosStoreBtn.href = APP_STORE_URL;
+            if (playStoreBtn) playStoreBtn.href = PLAY_STORE_URL;
+            return;
+          }
+
+          storeBtn.hidden = false;
+          storePair.hidden = true;
+
+          var storeBtnIcon = document.getElementById("store-btn-icon");
+          var storeBtnLabel = document.getElementById("store-btn-label");
+          var primaryStoreUrl =
+            platform === "android" ? PLAY_STORE_URL : APP_STORE_URL;
+          storeBtn.href = primaryStoreUrl;
+
+          if (platform === "android") {
+            if (storeBtnIcon)
+              storeBtnIcon.setAttribute("name", "logo-google-playstore");
+            if (storeBtnLabel)
+              storeBtnLabel.textContent = "Open on Google Play";
+          } else {
+            if (storeBtnIcon)
+              storeBtnIcon.setAttribute("name", "logo-apple");
+            if (storeBtnLabel)
+              storeBtnLabel.textContent = "Open on iOS App Store";
+          }
+
           storeBtn.addEventListener("click", function (event) {
             event.preventDefault();
 
@@ -1196,7 +1342,7 @@
               window.removeEventListener("pagehide", markLeft);
               window.removeEventListener("blur", markLeft);
               document.removeEventListener("visibilitychange", onVisibility);
-              window.location.href = APP_STORE_URL;
+              window.location.href = primaryStoreUrl;
             }
 
             function onVisibility() {
@@ -1243,13 +1389,17 @@
         ) as HTMLButtonElement | null;
         var dowsEl = document.getElementById("dows");
         var weeksEl = document.getElementById("weeks");
-        var icsBtn = document.getElementById("ics-btn");
+        var calMenu = document.getElementById("cal-menu");
+        var calBtn = document.getElementById(
+          "cal-btn",
+        ) as HTMLButtonElement | null;
+        var calMenuList = document.getElementById("cal-menu-list");
         var gcalBtn = document.getElementById("gcal-btn");
+        var icsBtn = document.getElementById("ics-btn");
         var pngBtn = document.getElementById(
           "png-btn",
         ) as HTMLButtonElement | null;
         var copyEl = document.getElementById("copy");
-        var copyBody = document.getElementById("copy-body");
         var exportSheet = document.getElementById("export-sheet");
         var exportLabel = document.getElementById("export-label");
         var exportMeta = document.getElementById("export-meta");
@@ -1290,22 +1440,32 @@
         );
 
         if (copyEl) copyEl.classList.add("has-preview");
-        if (copyBody) {
-          copyBody.textContent =
-            "A rotation was shared with you. You can open it in the DeGuardia app or export it with the options below.";
-        }
         var icsPreview = buildIcs(activeDraft);
-        if (icsPreview.count > 0) {
+        if (icsPreview.count > 0 && calMenu && calBtn && calMenuList) {
+          var activeCalMenu = calMenu;
+          var activeCalBtn = calBtn;
+          var activeCalMenuList = calMenuList;
+          activeCalMenu.hidden = false;
+          activeCalBtn.addEventListener("click", function () {
+            var open = activeCalMenuList.hidden;
+            activeCalMenuList.hidden = !open;
+            activeCalBtn.setAttribute(
+              "aria-expanded",
+              open ? "true" : "false",
+            );
+          });
           if (gcalBtn) {
-            gcalBtn.hidden = false;
             gcalBtn.addEventListener("click", function () {
               exportToGoogleCalendar(activeDraft);
+              activeCalMenuList.hidden = true;
+              activeCalBtn.setAttribute("aria-expanded", "false");
             });
           }
           if (icsBtn) {
-            icsBtn.hidden = false;
             icsBtn.addEventListener("click", function () {
               downloadIcs(activeDraft);
+              activeCalMenuList.hidden = true;
+              activeCalBtn.setAttribute("aria-expanded", "false");
             });
           }
         }
