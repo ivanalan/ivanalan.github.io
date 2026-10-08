@@ -175,8 +175,12 @@
           <span>Current Download .ics style (one VEVENT per shift)</span>
         </button>
         <button type="button" id="flow-d">
-          <strong>D — RRULE .ics only</strong>
-          <span>System / Apple Calendar picker; check Google sync</span>
+          <strong>D — RRULE .ics download</strong>
+          <span>Blob download (often lands in Files)</span>
+        </button>
+        <button type="button" id="flow-e">
+          <strong>E — Apple Calendar (data: URL)</strong>
+          <span>RRULE .ics via data: — should open Add to Calendar on iOS</span>
         </button>
       </section>
 
@@ -421,10 +425,16 @@
           ].join("\n");
         }
 
+        function openAppleCalendarDataUrl(ics: string): void {
+          window.location.href =
+            "data:text/calendar;charset=utf-8," + encodeURIComponent(ics);
+        }
+
         var flowA = document.getElementById("flow-a");
         var flowB = document.getElementById("flow-b");
         var flowC = document.getElementById("flow-c");
         var flowD = document.getElementById("flow-d");
+        var flowE = document.getElementById("flow-e");
 
         if (flowA) {
           flowA.addEventListener("click", function () {
@@ -475,6 +485,18 @@
               "text/calendar;charset=utf-8",
             );
             setLast("D downloaded RRULE .ics only\n" + rule);
+          });
+        }
+
+        if (flowE) {
+          flowE.addEventListener("click", function () {
+            var ics = buildRruleIcs(FIXTURE, shifts);
+            setLast(
+              "E opened Apple Calendar via data: URL\n" +
+                rule +
+                "\nPick your Google calendar if offered.",
+            );
+            openAppleCalendarDataUrl(ics);
           });
         }
       })();

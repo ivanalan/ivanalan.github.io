@@ -637,6 +637,10 @@
               Add to calendar
             </button>
             <div class="cal-menu-list" id="cal-menu-list" hidden role="menu">
+              <button type="button" id="apple-cal-btn" role="menuitem">
+                <ion-icon name="logo-apple" aria-hidden="true"></ion-icon>
+                Apple Calendar
+              </button>
               <button type="button" id="gcal-btn" role="menuitem">
                 <ion-icon name="logo-google" aria-hidden="true"></ion-icon>
                 Google Calendar
@@ -1134,6 +1138,103 @@
         }
 
         /**
+         * One VEVENT + RRULE when the cycle is unbroken. Better for Apple Calendar
+         * (and Google sync via iOS) than N one-off events.
+         */
+        function buildRruleIcs(draft: Draft): { ics: string; count: number } | null {
+          if (vacationBreaksCycle(draft)) return null;
+          var shiftInfo = firstAndCountShifts(draft);
+          if (!shiftInfo.first || !shiftInfo.count) return null;
+          var endDate = addDays(shiftInfo.first, 1);
+          var stamp = formatIcsUtcNow();
+          var summary = escapeIcsText(draft.label);
+          var uid =
+            "guardia-rrule-" +
+            draft.pattern.cycleDays +
+            draft.pattern.offset +
+            "-" +
+            shiftInfo.first.replace(/-/g, "") +
+            "@alanmatias.com";
+          var lines = [
+            "BEGIN:VCALENDAR",
+            "VERSION:2.0",
+            "PRODID:-//DeGuardia//EN",
+            "CALSCALE:GREGORIAN",
+            "METHOD:PUBLISH",
+            "X-WR-CALNAME:" + summary,
+            "BEGIN:VEVENT",
+            "UID:" + uid,
+            "DTSTAMP:" + stamp,
+            "DTSTART:" + formatIcsLocal(shiftInfo.first, draft.shiftStartTime),
+            "DTEND:" + formatIcsLocal(endDate, draft.shiftStartTime),
+            "SUMMARY:" + summary,
+            "DESCRIPTION:" +
+              escapeIcsText(
+                "Shared from DeGuardia · " +
+                  patternLabel(draft.pattern.cycleDays, draft.pattern.offset),
+              ),
+            "RRULE:FREQ=DAILY;INTERVAL=" +
+              draft.pattern.cycleDays +
+              ";COUNT=" +
+              shiftInfo.count,
+            "END:VEVENT",
+            "END:VCALENDAR",
+          ];
+          return {
+            ics: lines.join("\r\n") + "\r\n",
+            count: shiftInfo.count,
+          };
+        }
+
+        /**
+         * iOS Safari: data: text/calendar often opens Add to Calendar (pick Google
+         * if that account is in Settings → Calendar). Falls back to share/download.
+         */
+        function openAppleCalendar(draft: Draft): void {
+          var rruleBuilt = buildRruleIcs(draft);
+          var built = rruleBuilt || buildIcs(draft);
+          if (!built.count) return;
+          var ics = built.ics;
+          var filename = slugFilename(draft.label);
+
+          if (detectPlatform() === "ios") {
+            window.location.href =
+              "data:text/calendar;charset=utf-8," + encodeURIComponent(ics);
+            return;
+          }
+
+          var file = new File([ics], filename, { type: "text/calendar" });
+          if (
+            typeof navigator.canShare === "function" &&
+            navigator.canShare({ files: [file] })
+          ) {
+            navigator.share({ files: [file], title: draft.label }).catch(
+              function () {
+                downloadIcs(draft);
+              },
+            );
+            return;
+          }
+
+          if (rruleBuilt) {
+            var blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            document.body.append(a);
+            a.click();
+            a.remove();
+            window.setTimeout(function () {
+              URL.revokeObjectURL(url);
+            }, 2000);
+            return;
+          }
+
+          downloadIcs(draft);
+        }
+
+        /**
          * One recurring event via Google’s TEMPLATE URL.
          * Only valid when shifts are a clean every-N-days cycle (no vacation gaps).
          */
@@ -1573,6 +1674,7 @@
           "cal-btn",
         ) as HTMLButtonElement | null;
         var calMenuList = document.getElementById("cal-menu-list");
+        var appleCalBtn = document.getElementById("apple-cal-btn");
         var gcalBtn = document.getElementById("gcal-btn");
         var icsBtn = document.getElementById("ics-btn");
         var pngBtn = document.getElementById(
@@ -1633,6 +1735,13 @@
               open ? "true" : "false",
             );
           });
+          if (appleCalBtn) {
+            appleCalBtn.addEventListener("click", function () {
+              openAppleCalendar(activeDraft);
+              activeCalMenuList.hidden = true;
+              activeCalBtn.setAttribute("aria-expanded", "false");
+            });
+          }
           if (gcalBtn) {
             gcalBtn.addEventListener("click", function () {
               exportToGoogleCalendar(activeDraft);
