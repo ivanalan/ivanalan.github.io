@@ -3,7 +3,7 @@ import { site } from "@/lib/site";
 import BrandChip from "@/components/BrandChip.astro";
 ---
 
-<header class="flex flex-col gap-4">
+<header class="flex flex-col gap-2">
   <div class="flex flex-col gap-0.5">
     <h1 class="reveal text-name text-foreground" style="--reveal-index: 0">
       {site.name}
@@ -12,10 +12,15 @@ import BrandChip from "@/components/BrandChip.astro";
       {site.role}
     </p>
   </div>
-  <p
-    class="reveal text-base leading-relaxed text-foreground"
-    style="--reveal-index: 2"
-  >
-    3+ years shipping products: from scrappy, fast work at <BrandChip brand="ab-initio" /> to designing for scale at <BrandChip brand="qualtrics" />. I design with <BrandChip brand="figma" />, iterate in <BrandChip brand="cursor" />, and measure impact using <BrandChip brand="amplitude" />.
-  </p>
+  <div class="flex flex-col gap-1">
+    <p
+      class="reveal text-base leading-[1.7] text-foreground"
+      style="--reveal-index: 2"
+    >
+      3+ years shipping products: from scrappy, fast work at Ab Initio to
+      designing for scale at Qualtrics. I design with <BrandChip brand="figma" />, iterate in <BrandChip
+      brand="cursor"
+    />, and measure impact using <BrandChip brand="amplitude" />.
+    </p>
+  </div>
 </header>

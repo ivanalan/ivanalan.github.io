@@ -1,9 +1,21 @@
+import type { CompanyBrand } from "@/components/BrandChip";
+import type { IonIconName } from "@/components/IonIcon";
+
 export type CoverShader = "r5" | "qualtrics";
+
+export type MetaMark = "figma";
+
+export type WorkCardMeta = {
+  label: string;
+  icon?: IonIconName;
+  mark?: MetaMark;
+};
 
 export type WorkCard = {
   href: string;
   title: string;
-  meta: string;
+  companyBrand?: CompanyBrand;
+  meta: WorkCardMeta[];
   status: "placeholder" | "published";
   coverSrc?: string;
   coverWidth?: number | string;
