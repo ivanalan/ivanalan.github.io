@@ -1,0 +1,60 @@
+---
+type Props = {
+  /** Suggested filename once you export from the deck */
+  file: string;
+  caption: string;
+  /** Optional deck reference, e.g. "Presentation p10" */
+  from?: string;
+};
+
+const { file, caption, from } = Astro.props;
+const aria = from
+  ? `Media placeholder for ${file}, from ${from}`
+  : `Media placeholder for ${file}`;
+---
+
+<figure>
+  <div class="case-media-placeholder" role="img" aria-label={aria}>
+    <span class="case-media-placeholder__eyebrow">Add media</span>
+    <span class="case-media-placeholder__file">{file}</span>
+    {
+      from && (
+        <span class="case-media-placeholder__from">{from}</span>
+      )
+    }
+  </div>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .case-media-placeholder {
+    display: flex;
+    min-height: 14rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    border: 1px dashed color-mix(in oklab, var(--border) 85%, transparent);
+    background: var(--muted);
+    padding: 2rem 1.25rem;
+    text-align: center;
+  }
+
+  .case-media-placeholder__eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .case-media-placeholder__file {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.9rem;
+    color: var(--foreground);
+  }
+
+  .case-media-placeholder__from {
+    font-size: 0.8rem;
+    color: var(--muted-foreground);
+  }
+</style>

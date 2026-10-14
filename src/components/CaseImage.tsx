@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils"
 type CaseImageProps = {
   src: string
   alt: string
-  caption: string
+  caption?: string
   href?: string
   linkLabel?: string
   /** Fill behind transparent images. Defaults to muted. */
@@ -42,6 +42,7 @@ function CaptionText({
   href,
   linkLabel,
 }: Pick<CaseImageProps, "caption" | "href" | "linkLabel">) {
+  if (!caption) return null
   if (href && linkLabel && caption.includes(linkLabel)) {
     const [before, ...rest] = caption.split(linkLabel)
     return (
@@ -472,18 +473,24 @@ export function CaseImage({
             )}
           </div>
 
-          <DialogDescription className="max-w-prose">
-            <CaptionText
-              caption={caption}
-              href={href}
-              linkLabel={linkLabel}
-            />
+          <DialogDescription className="mx-auto max-w-prose text-center">
+            {caption ? (
+              <CaptionText
+                caption={caption}
+                href={href}
+                linkLabel={linkLabel}
+              />
+            ) : (
+              alt
+            )}
           </DialogDescription>
         </DialogContent>
       </Dialog>
-      <figcaption>
-        <CaptionText caption={caption} href={href} linkLabel={linkLabel} />
-      </figcaption>
+      {caption ? (
+        <figcaption>
+          <CaptionText caption={caption} href={href} linkLabel={linkLabel} />
+        </figcaption>
+      ) : null}
     </figure>
   )
 }
