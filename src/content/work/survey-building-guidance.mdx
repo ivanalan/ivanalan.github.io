@@ -1,5 +1,5 @@
 ---
-title: Revamping an opaque score into clear guidance
+title: Increasing survey guidance usage by 600%
 company: Qualtrics
 role: Designer
 team: 1 PM, 1 researcher, 2 eng leads, 3 engineers
@@ -15,103 +15,99 @@ import CaseTable from "../../components/CaseTable.astro";
 import { CaseImage } from "../../components/CaseImage";
 import { CaseVideo } from "../../components/CaseVideo";
 
-<CaseImage
-  client:load
-  src="/media/work/survey-building-guidance/SidePanel1.png"
-  alt="Survey Builder with Issues and tips side panel open on Tips, showing Simplify question wording expanded beside a CSAT survey"
-  caption="Errors, Warnings, and Tips in context while you edit."
-/>
-
 ## Outcome
 
-1. Turned an untrusted health score into Errors / Warnings / Tips, ready for use in our Survey Builder AI harness.
-2. Built the guidance side panel as a shared design-system pattern with Distributions, grounded in joint research rather than two one-off designs.
-3. Post-launch stats TBD
+1. Grew guidance from **10% → 35% MAU**, with event usage up about **600%**.
+2. Developed a **shared design system pattern** with another team, shipping 2 products with 1 system.
+3. Replaced an opaque health score with a framework **ready for AI building**.
 
-## A score that didn’t earn trust
+## The problem: low completion rates and poor data
 
-In Qualtrics, you create surveys in the Survey Builder. Expert Review scores your survey “Great”, “Fair”, or “Poor” from a formula of ~20 checks. For example, an incomplete translation on a question could drop you from “Great” to “Fair”.
+Take a look at this sample survey. Would you take it all the way through if you had to answer 10 open-ended questions?
 
 <CaseImage
   client:load
-  src="/media/work/survey-building-guidance/SB_base.png"
-  alt="Survey Builder canvas with Expert Review score Fair badge in the upper right, cursor pointing at it"
-  caption="This was the entry point to Expert Review."
+  src="/media/work/survey-building-guidance/problem-survey-fatigue-phone.png"
+  alt="Phone mockup of a Delta survey with five open-text questions about a recent trip"
+  bgClassName="bg-transparent"
 />
 
+Research shows that if you have more than 4 open-text questions, completion rates decline significantly due to survey fatigue. While the Qualtrics Survey Builder is powerful for building complex surveys, it doesn’t matter if you get low completion rates or poor data.
+
+That’s why our team built Expert Review in 2016 — to help provide users with best practices and alert them of any technical issues.
+
 <CaseImage
   client:load
-  src="/media/work/survey-building-guidance/ExpertReview.png"
+  src="/media/work/survey-building-guidance/problem-expert-review-entry.png"
+  alt="Survey Builder with a magnified Expert Review score Fair badge"
+  caption="The ingress to Expert Review."
+  bgClassName="bg-transparent"
+/>
+
+It scores a survey Poor, Fair, or Great from a formula of 20 checks, then lists those issues in a modal.
+
+<CaseImage
+  client:load
+  src="/media/work/survey-building-guidance/problem-expert-review-modal.png"
   alt="Expert Review modal showing a Fair score with methodology checks listed underneath"
-  caption="Expert Review: an opaque score in a modal."
+  bgClassName="bg-transparent"
 />
 
-Tasked with improving the feature, I opened an Amplitude investigation to understand the problem:
+## The ask: improve feedback and increase usage
 
-- Expert Review only reached about **14–16% MAU** among active survey builders.
-- The score correlated with completion rate above 80%, then flattened. Below that, a 20% survey and a 79% survey looked almost the same.
-- The distribution spiked where ~15% of surveys scored 66%, with almost no surveys between 67–93%, so fixing issues often produced no movement or a sudden jump.
+While Expert Review was great in theory, it had very little usage in practice.
 
 <CaseImage
   client:load
-  src="/media/work/survey-building-guidance/amplitude2.png"
-  alt="Amplitude analysis relating Expert Review score to survey completion rate"
-  caption="9% MAU, and a skewed score distribution."
+  src="/media/work/survey-building-guidance/ask-low-usage-chart.png"
+  alt="Chart showing Expert Review usage among active survey builders at 10.8% of active users"
+  caption="11% MAU of Expert Review among active survey builders"
+  bgClassName="bg-transparent"
 />
 
-Survey Builder PSAT had also dropped ~10% year over year (to ~66%), with ease of use as the top negative driver. Roughly $70–85K in annual cost-to-serve mapped to configuration and runtime issues in the same space.
+The ask from product was broad: create a new framework to modernize this system. The hypothesis was that if we increased usage with this guidance tool, we could improve these key business metrics:
 
-The ask from product was broad: improve feedback and catch broken surveys. Two problems were running in parallel, and they needed one trustworthy system.
+1. **Time-to-value.** Reduce the time it takes for users to realize value.
+2. **Increase platform maturity.** Nudge users towards more advanced features.
 
-1. Methodology “health” (question readability, mobile optimization)
-2. Real config failures (invalid references, build failures)
+My role was to define the user problem and plan the implementation. Early on, the PM was on leave, so I had more ownership of the problem framing and stakeholder alignment.
 
-## More than a framework doc
+## Three problems under one score
 
-A checklist of new metrics wouldn’t fix trust. I treated the ask as a design problem: redefine how guidance is categorized, then rebuild its interactions. That became a phased plan:
+Tasked with improving the feature, I investigated underlying usage issues with Amplitude data and paired it with existing qualitative research. Here are the three main problems I found:
 
-<CaseTable>
-  <table>
-    <thead>
-      <tr>
-        <th scope="col">Timing</th>
-        <th scope="col">Phase</th>
-        <th scope="col">What shipped</th>
-        <th scope="col">Why it mattered</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th scope="row">Q1 2026</th>
-        <td>Align on a shared framework</td>
-        <td>Score replaced by Errors, Warnings, and Tips</td>
-        <td>Foundational architecture for the phases that followed</td>
-      </tr>
-      <tr>
-        <th scope="row">Q2 2026</th>
-        <td>Research and testing</td>
-        <td>Research report on key user needs and interaction patterns</td>
-        <td>Resolved concerns about a new pattern and clarified what mattered to builders</td>
-      </tr>
-      <tr>
-        <th scope="row">Q3 2026</th>
-        <td>Full deprecation and side panel launch</td>
-        <td>In-context side panel</td>
-        <td>Better interactions to match the new framework</td>
-      </tr>
-      <tr>
-        <th scope="row">Q4 2026</th>
-        <td>Next</td>
-        <td>AI agent in the same panel</td>
-        <td>Carry the framework into the AI era</td>
-      </tr>
-    </tbody>
-  </table>
-</CaseTable>
+**1. The score wasn’t a robust mechanism.** Builders said it felt inaccurate or confusing, and my analysis showed that the score was heavily skewed.
 
-## Aligning on a simple 3-category framework
+<CaseImage
+  client:load
+  src="/media/work/survey-building-guidance/problem-score-distribution.png"
+  alt="Histogram of Expert Review overall scores with a spike around 70–75 and a gap before 95–100"
+  caption="Skewed score distribution — fixing issues often didn’t move the number."
+  bgClassName="bg-transparent"
+  className="mx-auto max-w-xl"
+/>
 
-Expert Review metrics sat on two axes, issue type × severity, producing ~25 attribute combinations. Reviewing past user research, I proposed a simpler frame that sorted ~60 cases into three categories:
+**2. Prioritization was unclear.** Metrics were categorized on issue type × severity: roughly 25 attribute combinations. Users found it hard to parse through and read.
+
+<CaseImage
+  client:load
+  src="/media/work/survey-building-guidance/problem-unclear-prioritization.png"
+  alt="Expert Review modal with severity filters and long metric copy, annotated as hard to parse"
+  bgClassName="bg-transparent"
+/>
+
+**3. Interaction left the user’s context.** People had to leave the builder for a modal that took them out of their survey context. Research showed that users want guidance that is dismissable and in context.
+
+<CaseImage
+  client:load
+  src="/media/work/survey-building-guidance/problem-modal-leaves-context.png"
+  alt="Survey Builder canvas behind an Expert Review modal, showing the jump out of context"
+  bgClassName="bg-transparent"
+/>
+
+## Stop scoring. Start categorizing.
+
+To create a new framework, I borrowed from our existing design system pattern for banners which has a variant for errors, warnings, and tips. I enriched this framework with rules and examples for the Survey Builder, and was able to apply it to nearly 60 cases that fell into these categories cleanly.
 
 <CaseTable>
   <table>
@@ -138,84 +134,57 @@ Expert Review metrics sat on two axes, issue type × severity, producing ~25 att
   </table>
 </CaseTable>
 
-It took an entire quarter to align on that framework. The categories appealed to every stakeholder. The hard part was deciding which issues were important enough to be Errors (and block publish) versus softer Warnings.
+Yet, it took almost a whole quarter to align all stakeholders on that framework. While the framework seemed simple enough, there was now a new challenge: which issues merit being an Error (blocking publish), and which are a softer Warning.
 
-For example, “Invalid display logic” means that at runtime the survey cannot show a question because its logic has invalid references. That breaks the survey definition, yet users had learned the behavior and sometimes used it intentionally to hide questions that were no longer relevant.
+We eventually agreed on reserving Errors for a small listed set of high-risk issues and signed off on the framework. However, looking back, I would have integrated eng as part of the original framework brainstorming to avoid this lengthy discussion at the end.
 
-Those back-and-forths felt endless. I learned that instead of bringing engineering a finished framework, I should have facilitated co-design from the start so decisions were made collectively rather than handed down for review.
+## Designing at scale
 
-## A surprising result from research
-
-While the framework already existed from prior research, I partnered with a researcher on remaining questions and interaction tests.
-
-One concept we tested was blocking publish when a survey had errors, prompted by complaints about surveys going out with expired dates or silent logic failures. Participants confirmed they wouldn’t distribute an untakeable survey, but they were hesitant about being blocked from publishing.
-
-That revealed publish was not the mental model we thought it was. People often used Publish to save an explicit version in history, even with autosave. It was a critical, unexpected update for the framework: the platform was not ready to block publish on errors until save and publish were decoupled. Most issues stayed Warnings, which did not block publishing.
-
-## Interaction tests before shipping at Qualtrics scale
-
-At this company size, shipping a pattern once is expensive to unwind. Easy to add one-off checks; hard to remove them, which is how Expert Review got outdated in the first place. So the second half of the research went into interaction testing.
-
-Across Qualtrics, guidance already lived in different shapes: inline footers, left panes (Dashboard Spot Check), modals, checklists. There wasn’t one canonical pattern to copy. We tested three ideas and landed on a right-hand panel so builders could see the issue and edit the question at the same time.
+While I solved the first two problems (score is not a robust mechanism, prioritization was unclear), I still had to solve the interaction problem. At Qualtrics scale, shipping a pattern is expensive to undo. So, at the great advice of my PM, I invested some time to validate with users first. I partnered with a researcher to run a quick study to answer some still-open questions and run usability tests.
 
 <CaseImage
   client:load
-  src="/media/work/survey-building-guidance/PrototypeOptions.png"
+  src="/media/work/survey-building-guidance/research-interaction-concepts.png"
   alt="Three interaction concepts for survey guidance: modal, left pane, and right-hand side panel"
-  caption="Three concepts tested and the right-hand panel won."
+  caption="Three concepts tested. The right-hand panel won."
+  bgClassName="bg-transparent"
 />
 
-## Prototyping deep interactions in the codebase
+Two decisions came out of that research:
 
-Building on that research decision, I started deeper interaction work in Figma, but iteration was slow. I needed to compare behaviors like sticky headers under long lists, accordion exclusivity, scroll and highlight sync, and cascading panes. So I switched to Cursor on a Survey Builder prototyping branch, putting low-fidelity panels on the real product and stacking those interactions against a realistic survey build.
+1. **Only new metrics would be eligible as Errors.** Because users were “publishing” as a way to “save” their survey, there was a huge risk in suddenly blocking users from publish. So, only new checks are eligible to be Errors.
+2. **Move forward with a right-hand side panel.** We tested a modal, a left pane, and a right panel. The panel won because it fit into builders' workflows of drafting an entire survey, then reviewing it all at once.
 
-The biggest decision was IA: expand-in-place versus dedicated pages for metrics like Invalid Display Logic. In Figma, a detail page looked cleaner. In the code prototype with real data, expand-in-place was faster. You could open metrics and see what was wrong at a glance. The detail page felt clunky, something much easier to discover in a working prototype.
+## Co-designing a pattern
 
-<CaseVideo
-  client:load
-  src="/media/work/survey-building-guidance/prototype-ia.mp4"
-  poster="/media/work/survey-building-guidance/prototype-ia-poster.webp"
-  width={1582}
-  height={872}
-  title="Code prototype of Survey Builder guidance side panel IA"
-  caption="Expand-in-place vs detail pages using a real survey."
-/>
+Around the same time, another team was solving a similar problem: "how might we provide users with email best practices so invitations don’t land in spam?". Their designer reached out so we could compare projects.
 
-## Collaborating with a designer to create a design system pattern
-
-Around the same time, another team was solving a similar problem: helping users follow email best practices so survey invitations don’t land in spam. Their designer reached out so we could compare projects and look for collaboration.
-
-After swapping notes, it was clear we shared the same underlying issues and that one solution could cover both. We designed a side panel with expandable cards: all feedback in one overview, with a way to expand into more detail or actions. Instead of building two separate products, we reused the same components and kept the experience consistent.
+We shared the same underlying needs: an in-context signal, a clear severity framework, and a way to view more information. Instead of two one-off products, we co-designed one design system pattern.
 
 <CaseImage
   client:load
-  src="/media/work/survey-building-guidance/emailSidePanel2.png"
-  alt="Communications email guidance side panel with expandable best-practice cards"
-  caption="The same expandable-card side panel pattern in Distributions."
+  src="/media/work/survey-building-guidance/codesign-email-annotation.png"
+  alt="Annotated email compose guidance showing in-context Error, Warning, or Tip signals"
+  caption="Sending an email: an in-context signal and a side panel with more info."
+  bgClassName="bg-transparent"
 />
-
-I think design systems work best this way: not as top-down rules, but when teams solving real problems on their own find a chance to share. There’s a broader opportunity to make this guidance layer consistent across products, but a pattern that already fits two is the first step.
-
-## Designer-owned implementation
-
-On an earlier feature, we launched using the classic loop: I submit specs → eng implements → I review pixels → wait → re-review. With this work, I cut the loop and directly owned implementation. Eng built the backend and base interactions, then handed the work to me so I could refine interactions and polish.
-
-On the side panel that meant one-at-a-time accordion behavior, layout alignment, and flattening a nested information architecture. That pass became part of our SDLC instead of critique-only review, and it shortened the path to a UI that matched the intent of the design.
 
 <CaseImage
   client:load
-  src="/media/work/survey-building-guidance/jiramerge.png"
-  alt="Jira ticket showing designer-owned implementation work merged into the Survey Builder branch"
-  caption="Design implementation owned by me."
+  src="/media/work/survey-building-guidance/codesign-side-panel-annotation.png"
+  alt="Annotated Survey Builder Issues and tips side panel linked to questions on the canvas"
+  caption="Building a survey: an in-context signal and a side panel with more info."
+  bgClassName="bg-transparent"
 />
 
-## Copy is part of design
+I think design systems work best this way: not as top-down rules, but when teams solving real problems find a chance to share.
 
-One design-driven push I made was iterating the copy for each metric. The side panel over the modal was a priority, but the copy mattered too: users needed to quickly see what was wrong, why, and what to do. I treated copy as part of the design (lower priority, but still design) and built a framework to turn unstructured metric descriptions into a scalable system. Every description gets three sentences: (1) why it was flagged, (2) why it matters, and (3) what to do.
+## Copy is design
+
+The side panel mattered, but so did the words inside it. I treated copy as part of the design and created a system that ensured our copy could stay clear and actionable as our list of metrics scaled. Each metric would have three simple sentences: (1) what was flagged, (2) why it matters, (3) what to do.
 
 <CaseTable
   class="equal-cols"
-  caption="Same metric rewritten to (1) Flag, (2) Impact, (3) Action."
 >
   <table>
     <thead>
@@ -258,16 +227,63 @@ One design-driven push I made was iterating the copy for each metric. The side p
   </table>
 </CaseTable>
 
-## What this unlocked
+## Implementation: prototype in code, polish in product
 
-The Q1 work set the foundation for a simple Error, Warning, and Tip framework, where survey health is a clear, scalable system instead of an opaque score. Engineering could now add new issues without redesigning how they show up each time. Q2 research and testing made sure those early ideas would scale to Qualtrics’ user base and surfaced insights we needed. In Q3, we launched the side panel and deprecated Expert Review, making day-to-day survey building easier to iterate on.
+I started deeper interaction work in Figma, but iteration was slow. So, I switched to Cursor and prototyped using the real codebase with a realistic survey.
 
-More importantly, this laid groundwork for AI survey building in two ways: a stable Error / Warning / Tip harness that already fits the design system, and a right-hand side panel we can keep extending.
+<CaseVideo
+  client:load
+  src="/media/work/survey-building-guidance/implementation-prototype-ia.mp4"
+  poster="/media/work/survey-building-guidance/implementation-prototype-ia-poster.webp"
+  width={1582}
+  height={872}
+  title="Code prototype of Survey Builder guidance side panel IA"
+  caption="Exploring information architecture interactions in real code"
+  bgClassName="bg-transparent"
+/>
 
-## What I’d do differently
+For shipping, I pioneered a new process. Eng built the backend and base flows, then handed the UI to me. I owned an implementation pass for the UI (accordion behavior, layout, flattening nested IA), and polished in the product instead of looping pixel critiques.
 
-If I were to change just one thing in this project, I’d pull engineering into the framework earlier as co-authors of categorization, not late reviewers of a proposal. The UI work was comparatively straightforward; the real bottleneck was the framework itself. A kickoff workshop would have been invaluable.
+<CaseImage
+  client:load
+  src="/media/work/survey-building-guidance/implementation-designer-merge.png"
+  alt="Jira ticket showing designer-owned implementation work merged into the Survey Builder branch"
+  bgClassName="bg-transparent"
+/>
 
-## Next
+## Impact: 25% increase in MAU and 6x usage
 
-Next up is the Survey Builder AI agent: built on this foundation to help users create surveys with sound methodology advice and solid logical configurations.
+Shipping the framework and side panel moved guidance from **10% → 35% MAU**. Event usage among active survey builders rose about **6×**.
+
+<CaseImage
+  client:load
+  src="/media/work/survey-building-guidance/impact-usage-events-chart.png"
+  alt="Chart of active survey builder guidance events from Jan 2026 to Sep 2026, rising from roughly 25k to about 176k"
+  caption="Event usage went from about 25,000 → 175,000: a 6x increase."
+  bgClassName="bg-transparent"
+  className="mx-auto max-w-xl"
+/>
+
+One pattern shipped in two products, which made it the start of a durable system rather than a one-off. It also led the way for a stable Error / Warning / Tip harness for upcoming AI agent work.
+
+<CaseImage
+  client:load
+  src="/media/work/survey-building-guidance/impact-shipped-side-panel.png"
+  alt="MacBook showing Survey Builder with Issues and tips side panel open on a CSAT survey"
+  caption="Shipped side panel: Errors, Warnings, and Tips in context of the builder."
+  bgClassName="bg-transparent"
+/>
+
+## Looking back
+
+Looking back, I would have pulled engineering into the framework earlier as co-designers, not late reviewers of a proposal. The UI work was comparatively straightforward, while the real bottleneck was the framework.
+
+I would have also tried to push the problem framing toward the goal of building an AI-agent harness. The side panel was the right product for builders now, but the longer-term job is guardrails when people build surveys with agents.
+
+<CaseImage
+  client:load
+  src="/media/work/survey-building-guidance/reflection-ai-harness.png"
+  alt="Survey Builder with Qualtrics AI side panel summarizing flagged issues by severity"
+  caption="Looking ahead: guidance as an AI harness in the side panel."
+  bgClassName="bg-transparent"
+/>
