@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import type { WorkCard, WorkTabsProps } from "./work-tabs.types";
+import { BrandChip, MetaChip } from "@/components/BrandChip";
 import { ShaderCover } from "@/components/ShaderCover";
 import { VideoCover } from "@/components/VideoCover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -46,8 +47,19 @@ function Card({ item, index }: { item: WorkCard; index: number }) {
         <h2 className="font-heading text-work-title text-foreground">
           {item.title}
         </h2>
-        {item.meta ? (
-          <p className="text-base text-muted-foreground">{item.meta}</p>
+        {item.companyBrand || item.meta.length > 0 ? (
+          <div className="flex flex-wrap items-center gap-1.5">
+            {item.companyBrand ? <BrandChip brand={item.companyBrand} /> : null}
+            {item.meta.map((part, index) => (
+              <MetaChip
+                key={`${part.label}-${index}`}
+                icon={part.icon}
+                mark={part.mark}
+              >
+                {part.label}
+              </MetaChip>
+            ))}
+          </div>
         ) : null}
       </div>
     </a>

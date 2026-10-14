@@ -1,29 +1,52 @@
-import type { WorkCard } from "@/components/work-tabs.types";
+import { companyToBrand } from "@/components/BrandChip";
+import type { WorkCard, WorkCardMeta } from "@/components/work-tabs.types";
 import { getImage } from "astro:assets";
 import { getCollection } from "astro:content";
 
 type Entry = Awaited<ReturnType<typeof getCollection<"work" | "sideProjects">>>[number];
 
-function cardMeta(entry: Entry): string {
+function cardMeta(entry: Entry, omitCompany: boolean): WorkCardMeta[] {
   const isSideProject = entry.collection === "sideProjects";
-  const projectType = isSideProject ? entry.data.projectType : undefined;
-  const role = isSideProject ? undefined : entry.data.role;
-  const metrics = isSideProject ? entry.data.metrics : undefined;
+  const items: WorkCardMeta[] = [];
 
-  return [entry.data.company, projectType, role, metrics, entry.data.year]
-    .filter((part) => part !== undefined && part !== "")
-    .join(" · ");
+  if (!omitCompany && entry.data.company) {
+    items.push({ label: entry.data.company });
+  }
+  if (isSideProject && entry.data.projectType) {
+    if (entry.id === "guardias") {
+      items.push({ label: entry.data.projectType, icon: "logo-apple" });
+    } else if (entry.id === "table-layout-switcher") {
+      items.push({ label: entry.data.projectType, mark: "figma" });
+    } else {
+      items.push({ label: entry.data.projectType });
+    }
+  }
+  if (!isSideProject && entry.data.role) {
+    items.push({ label: entry.data.role, icon: "person" });
+  }
+  if (isSideProject && entry.data.metrics) {
+    items.push({ label: entry.data.metrics, icon: "analytics" });
+  }
+  if (entry.data.year !== undefined) {
+    items.push({ label: String(entry.data.year), icon: "calendar-clear" });
+  }
+
+  return items;
 }
 
 const toCard = async (entry: Entry, featured = false): Promise<WorkCard> => {
   const cover = entry.data.cover
     ? await getImage({ src: entry.data.cover, width: 1280 })
     : undefined;
+  const companyBrand = entry.data.company
+    ? companyToBrand(entry.data.company)
+    : undefined;
 
   return {
     href: `/work/${entry.id}`,
     title: entry.data.title,
-    meta: cardMeta(entry),
+    companyBrand,
+    meta: cardMeta(entry, companyBrand !== undefined),
     status: entry.data.status,
     coverSrc: cover?.src,
     coverWidth: cover?.attributes.width,
