@@ -4,20 +4,30 @@ import { Icon } from "astro-icon/components";
 const brands = {
   figma: {
     label: "Figma",
-    tile: "bg-neutral-950",
+    name: "figma",
     icon: "h-3 w-auto",
   },
   cursor: {
     label: "Cursor",
-    tile: "bg-neutral-950 text-white",
+    name: "cursor",
     icon: "size-3",
   },
   amplitude: {
     label: "Amplitude",
-    // currentColor paints the mark's disc, so it matches the tile and the
-    // cutouts are what read white.
-    tile: "bg-neutral-950 text-neutral-950",
-    icon: "size-4",
+    name: "amplitude",
+    // currentColor paints the mark so it matches the chip; cutouts stay white.
+    icon: "size-4 text-secondary",
+  },
+  "ab-initio": {
+    label: "Ab Initio",
+    name: "AbInitioLogo",
+    icon: "size-3",
+  },
+  qualtrics: {
+    label: "Qualtrics",
+    name: "xmMarkColor",
+    // Wide XM wordmark — size to the tile width so it doesn't clip.
+    icon: "h-auto w-3.5",
   },
 } as const;
 
@@ -26,19 +36,16 @@ type Props = {
 };
 
 const { brand } = Astro.props;
-const { label, tile, icon } = brands[brand];
+const { label, name, icon } = brands[brand];
 ---
 
 <span
   class="mx-0.5 inline-flex translate-y-[-0.06em] items-center gap-1 whitespace-nowrap rounded-md border border-border bg-secondary py-0.5 pr-1 pl-1 align-middle text-sm leading-none text-foreground"
 >
   <span
-    class:list={[
-      "inline-flex size-4 shrink-0 items-center justify-center overflow-hidden rounded-[0.25rem]",
-      tile,
-    ]}
+    class="inline-flex size-4 shrink-0 items-center justify-center overflow-hidden rounded-[0.25rem]"
   >
-    <Icon name={brand} class={icon} aria-hidden="true" />
+    <Icon name={name} class={icon} aria-hidden="true" />
   </span>
   {label}
 </span>
