@@ -45,6 +45,7 @@ const toCard = async (entry: Entry, featured = false): Promise<WorkCard> => {
   return {
     href: `/work/${entry.id}`,
     title: entry.data.title,
+    subtitle: entry.data.subtitle,
     companyBrand,
     meta: cardMeta(entry, companyBrand !== undefined),
     status: entry.data.status,

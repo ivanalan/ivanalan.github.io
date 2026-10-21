@@ -10,6 +10,19 @@ import { cn } from "@/lib/utils";
 const CARD_REVEAL_OFFSET = 4;
 
 function Card({ item, index }: { item: WorkCard; index: number }) {
+  const hasChips = Boolean(item.companyBrand || item.meta.length > 0);
+
+  const chipRow = hasChips ? (
+    <div className="flex flex-wrap items-center gap-1.5">
+      {item.companyBrand ? <BrandChip brand={item.companyBrand} /> : null}
+      {item.meta.map((part, i) => (
+        <MetaChip key={`${part.label}-${i}`} icon={part.icon} mark={part.mark}>
+          {part.label}
+        </MetaChip>
+      ))}
+    </div>
+  ) : null;
+
   return (
     <a
       href={item.href}
@@ -43,23 +56,15 @@ function Card({ item, index }: { item: WorkCard; index: number }) {
           aria-hidden="true"
         />
       )}
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1.5">
+        {chipRow}
         <h2 className="font-heading text-work-title text-foreground">
           {item.title}
         </h2>
-        {item.companyBrand || item.meta.length > 0 ? (
-          <div className="flex flex-wrap items-center gap-1.5">
-            {item.companyBrand ? <BrandChip brand={item.companyBrand} /> : null}
-            {item.meta.map((part, index) => (
-              <MetaChip
-                key={`${part.label}-${index}`}
-                icon={part.icon}
-                mark={part.mark}
-              >
-                {part.label}
-              </MetaChip>
-            ))}
-          </div>
+        {item.subtitle ? (
+          <p className="text-sm leading-snug text-muted-foreground">
+            {item.subtitle}
+          </p>
         ) : null}
       </div>
     </a>
@@ -109,12 +114,14 @@ export function WorkTabs({
       <TabsContent value="side-projects" className="flex flex-col gap-12">
         {sideProjects.length > 0 ? (
           sideProjects.map((item, index) => (
-            <Card key={item.href} item={item} index={CARD_REVEAL_OFFSET + index} />
+            <Card
+              key={item.href}
+              item={item}
+              index={CARD_REVEAL_OFFSET + index}
+            />
           ))
         ) : (
-          <p className="text-sm text-muted-foreground">
-            Nothing here yet.
-          </p>
+          <p className="text-sm text-muted-foreground">Nothing here yet.</p>
         )}
       </TabsContent>
     </Tabs>
