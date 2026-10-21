@@ -14,6 +14,7 @@ export type WorkCardMeta = {
 export type WorkCard = {
   href: string;
   title: string;
+  subtitle?: string;
   companyBrand?: CompanyBrand;
   meta: WorkCardMeta[];
   status: "placeholder" | "published";

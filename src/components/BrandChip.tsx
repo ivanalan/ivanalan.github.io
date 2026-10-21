@@ -37,7 +37,7 @@ export function companyToBrand(company: string): CompanyBrand | undefined {
 }
 
 const chipClass =
-  "inline-flex items-center gap-1 whitespace-nowrap rounded-md border border-border bg-secondary py-0.5 text-sm leading-none text-foreground";
+  "inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border border-border bg-secondary py-0.5 text-sm leading-none text-foreground";
 
 type BrandChipProps = {
   brand: CompanyBrand;

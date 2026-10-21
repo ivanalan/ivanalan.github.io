@@ -10,6 +10,7 @@ const work = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
+      subtitle: z.string().optional(),
       company: z.string().optional(),
       role: z.string().optional(),
       team: z.string().optional(),
@@ -33,6 +34,7 @@ const sideProjects = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
+      subtitle: z.string().optional(),
       projectType: z.string().optional(),
       company: z.string().optional(),
       role: z.string().optional(),
