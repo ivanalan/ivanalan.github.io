@@ -6,15 +6,19 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Non-inline so utilities resolve through var(--text-*), not baked rem. */
+@theme {
+  --text-name: 1.5rem;
+  --text-name--line-height: 1.25;
+  --text-work-title: 1.25rem;
+  --text-work-title--line-height: 1.35;
+}
+
 @theme inline {
   --font-heading: "Gentium Book Basic", ui-serif, Georgia, "Times New Roman",
     serif;
   --font-sans: "Fustat Variable", ui-sans-serif, system-ui, sans-serif;
   --text-base--line-height: 1.5;
-  --text-name: 1.5rem;
-  --text-name--line-height: 1.25;
-  --text-work-title: 1.25rem;
-  --text-work-title--line-height: 1.35;
   --color-background: var(--background);
   --color-secondary: var(--secondary);
   --color-muted: var(--muted);
@@ -48,8 +52,16 @@
 
   html {
     @apply font-sans;
+    /* ~14px when the browser default is 16px; rem type scales with this. */
+    font-size: 87.5%;
     color-scheme: dark;
     scrollbar-gutter: stable;
+  }
+
+  @media (min-width: 768px) {
+    html {
+      font-size: 100%;
+    }
   }
 
   body {

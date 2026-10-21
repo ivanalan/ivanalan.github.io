@@ -56,13 +56,13 @@ function Card({ item, index }: { item: WorkCard; index: number }) {
           aria-hidden="true"
         />
       )}
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         {chipRow}
         <h2 className="font-heading text-work-title text-foreground">
           {item.title}
         </h2>
         {item.subtitle ? (
-          <p className="text-sm leading-snug text-muted-foreground">
+          <p className="text-base text-muted-foreground">
             {item.subtitle}
           </p>
         ) : null}
