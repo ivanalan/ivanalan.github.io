@@ -9,6 +9,7 @@ import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 import icon from "astro-icon";
+import { projectAssets } from "./src/lib/project-assets.mjs";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 
@@ -24,6 +25,7 @@ export default defineConfig({
     },
   },
   integrations: [
+    projectAssets(root),
     react(),
     mdx(),
     sitemap(),

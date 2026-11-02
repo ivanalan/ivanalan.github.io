@@ -81,17 +81,10 @@ export function CaseImage({
 }: CaseImageProps) {
   const [scale, setScale] = useState(1)
   const [dragging, setDragging] = useState(false)
-  const [miniVp, setMiniVp] = useState({
-    left: 0,
-    top: 0,
-    width: 0,
-    height: 0,
-  })
 
   const frameRef = useRef<HTMLDivElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
-  const minimapRef = useRef<HTMLDivElement>(null)
   const transformRef = useRef<Transform>({
     scale: 1,
     x: 0,
@@ -112,10 +105,6 @@ export function CaseImage({
     moved: false,
     panning: false,
   })
-  const miniGestureRef = useRef({
-    pointerId: null as number | null,
-    active: false,
-  })
 
   const zoomed = scale > 1.01
 
@@ -134,30 +123,6 @@ export function CaseImage({
     t.imgH = nh * fit
   }
 
-  function updateMinimapVp() {
-    const t = transformRef.current
-    const minimap = minimapRef.current
-    if (!minimap || !t.imgW || !t.frameW) return
-    const mini = minimap.getBoundingClientRect()
-    if (!mini.width) return
-
-    const scaleX = mini.width / t.imgW
-    const scaleY = mini.height / t.imgH
-    const ox = (t.frameW - t.imgW) / 2
-    const oy = (t.frameH - t.imgH) / 2
-    const visLeft = -t.x / t.scale
-    const visTop = -t.y / t.scale
-    const visRight = (t.frameW - t.x) / t.scale
-    const visBottom = (t.frameH - t.y) / t.scale
-
-    setMiniVp({
-      left: (visLeft - ox) * scaleX,
-      top: (visTop - oy) * scaleY,
-      width: Math.max(8, (visRight - visLeft) * scaleX),
-      height: Math.max(8, (visBottom - visTop) * scaleY),
-    })
-  }
-
   function applyTransform(animate: boolean) {
     const stage = stageRef.current
     if (!stage) return
@@ -167,7 +132,6 @@ export function CaseImage({
       : "none"
     stage.style.transform = `translate(${x}px, ${y}px) scale(${s})`
     setScale(s)
-    updateMinimapVp()
   }
 
   function resetZoom(animate = true) {
@@ -231,29 +195,8 @@ export function CaseImage({
     applyTransform(true)
   }
 
-  function jumpViaMinimap(clientX: number, clientY: number) {
-    const minimap = minimapRef.current
-    if (!minimap) return
-    measure()
-    const t = transformRef.current
-    const rect = minimap.getBoundingClientRect()
-    const nx = (clientX - rect.left) / rect.width
-    const ny = (clientY - rect.top) / rect.height
-    const ox = (t.frameW - t.imgW) / 2
-    const oy = (t.frameH - t.imgH) / 2
-    const stageX = ox + nx * t.imgW
-    const stageY = oy + ny * t.imgH
-    if (t.scale <= 1.01) t.scale = DEFAULT_ZOOM
-    t.x = t.frameW / 2 - stageX * t.scale
-    t.y = t.frameH / 2 - stageY * t.scale
-    t.focusX = 0.5
-    t.focusY = 0.5
-    applyTransform(false)
-  }
-
   function onPointerDown(e: ReactPointerEvent<HTMLDivElement>) {
     if (e.button !== 0) return
-    if ((e.target as HTMLElement).closest("[data-minimap]")) return
     const frame = frameRef.current
     if (!frame) return
     frame.setPointerCapture(e.pointerId)
@@ -310,32 +253,6 @@ export function CaseImage({
     } else {
       resetZoom(true)
     }
-  }
-
-  function onMiniPointerDown(e: ReactPointerEvent<HTMLDivElement>) {
-    if (e.button !== 0) return
-    e.stopPropagation()
-    const el = minimapRef.current
-    if (!el) return
-    el.setPointerCapture(e.pointerId)
-    miniGestureRef.current = { pointerId: e.pointerId, active: true }
-    jumpViaMinimap(e.clientX, e.clientY)
-  }
-
-  function onMiniPointerMove(e: ReactPointerEvent<HTMLDivElement>) {
-    const g = miniGestureRef.current
-    if (!g.active || g.pointerId !== e.pointerId) return
-    jumpViaMinimap(e.clientX, e.clientY)
-  }
-
-  function onMiniPointerEnd(e: ReactPointerEvent<HTMLDivElement>) {
-    const g = miniGestureRef.current
-    if (g.pointerId !== e.pointerId) return
-    const el = minimapRef.current
-    if (el?.hasPointerCapture(e.pointerId)) {
-      el.releasePointerCapture(e.pointerId)
-    }
-    miniGestureRef.current = { pointerId: null, active: false }
   }
 
   return (
@@ -434,43 +351,9 @@ export function CaseImage({
                 className="mx-auto h-auto max-h-[min(80vh,900px)] w-auto max-w-full rounded-xl object-contain select-none"
                 onLoad={() => {
                   measure()
-                  updateMinimapVp()
                 }}
               />
             </div>
-
-            {zoomed && (
-              <div
-                ref={minimapRef}
-                data-minimap
-                className={cn(
-                  "absolute right-2 bottom-2 z-10 w-28 cursor-pointer overflow-hidden rounded-lg ring-1 ring-white/50 shadow-lg touch-none sm:w-32",
-                  bgClassName,
-                )}
-                onPointerDown={onMiniPointerDown}
-                onPointerMove={onMiniPointerMove}
-                onPointerUp={onMiniPointerEnd}
-                onPointerCancel={onMiniPointerEnd}
-                role="img"
-                aria-label="Overview map — drag to pan"
-              >
-                <img
-                  src={src}
-                  alt=""
-                  draggable={false}
-                  className="block h-auto w-full select-none opacity-90"
-                />
-                <div
-                  className="pointer-events-none absolute border-2 border-white bg-white/20 shadow-[0_0_0_1px_rgba(0,0,0,0.35)]"
-                  style={{
-                    left: miniVp.left,
-                    top: miniVp.top,
-                    width: miniVp.width,
-                    height: miniVp.height,
-                  }}
-                />
-              </div>
-            )}
           </div>
 
           <DialogDescription className="mx-auto max-w-prose text-center">

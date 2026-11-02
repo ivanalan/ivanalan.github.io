@@ -3,10 +3,10 @@ import type { WorkCard, WorkCardMeta } from "@/components/work-tabs.types";
 import { getImage } from "astro:assets";
 import { getCollection } from "astro:content";
 
-type Entry = Awaited<ReturnType<typeof getCollection<"work" | "sideProjects">>>[number];
+type Entry = Awaited<ReturnType<typeof getCollection<"projects">>>[number];
 
 function cardMeta(entry: Entry, omitCompany: boolean): WorkCardMeta[] {
-  const isSideProject = entry.collection === "sideProjects";
+  const isSideProject = entry.data.category === "side-project";
   const items: WorkCardMeta[] = [];
 
   if (!omitCompany && entry.data.company) {
@@ -63,10 +63,11 @@ const toCard = async (entry: Entry, featured = false): Promise<WorkCard> => {
 /** Shared by / and /side-projects, which render the same two tab panels and
  *  differ only in which one opens first. */
 export async function getWorkCards() {
-  const [work, sideProjects] = await Promise.all([
-    getCollection("work"),
-    getCollection("sideProjects"),
-  ]);
+  const projects = await getCollection("projects");
+  const work = projects.filter((entry) => entry.data.category === "work");
+  const sideProjects = projects.filter(
+    (entry) => entry.data.category === "side-project",
+  );
 
   work.sort((a, b) => a.data.order - b.data.order);
   sideProjects.sort((a, b) => a.data.order - b.data.order);
