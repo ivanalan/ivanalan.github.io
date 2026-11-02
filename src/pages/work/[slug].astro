@@ -6,19 +6,16 @@ import { readingTimeLabel } from "@/lib/reading-time";
 import { getCollection, render } from "astro:content";
 
 export async function getStaticPaths() {
-  const [work, sideProjects] = await Promise.all([
-    getCollection("work"),
-    getCollection("sideProjects"),
-  ]);
+  const projects = await getCollection("projects");
 
-  return [...work, ...sideProjects].map((entry) => ({
+  return projects.map((entry) => ({
     params: { slug: entry.id },
     props: { entry },
   }));
 }
 
 const { entry } = Astro.props;
-const backHref = entry.collection === "sideProjects" ? "/side-projects" : "/";
+const backHref = entry.data.category === "side-project" ? "/side-projects" : "/";
 const { Content } = await render(entry);
 const isPublished = entry.data.status === "published";
 const readTime = isPublished ? readingTimeLabel(entry.body) : undefined;
@@ -49,7 +46,7 @@ const readTime = isPublished ? readingTimeLabel(entry.body) : undefined;
       <ProjectMeta
         company={entry.data.company}
         projectType={
-          entry.collection === "sideProjects"
+          entry.data.category === "side-project"
             ? entry.data.projectType
             : undefined
         }

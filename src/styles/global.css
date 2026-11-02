@@ -104,6 +104,12 @@
   @apply max-w-prose text-base text-muted-foreground;
 }
 
+/* Fustat supports 200–800; default <strong> is 700, which reads soft at body size. */
+.case-study strong,
+.case-study b {
+  font-weight: 800;
+}
+
 /* Preflight strips list markers and padding, so the numbers, dots, and
    indent have to be asked for. Items sit closer than top-level blocks do. */
 .case-study ol {

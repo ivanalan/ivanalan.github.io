@@ -7,20 +7,21 @@ team: Just me
 year: 2026
 metrics: "30 downloads"
 status: published
-coverVideo: "/media/side-projects/guardias/cover.mp4"
-coverVideoPoster: "/media/side-projects/guardias/cover-poster.webp"
+category: side-project
+coverVideo: "/guardias/assets/cover.mp4"
+coverVideoPoster: "/guardias/assets/cover-poster.webp"
 coverVideoClassName: "scale-120"
 order: 1
 ---
 
-import { CaseImage } from "../../components/CaseImage";
-import ShiftCalendar from "../../components/ShiftCalendar.astro";
-import ShiftsLeft from "../../components/ShiftsLeft.astro";
-import ShareEmbed from "../../components/ShareEmbed.astro";
+import { CaseImage } from "@/components/CaseImage";
+import ShiftCalendar from "@/components/ShiftCalendar.astro";
+import ShiftsLeft from "@/components/ShiftsLeft.astro";
+import ShareEmbed from "@/components/ShareEmbed.astro";
 
 <CaseImage
   client:load
-  src="/media/side-projects/guardias/app-screens.png"
+  src="/guardias/assets/app-screens.png"
   alt="DeGuardia’s three main screens: home, calendar, and rotations"
   caption="Home, Calendar, and Rotations"
   bgClassName="bg-primary"
@@ -67,7 +68,7 @@ In corporate software, an MVP usually means letting users create something and s
 
 <CaseImage
   client:load
-  src="/media/side-projects/guardias/Widgets-crop.png"
+  src="/guardias/assets/Widgets-crop.png"
   alt="DeGuardia home screen widgets: a two-week calendar and an upcoming shifts list"
   caption="Calendar and upcoming-shifts widgets"
   className="mx-auto max-w-xs"

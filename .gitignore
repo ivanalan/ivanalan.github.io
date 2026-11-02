@@ -6,11 +6,8 @@ dist/
 # dependencies
 node_modules/
 
-# source recordings, kept out of the build; public/media holds the encoded ones
+# source recordings, kept out of the repo; encoded files live in each project's assets/
 /media/
-
-# large deck, not part of the site
-src/content/work/Portfolio Presentation.pdf
 
 # logs
 npm-debug.log*

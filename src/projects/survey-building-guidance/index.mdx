@@ -1,0 +1,214 @@
+---
+title: Increasing guidance usage by 600% for 250k MAU
+subtitle: Replacing Expert Review with guidance survey builders actually use.
+company: Qualtrics
+role: Designer
+team: 1 PM, 1 researcher, 2 eng leads, 3 engineers
+year: 2026
+status: published
+category: work
+coverShader: qualtrics
+coverVideo: "/survey-building-guidance/assets/cover.mp4"
+coverVideoPoster: "/survey-building-guidance/assets/cover-poster.webp"
+order: 1
+---
+
+import CaseTable from "@/components/CaseTable.astro";
+import { CaseImage } from "@/components/CaseImage";
+
+## Impact
+
+1. Grew guidance monthly active usage from **10% → 35%**, with total events up **600%**.
+2. Co-designed **one** shared Error / Warning / Tip pattern that shipped in **two** products.
+3. Replaced an opaque health score with a severity framework built for future AI agents.
+
+## Context: low completion rates and poor data
+
+Would you complete a survey if it had 10 open ended questions? Research says no.
+
+<CaseImage
+  client:load
+  src="/survey-building-guidance/assets/problem-survey-fatigue-phone.png"
+  alt="Phone mockup of a QFlights survey with several open-text questions about a recent trip"
+  bgClassName="bg-transparent"
+/>
+
+Powerful surveys don’t matter if you get low completion rates or poor data. That’s why our team built Expert Review in 2016, to provide methodology tips and show setup issues.
+
+<CaseImage
+  client:load
+  src="/survey-building-guidance/assets/problem-expert-review-modal.png"
+  alt="Expert Review modal showing a Fair score with methodology checks listed underneath"
+  caption='Expert Review: ~20 checks on your survey'
+  bgClassName="bg-transparent"
+/>
+
+## The problem: low usage and hard to scale
+
+Expert Review had low usage (~11% MAU) and wasn’t scalable. Increasing adoption would move three business levers:
+
+1. **Time-to-value**: faster path to realizing value
+2. **Platform maturity**: nudge toward advanced features
+3. **Fewer support tickets**: catch errors before publish
+
+I owned problem framing, the business opportunity, and success metrics, and worked with the eng lead to design a scalable error system.
+
+## Three blockers: untrustworthy, unclear, out of context
+
+Amplitude and existing research pointed to three blockers:
+
+1. **Untrustworthy score:** Amplitude showed that Expert Review scores were inaccurate, and builders found it untrustworthy and confusing.”
+2. **Unclear priority:** users found it “hard to parse” so much information
+
+<CaseImage
+  client:load
+  src="/survey-building-guidance/assets/problem-unclear-prioritization.png"
+  alt="Expert Review modal with severity filters and long metric copy, annotated as hard to parse"
+  bgClassName="bg-transparent"
+/>
+
+3. **Out-of-context:** a modal pulled people out of the builder, when they wanted "dismissible, in-context guidance".
+
+<CaseImage
+  client:load
+  src="/survey-building-guidance/assets/problem-modal-leaves-context.png"
+  alt="Survey Builder canvas behind an Expert Review modal, showing the jump out of context"
+  bgClassName="bg-secondary"
+/>
+
+## A severity framework instead of a health score
+
+I replaced the health score with a severity model reused from our banner pattern: Error, Warning, and Tip.
+
+<CaseTable>
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Category</th>
+        <th scope="col">Definition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">Error</th>
+        <td>Data collection is impossible until resolved</td>
+      </tr>
+      <tr>
+        <th scope="row">Warning</th>
+        <td>Collection still happens, but something is compromised</td>
+      </tr>
+      <tr>
+        <th scope="row">Tip</th>
+        <td>Collection is fine; the survey can still improve</td>
+      </tr>
+    </tbody>
+  </table>
+</CaseTable>
+
+The hard call was which issues should be errors, blocking publish. We reserved Errors for a small, listed set of high-risk problems that make data collection impossible; everything else stayed a Warning or Tip so authors could still save and iterate on later.
+
+## Designing at scale by collaborating with research
+
+At Qualtrics scale, shipping a pattern is expensive to undo. I partnered with a researcher to run a quick study to answer some still-open questions and run usability tests.
+
+<CaseImage
+  client:load
+  src="/survey-building-guidance/assets/research-interaction-concepts.png"
+  alt="Three interaction concepts for survey guidance: modal, left pane, and right-hand side panel"
+  caption="Three concepts tested. The right-hand panel won."
+  bgClassName="bg-secondary"
+/>
+
+Two decisions came out of that research:
+
+1. **Only new metrics would be eligible as Errors.** Because users were “publishing” as a way to “save” their survey, there was a huge risk in suddenly blocking users from publish.
+2. **Move forward with a right-hand side panel.** We tested a banner, a pop-up, and a right panel. The right panel won as it was easy to keep in context while editing.
+
+## Co-designing a pattern instead of 2 different solutions
+
+Distributions faced a similar need for email best-practice guidance. We shared the same requirements: an in-context signal, severity framework, and a way to dig deeper. So I collaborated with their designer and co-designed one pattern instead of two.
+
+<CaseImage
+  client:load
+  src="/survey-building-guidance/assets/codesign-shared-pattern.png"
+  alt="Shared guidance pattern across email compose and Survey Builder: in-context signals with an Issues and tips side panel"
+  caption="One pattern in two products: in-context signal plus a side panel with more info."
+  bgClassName="bg-secondary"
+/>
+
+## Advocating to create a copy system that scales
+
+Metric copy was inconsistent and one-off. So, I created a scalable content system instead: what was flagged, why it matters, and what to do.
+
+<CaseTable
+  class="equal-cols"
+>
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Before</th>
+        <th scope="col">After</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <p>
+            <strong>Invalid display logic</strong>
+          </p>
+          <p>
+            Logic allows you to program an action based on parameters you set.
+            In this case, you have created a logic-based action that is not able
+            to be performed. If you have deleted a question/item linked to the
+            programmed action, you must change the logic or add/replace the
+            question/item associated with the logic. If the question/item that
+            triggers the action comes after the action is programmed to take
+            place, you must change the order of the questions/items associated
+            with the logic. If the display logic references a question that also
+            depends on display logic, you must edit the question/block’s display
+            logic.
+          </p>
+        </td>
+        <td>
+          <p>
+            <strong>Invalid display logic</strong>
+          </p>
+          <p>
+            Some display logic references an item that has been deleted, moved,
+            or placed after it. This logic won’t work, so respondents may miss
+            questions or choices. Edit the logic or reorder the related items.
+          </p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</CaseTable>
+
+## Owning design specs in code
+
+Instead of the usual design → eng → feedback loop, I implemented layout and interaction specs directly in code. This cut a 4 step loop process down to 2 steps to launch.
+
+<CaseImage
+  client:load
+  src="/survey-building-guidance/assets/implementation-designer-merge.png"
+  alt="Merged pull request for side panel polish: card spacing, hover states, and exclusive expand"
+  bgClassName="bg-transparent"
+/>
+
+## Impact: 350% increase in MAU and 600% usage
+
+After launch, monthly active usage of guidance grew from 10% to 35%, with total events up 600%. We also shipped one shared pattern across two products, the start of a design-system approach, and a stable Error / Warning / Tip model for future AI agent work.
+
+<CaseImage
+  client:load
+  src="/survey-building-guidance/assets/impact-shipped-side-panel.png"
+  alt="MacBook showing Survey Builder with Issues and tips side panel open on a CSAT survey"
+  caption="Shipped side panel: Errors, Warnings, and Tips in context of the builder."
+  bgClassName="bg-transparent"
+/>
+
+## Looking back
+
+Looking back, I would have pulled engineering into the framework earlier as co-designers, not late reviewers of a proposal. The UI work was comparatively straightforward, while the real bottleneck was the framework.
+
+I would have also pushed the problem framing towards building an AI-agent harness. The side panel was right for builders now, but we need guardrails for future agentic survey building.
