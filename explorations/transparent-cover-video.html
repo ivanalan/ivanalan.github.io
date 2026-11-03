@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Transparent GIF cover over dither backdrop (example)</title>
+
+<link rel="stylesheet" href="../node_modules/@fontsource-variable/fustat/index.css" />
+<link rel="stylesheet" href="../node_modules/@fontsource/gentium-book-basic/400.css" />
+
+<style>
+  :root {
+    --font-heading: "Gentium Book Basic", ui-serif, Georgia, "Times New Roman", serif;
+    --font-sans: "Fustat Variable", ui-sans-serif, system-ui, sans-serif;
+    --background: oklch(18.561% 0.00161 197.742);
+    --secondary: oklch(24.705% 0.01511 285.224);
+    --foreground: oklch(96.946% 0.00318 15.308);
+    --muted-foreground: oklch(76.092% 0.01027 273.305);
+    --border: oklch(0.919 0 0 / 7%);
+    --radius: 0.625rem;
+    --radius-xl: calc(var(--radius) * 1.4);
+    --bd: .75;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font-sans); background: #0b0b0c; color: var(--foreground); line-height: 1.5; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 24px 96px; display: grid; gap: 48px; }
+  .eh h1 { font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
+  .eh p { color: var(--muted-foreground); font-size: 14px; margin-top: 6px; max-width: 72ch; }
+  .eh code { font-family: ui-monospace, Menlo, monospace; font-size: 12px; background: #1d1d20; padding: 1px 5px; border-radius: 4px; color: #d4d4d8; }
+  .label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 10px; }
+  .note { font-size: 13px; color: var(--muted-foreground); max-width: 70ch; }
+
+  .ctl {
+    display: grid; gap: 10px;
+    padding: 14px 16px;
+    background: rgba(11,11,12,.9);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 13px;
+    color: var(--muted-foreground);
+    max-width: 768px;
+  }
+  .ctl-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px 16px;
+  }
+  .ctl .row { display: flex; align-items: center; gap: 8px; min-height: 28px; }
+  .ctl .row > span:first-child { flex: 0 0 72px; color: var(--muted-foreground); }
+  .ctl input[type="range"] { accent-color: #8da2c8; flex: 1; min-width: 0; }
+  .ctl input[type="color"] {
+    width: 36px; height: 24px; padding: 0; border: 1px solid var(--border);
+    border-radius: 4px; background: transparent; cursor: pointer;
+  }
+  .ctl select {
+    flex: 1; min-width: 0; font: inherit; font-size: 13px;
+    color: var(--foreground); background: #1a1a1e; border: 1px solid var(--border);
+    border-radius: 6px; padding: 4px 8px;
+  }
+  .ctl output { min-width: 3.5ch; color: var(--foreground); font-variant-numeric: tabular-nums; text-align: right; }
+  .ctl .hex { font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: var(--foreground); min-width: 6ch; }
+
+  .presets { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+  .preset {
+    display: grid; gap: 6px; text-align: left;
+    font: inherit; font-size: 12px; color: var(--foreground);
+    background: #141417; border: 1px solid var(--border); border-radius: 10px;
+    padding: 8px; cursor: pointer; transition: border-color .2s, background .2s;
+  }
+  .preset:hover { background: #1a1a1e; }
+  .preset[aria-pressed="true"] { border-color: #8da2c8; background: #1c2030; }
+  .preset .swatch {
+    height: 36px; border-radius: 6px; border: 1px solid rgba(255,255,255,.06);
+    background:
+      linear-gradient(135deg, var(--p-front) 0 40%, transparent 40%),
+      var(--p-back);
+  }
+  .preset b { font-weight: 600; font-size: 12px; }
+  .preset small { color: var(--muted-foreground); font-size: 11px; line-height: 1.35; }
+
+  .page { background: var(--background); border: 1px solid var(--border); border-radius: 14px; max-width: 768px; }
+  .page-inner { padding: 48px 32px; display: flex; flex-direction: column; gap: 24px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font-size: 12px; padding: 3px 8px; border-radius: 999px; background: oklch(0.919 0 0 / 7%); color: var(--muted-foreground); }
+  .work h2 { font-family: var(--font-heading); font-weight: 400; font-size: 1.25rem; line-height: 1.35; }
+  .muted { color: var(--muted-foreground); font-size: 1rem; }
+  .meta { display: flex; flex-direction: column; gap: 8px; }
+
+  .cover {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    isolation: isolate;
+    background: #15171b;
+  }
+  .cover .bg { position: absolute; inset: 0; z-index: 0; opacity: var(--bd); transition: opacity .4s ease-out; }
+  .cover .bg canvas { display: block; width: 100% !important; height: 100% !important; }
+  .cover::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); z-index: 3; pointer-events: none;
+  }
+
+  .cover-gif {
+    position: absolute; inset: 0; z-index: 2;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  .hero.cover { aspect-ratio: 21 / 9; }
+
+  .fb { position: absolute; right: 8px; bottom: 8px; font-size: 11px; background: rgba(0,0,0,.6); color: #fff; padding: 3px 7px; border-radius: 5px; display: none; z-index: 4; }
+  .failed .fb { display: block; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eh">
+    <h1>Transparent GIF cover over dither backdrop</h1>
+    <p>
+      Example only: <code>Scene-4.gif</code> over subtle dither presets — low contrast, slow motion,
+      close in value to the page so the UI stays the brightest thing.
+    </p>
+  </div>
+
+  <div class="ctl">
+    <div class="label" style="margin:0">Subtle presets</div>
+    <div class="presets" id="presets" role="group" aria-label="Backdrop presets"></div>
+
+    <div class="label" style="margin:8px 0 0">Fine-tune</div>
+    <div class="ctl-grid">
+      <label class="row"><span>Strength</span><input id="bd" type="range" min="15" max="100" value="60" /><output id="bdv">60</output></label>
+      <label class="row"><span>Speed</span><input id="speed" type="range" min="0" max="100" value="12" /><output id="speedv">0.12</output></label>
+      <label class="row"><span>Back</span><input id="cBack" type="color" value="#16191f" /><span class="hex" id="cBackHex">#16191f</span></label>
+      <label class="row"><span>Front</span><input id="cFront" type="color" value="#232833" /><span class="hex" id="cFrontHex">#232833</span></label>
+      <label class="row"><span>Scale</span><input id="scale" type="range" min="20" max="300" value="90" /><output id="scalev">0.90</output></label>
+      <label class="row"><span>Px size</span><input id="px" type="range" min="5" max="200" value="45" /><output id="pxv">4.5</output></label>
+      <label class="row"><span>Rotation</span><input id="rot" type="range" min="0" max="360" value="0" /><output id="rotv">0°</output></label>
+      <label class="row"><span>Shape</span>
+        <select id="shape">
+          <option value="simplex">simplex</option>
+          <option value="warp" selected>warp</option>
+          <option value="dots">dots</option>
+          <option value="wave">wave</option>
+          <option value="ripple">ripple</option>
+          <option value="swirl">swirl</option>
+          <option value="sphere">sphere</option>
+        </select>
+      </label>
+      <label class="row"><span>Type</span>
+        <select id="dtype">
+          <option value="random">random</option>
+          <option value="2x2">2×2</option>
+          <option value="4x4" selected>4×4</option>
+          <option value="8x8">8×8</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <section>
+    <div class="label">A · Home card cover</div>
+    <div class="page"><div class="page-inner">
+      <div class="cover" data-bd>
+        <div class="bg"></div>
+        <img class="cover-gif" alt="" src="assets/scene-4.gif" />
+        <span class="fb"></span>
+      </div>
+      <div class="meta">
+        <div class="chips"><span class="chip">Qualtrics</span><span class="chip">Designer</span><span class="chip">2026</span></div>
+        <h2 class="work">Increasing guidance usage by 600% for 250k MAU</h2>
+        <p class="muted">GIF standing in for the floating screenshot.</p>
+      </div>
+    </div></div>
+  </section>
+
+  <section>
+    <div class="label">B · Case-study header (wide)</div>
+    <div class="page"><div class="page-inner" style="padding-top:40px;padding-bottom:40px">
+      <div class="meta">
+        <div class="chips"><span class="chip">Qualtrics</span><span class="chip">Designer</span><span class="chip">2026</span></div>
+        <h2 style="font-family:var(--font-heading);font-weight:400;font-size:1.75rem;line-height:1.3">Increasing guidance usage by 600% for 250k MAU</h2>
+      </div>
+      <div class="cover hero" data-bd>
+        <div class="bg"></div>
+        <img class="cover-gif" alt="" src="assets/scene-4.gif" />
+        <span class="fb"></span>
+      </div>
+    </div></div>
+  </section>
+
+  <p class="note">
+    Strength is cover opacity. Speed / colors / scale / px size / rotation / shape / type map to
+    <code>@paper-design/shaders</code> dithering uniforms. GIF is as-encoded (real alpha).
+  </p>
+
+</div>
+
+<script type="module">
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const $ = id => document.getElementById(id);
+const mounts = [];
+let activePreset = 'slate-hush';
+
+/* Low-contrast, slow, page-adjacent values — UI stays the brightest surface. */
+const PRESETS = [
+  {
+    id: 'slate-hush',
+    name: 'Slate hush',
+    blurb: 'Safe default. Near-page slate, barely moving warp.',
+    bd: 60, speed: 12, back: '#16191f', front: '#232833',
+    scale: 90, px: 45, rot: 0, shape: 'warp', type: '4x4',
+  },
+  {
+    id: 'ink-drift',
+    name: 'Ink drift',
+    blurb: 'Soft vignette sphere. Almost ink, whisper of cool blue.',
+    bd: 52, speed: 8, back: '#12141a', front: '#1c2230',
+    scale: 70, px: 55, rot: 0, shape: 'sphere', type: '8x8',
+  },
+  {
+    id: 'soft-grain',
+    name: 'Soft grain',
+    blurb: 'Fine noise texture. Reads as paper, not a pattern.',
+    bd: 58, speed: 10, back: '#181c24', front: '#262e3a',
+    scale: 130, px: 28, rot: 0, shape: 'simplex', type: '8x8',
+  },
+  {
+    id: 'quiet-ripple',
+    name: 'Quiet ripple',
+    blurb: 'Gentle concentric motion. Slow enough to ignore.',
+    bd: 55, speed: 9, back: '#171b22', front: '#243040',
+    scale: 85, px: 48, rot: 0, shape: 'ripple', type: '4x4',
+  },
+  {
+    id: 'cool-wave',
+    name: 'Cool wave',
+    blurb: 'Horizontal hush. Slight tilt so it doesn’t feel static.',
+    bd: 57, speed: 11, back: '#151820', front: '#283240',
+    scale: 95, px: 40, rot: 8, shape: 'wave', type: '4x4',
+  },
+];
+
+function strength() {
+  document.documentElement.style.setProperty('--bd', Number($('bd').value) / 100);
+  $('bdv').textContent = $('bd').value;
+}
+
+function syncLabels() {
+  $('cBackHex').textContent = $('cBack').value;
+  $('cFrontHex').textContent = $('cFront').value;
+  $('speedv').textContent = (Number($('speed').value) / 100).toFixed(2);
+  $('scalev').textContent = (Number($('scale').value) / 100).toFixed(2);
+  $('pxv').textContent = (Number($('px').value) / 10).toFixed(1);
+  $('rotv').textContent = $('rot').value + '°';
+  strength();
+}
+
+function readParams(P) {
+  const col = s => P.getShaderColorFromString(s);
+  syncLabels();
+  return {
+    speed: Number($('speed').value) / 100,
+    uniforms: {
+      u_scale: Number($('scale').value) / 100,
+      u_rotation: Number($('rot').value),
+      u_colorBack: col($('cBack').value),
+      u_colorFront: col($('cFront').value),
+      u_shape: P.DitheringShapes[$('shape').value],
+      u_type: P.DitheringTypes[$('dtype').value],
+      u_pxSize: Number($('px').value) / 10,
+    },
+  };
+}
+
+function apply(P, { fromPreset = false } = {}) {
+  if (!fromPreset) {
+    activePreset = null;
+    document.querySelectorAll('.preset').forEach(b => b.setAttribute('aria-pressed', 'false'));
+  }
+  if (!P || !mounts.length) { syncLabels(); return; }
+  const { speed, uniforms } = readParams(P);
+  for (const m of mounts) {
+    m.setUniforms(uniforms);
+    m.setSpeed(reduce ? 0 : speed);
+  }
+}
+
+function loadPreset(preset, P) {
+  activePreset = preset.id;
+  $('bd').value = preset.bd;
+  $('speed').value = preset.speed;
+  $('cBack').value = preset.back;
+  $('cFront').value = preset.front;
+  $('scale').value = preset.scale;
+  $('px').value = preset.px;
+  $('rot').value = preset.rot;
+  $('shape').value = preset.shape;
+  $('dtype').value = preset.type;
+  document.querySelectorAll('.preset').forEach(b => {
+    b.setAttribute('aria-pressed', String(b.dataset.id === preset.id));
+  });
+  apply(P, { fromPreset: true });
+}
+
+function renderPresets(P) {
+  const host = $('presets');
+  host.replaceChildren(...PRESETS.map(p => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'preset';
+    btn.dataset.id = p.id;
+    btn.setAttribute('aria-pressed', String(p.id === activePreset));
+    btn.style.setProperty('--p-back', p.back);
+    btn.style.setProperty('--p-front', p.front);
+    btn.innerHTML = `<span class="swatch" aria-hidden="true"></span><b>${p.name}</b><small>${p.blurb}</small>`;
+    btn.addEventListener('click', () => loadPreset(p, P));
+    return btn;
+  }));
+}
+
+let P, loadErr;
+try { P = await import('https://esm.sh/@paper-design/shaders@0.0.80'); } catch (e) { loadErr = e; }
+
+const fail = (cover, e) => {
+  console.error(e);
+  cover.classList.add('failed');
+  cover.querySelector('.fb').textContent = 'shader failed: ' + (e && e.message || e);
+};
+
+async function mountAll() {
+  if (!P) {
+    document.querySelectorAll('[data-bd]').forEach(c => fail(c, loadErr));
+    return;
+  }
+  const { speed, uniforms } = readParams(P);
+  const size = {
+    u_fit: P.ShaderFitOptions.none, u_originX: .5, u_originY: .5,
+    u_offsetX: 0, u_offsetY: 0, u_worldWidth: 0, u_worldHeight: 0,
+  };
+  for (const cover of document.querySelectorAll('[data-bd]')) {
+    const host = cover.querySelector('.bg');
+    if (cover.dataset.mounted || host.offsetWidth === 0) continue;
+    cover.dataset.mounted = '1';
+    try {
+      const m = new P.ShaderMount(host, P.ditheringFragmentShader, { ...size, ...uniforms }, undefined, reduce ? 0 : speed);
+      mounts.push(m);
+    } catch (e) { fail(cover, e); }
+  }
+}
+
+for (const id of ['bd', 'speed', 'cBack', 'cFront', 'scale', 'px', 'rot', 'shape', 'dtype']) {
+  $(id).addEventListener('input', () => apply(P));
+  $(id).addEventListener('change', () => apply(P));
+}
+
+renderPresets(P);
+loadPreset(PRESETS[0], P);
+await mountAll();
+apply(P, { fromPreset: true });
+</script>
+</body>
+</html>

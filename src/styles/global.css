@@ -101,7 +101,7 @@
 }
 
 .case-study p {
-  @apply max-w-prose text-base text-muted-foreground;
+  @apply text-base text-muted-foreground;
 }
 
 /* Fustat supports 200–800; default <strong> is 700, which reads soft at body size. */
@@ -113,11 +113,11 @@
 /* Preflight strips list markers and padding, so the numbers, dots, and
    indent have to be asked for. Items sit closer than top-level blocks do. */
 .case-study ol {
-  @apply max-w-prose list-decimal pl-[1.5em] text-base text-muted-foreground;
+  @apply list-decimal pl-[1.5em] text-base text-muted-foreground;
 }
 
 .case-study ul {
-  @apply max-w-prose list-disc pl-[1.5em] text-base text-muted-foreground;
+  @apply list-disc pl-[1.5em] text-base text-muted-foreground;
 }
 
 .case-study li + li {
@@ -131,7 +131,7 @@
 }
 
 .case-study figcaption {
-  @apply mx-auto mt-2 max-w-prose text-center text-sm text-muted-foreground;
+  @apply mx-auto mt-2 text-center text-sm text-muted-foreground;
 }
 
 .case-study p a,

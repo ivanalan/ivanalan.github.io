@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Home cover videos mock</title>
+
+<link rel="stylesheet" href="../node_modules/@fontsource-variable/fustat/index.css" />
+<link rel="stylesheet" href="../node_modules/@fontsource/gentium-book-basic/400.css" />
+
+<style>
+  :root {
+    --font-heading: "Gentium Book Basic", ui-serif, Georgia, "Times New Roman", serif;
+    --font-sans: "Fustat Variable", ui-sans-serif, system-ui, sans-serif;
+    --background: oklch(18.561% 0.00161 197.742);
+    --secondary: oklch(24.705% 0.01511 285.224);
+    --foreground: oklch(96.946% 0.00318 15.308);
+    --muted-foreground: oklch(76.092% 0.01027 273.305);
+    --border: oklch(0.919 0 0 / 7%);
+    --radius: 0.625rem;
+    --radius-xl: calc(var(--radius) * 1.4);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: var(--font-sans); background: #0b0b0c; color: var(--foreground); line-height: 1.5; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 24px 96px; display: grid; gap: 40px; }
+  .eh h1 { font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
+  .eh p { color: var(--muted-foreground); font-size: 14px; margin-top: 6px; max-width: 72ch; }
+  .eh code, .notes code { font-family: ui-monospace, Menlo, monospace; font-size: 12px; background: #1d1d20; padding: 1px 5px; border-radius: 4px; color: #d4d4d8; }
+  .label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 10px; }
+
+  .two { display: grid; grid-template-columns: minmax(0, 768px) minmax(260px, 1fr); gap: 40px; align-items: start; }
+  @media (max-width: 1000px) { .two { grid-template-columns: 1fr; } .notes { position: static; } }
+
+  .notes { display: grid; gap: 22px; font-size: 14px; color: var(--muted-foreground); position: sticky; top: 24px; max-height: calc(100vh - 48px); overflow: auto; padding-right: 4px; }
+  .notes h3 { color: var(--foreground); font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .notes p { margin: 4px 0 10px; font-size: 12px; line-height: 1.4; }
+
+  .presets { display: grid; gap: 8px; }
+  .preset {
+    display: grid; grid-template-columns: 40px 1fr; gap: 10px; align-items: start;
+    text-align: left; font: inherit; font-size: 12px; color: var(--foreground);
+    background: #141417; border: 1px solid var(--border); border-radius: 10px;
+    padding: 8px 10px; cursor: pointer; transition: border-color .2s, background .2s;
+  }
+  .preset:hover { background: #1a1a1e; }
+  .preset[aria-pressed="true"] { border-color: #8da2c8; background: #1c2030; }
+  .preset .swatch {
+    width: 40px; height: 40px; border-radius: 7px; border: 1px solid rgba(255,255,255,.06);
+    background:
+      radial-gradient(80% 80% at 70% 30%, var(--p-front) 0, transparent 70%),
+      var(--p-back);
+  }
+  .preset .swatch.triad {
+    background:
+      linear-gradient(90deg, var(--c1) 0 33.33%, var(--c2) 33.33% 66.66%, var(--c3) 66.66%);
+  }
+  .preset b { display: block; font-weight: 600; font-size: 12px; margin-bottom: 2px; }
+  .preset small { color: var(--muted-foreground); font-size: 11px; line-height: 1.35; }
+
+  .locked {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: #141417;
+    font-size: 12px; color: var(--muted-foreground);
+  }
+  .locked .swatch {
+    width: 36px; height: 36px; border-radius: 6px; flex: none;
+    border: 1px solid rgba(255,255,255,.06);
+    background:
+      radial-gradient(80% 80% at 50% 50%, #243040 0, transparent 70%),
+      #171b22;
+  }
+  .locked b { color: var(--foreground); font-weight: 600; }
+
+  .page { background: var(--background); border: 1px solid var(--border); border-radius: 14px; }
+  .page-inner { max-width: 768px; margin: 0 auto; padding: 64px 32px; display: flex; flex-direction: column; gap: 32px; }
+  .name { font-size: 1.5rem; line-height: 1.25; font-weight: 500; }
+  .role, .muted { color: var(--muted-foreground); font-size: 1rem; }
+  .intro { font-size: 1rem; line-height: 1.7; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tab { font: inherit; font-size: 14px; color: var(--muted-foreground); background: transparent; border: 0; border-radius: 8px; padding: 8px; cursor: pointer; transition: background-color .4s ease-out; }
+  .tab:hover, .tab[aria-selected="true"] { background: var(--secondary); }
+  .tab[aria-selected="true"] { color: var(--foreground); }
+  .list { display: flex; flex-direction: column; gap: 48px; }
+  .list[hidden] { display: none; }
+  .work { display: flex; flex-direction: column; gap: 12px; padding: 8px; border-radius: var(--radius-xl); color: inherit; text-decoration: none; transition: background-color .4s ease-out, scale .4s ease-out; }
+  .work:hover { background: var(--secondary); }
+  .work:active { scale: .99; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font-size: 12px; padding: 3px 8px; border-radius: 999px; background: oklch(0.919 0 0 / 7%); color: var(--muted-foreground); }
+  .work h2 { font-family: var(--font-heading); font-weight: 400; font-size: 1.25rem; line-height: 1.35; }
+  .meta { display: flex; flex-direction: column; gap: 8px; }
+
+  .cover {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    isolation: isolate;
+    background: #15171b;
+  }
+  .cover .bg { position: absolute; inset: 0; z-index: 0; opacity: var(--bd, .55); }
+  .cover .bg canvas { display: block; width: 100% !important; height: 100% !important; }
+  .cover::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); z-index: 3; pointer-events: none;
+  }
+  .cover-gif, .cover-still {
+    position: absolute; inset: 0; z-index: 2;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+  .shot.frame {
+    position: absolute; z-index: 2; left: 50%; top: 50%; width: 68%;
+    transform: translate(-50%, -50%); border-radius: 8px; height: auto;
+    box-shadow: 0 0 0 5px rgba(255,255,255,.10), 0 0 0 6px rgba(255,255,255,.07), 0 24px 50px -16px rgba(0,0,0,.65);
+  }
+
+  .fb { position: absolute; right: 8px; bottom: 8px; font-size: 11px; background: rgba(0,0,0,.6); color: #fff; padding: 3px 7px; border-radius: 5px; display: none; z-index: 4; }
+  .failed .fb { display: block; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eh">
+    <h1>Home cover videos mock</h1>
+    <p>
+      Three Work covers with transparent GIFs. <b style="color:var(--foreground);font-weight:600">1 · Guidance</b> stays on Quiet ripple.
+      Tune <b style="color:var(--foreground);font-weight:600">2 · Data platform</b> and <b style="color:var(--foreground);font-weight:600">3 · Decision flows</b> individually, or apply a triad where each hue is distinct.
+    </p>
+  </div>
+
+  <div class="two">
+    <div class="page"><div class="page-inner">
+      <header style="display:flex;flex-direction:column;gap:8px">
+        <div><h1 class="name">Alan Matias</h1><p class="role">Designer and engineer</p></div>
+        <p class="intro">3+ years shipping products, from scrappy work at Ab Initio to scale at Qualtrics. My computer science background shows up in how I think about systems, ship code, and measure analytics.</p>
+      </header>
+
+      <div>
+        <div class="tabs" role="tablist" aria-label="Work collections">
+          <button class="tab" role="tab" aria-selected="true" data-tab="work">Work</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="side">Side projects</button>
+        </div>
+
+        <div class="list" id="list-work">
+          <a class="work" href="#" onclick="return false">
+            <div class="cover" data-mount="guidance" style="--bd:.55">
+              <div class="bg"></div>
+              <img class="cover-gif" alt="" src="assets/guidance-cover.gif" />
+              <span class="fb"></span>
+            </div>
+            <div class="meta">
+              <div class="chips"><span class="chip">Qualtrics</span><span class="chip">Designer</span><span class="chip">2026</span></div>
+              <h2>Increasing guidance usage by 600% for 250k MAU</h2>
+              <p class="muted">Replacing Expert Review with guidance survey builders actually use.</p>
+            </div>
+          </a>
+
+          <a class="work" href="#" onclick="return false">
+            <div class="cover" data-mount="platform" style="--bd:.52">
+              <div class="bg"></div>
+              <img class="cover-gif" alt="" src="assets/data-platform-cover.gif?v=3" />
+              <span class="fb"></span>
+            </div>
+            <div class="meta">
+              <div class="chips"><span class="chip">Ab Initio</span><span class="chip">Sole designer</span><span class="chip">2024</span></div>
+              <h2>Launching a 0→1 platform in 6 months</h2>
+              <p class="muted">Unifying three products into one data-wrangling platform.</p>
+            </div>
+          </a>
+
+          <a class="work" href="#" onclick="return false">
+            <div class="cover" data-mount="flows" style="--bd:.50">
+              <div class="bg"></div>
+              <img class="cover-gif" alt="" src="assets/decision-flows-cover.gif?v=2" />
+              <span class="fb"></span>
+            </div>
+            <div class="meta">
+              <div class="chips"><span class="chip">Ab Initio</span><span class="chip">Lead designer</span><span class="chip">2023</span></div>
+              <h2>Leading a 1-year MVP without PM, users, or research</h2>
+              <p class="muted">Automating marketing decisions on real-time customer metrics.</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="list" id="list-side" hidden>
+          <a class="work" href="#" onclick="return false">
+            <div class="cover" style="background:#1a1f2a">
+              <img class="cover-still" alt="" src="assets/guardias-phones.png" style="object-fit:contain;object-position:center bottom;padding-top:8%" />
+            </div>
+            <div class="meta">
+              <div class="chips"><span class="chip">App development</span><span class="chip">Design Engineer</span><span class="chip">2026</span></div>
+              <h2>DeGuardia</h2>
+              <p class="muted">Shift scheduling for medical rotations.</p>
+            </div>
+          </a>
+          <a class="work" href="#" onclick="return false">
+            <div class="cover" style="background:#1a1f2a">
+              <img class="shot frame" alt="" src="assets/table-switcher.webp" />
+            </div>
+            <div class="meta">
+              <div class="chips"><span class="chip">Figma plugin</span><span class="chip">Design Engineer</span><span class="chip">2025</span></div>
+              <h2>Table Layout Switcher</h2>
+              <p class="muted">Swap Figma table layouts without rebuilding.</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div></div>
+
+    <aside class="notes">
+      <div>
+        <h3>1 · Guidance — locked</h3>
+        <div class="locked" style="margin-top:8px">
+          <span class="swatch" aria-hidden="true"></span>
+          <div><b>Quiet ripple</b><div>Cool slate · ripple · 4×4</div></div>
+        </div>
+      </div>
+
+      <div>
+        <h3>Triad — each color different</h3>
+        <p>Applies a distinct hue to every cover at once. Panel 1 stays Quiet ripple; 2 and 3 shift to contrast it.</p>
+        <div class="presets" id="triad-presets" role="group" aria-label="Triad presets"></div>
+      </div>
+
+      <div>
+        <h3>2 · Data platform</h3>
+        <p>Blue/magenta nodes — keep the backdrop darker and quieter than the UI.</p>
+        <div class="presets" id="platform-presets" role="group" aria-label="Data platform presets"></div>
+      </div>
+
+      <div>
+        <h3>3 · Decision flows</h3>
+        <p>Dense blue UI — soft, dark atmosphere so the panel stays the brightest surface.</p>
+        <div class="presets" id="flows-presets" role="group" aria-label="Decision flows presets"></div>
+      </div>
+    </aside>
+  </div>
+
+</div>
+
+<script type="module">
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const QUIET_RIPPLE = {
+  id: 'quiet-ripple', name: 'Quiet ripple',
+  bd: 0.55, speed: 0.09,
+  back: '#171b22', front: '#243040',
+  scale: 0.85, px: 4.8, rot: 0, shape: 'ripple', type: '4x4',
+};
+
+/* Cool-only: aqua → blue → purple. Low contrast so UI stays brightest. */
+const PLATFORM_PRESETS = [
+  {
+    id: 'aqua-hush', name: 'Aqua hush',
+    blurb: 'Muted teal-aqua. Clear step from Guidance blue.',
+    bd: 0.52, speed: 0.09,
+    back: '#10181a', front: '#1e3234',
+    scale: 0.92, px: 4.5, rot: 0, shape: 'ripple', type: '4x4',
+  },
+  {
+    id: 'cyan-warp', name: 'Cyan warp',
+    blurb: 'Soft cyan-slate warp. Quiet motion.',
+    bd: 0.52, speed: 0.10,
+    back: '#10161c', front: '#1e3038',
+    scale: 0.9, px: 4.6, rot: 0, shape: 'warp', type: '4x4',
+  },
+  {
+    id: 'cool-conduit', name: 'Cool conduit',
+    blurb: 'Slate-blue. Closest to Guidance, still darker.',
+    bd: 0.52, speed: 0.10,
+    back: '#12151c', front: '#222a38',
+    scale: 0.9, px: 4.6, rot: 0, shape: 'warp', type: '4x4',
+  },
+  {
+    id: 'deep-teal', name: 'Deep teal',
+    blurb: 'Near-ink teal wave. Pipeline feel.',
+    bd: 0.50, speed: 0.08,
+    back: '#0e1416', front: '#1a2c2e',
+    scale: 0.95, px: 4.2, rot: 6, shape: 'wave', type: '4x4',
+  },
+  {
+    id: 'aqua-grain', name: 'Aqua grain',
+    blurb: 'Fine aqua noise. Atmosphere only.',
+    bd: 0.54, speed: 0.09,
+    back: '#11181c', front: '#243438',
+    scale: 1.25, px: 2.8, rot: 0, shape: 'simplex', type: '8x8',
+  },
+];
+
+const FLOWS_PRESETS = [
+  {
+    id: 'indigo-mist', name: 'Indigo mist',
+    blurb: 'Soft indigo grain. Related to UI blue, quieter.',
+    bd: 0.50, speed: 0.08,
+    back: '#12141c', front: '#262a40',
+    scale: 1.15, px: 3.0, rot: 0, shape: 'simplex', type: '8x8',
+  },
+  {
+    id: 'violet-hush', name: 'Violet hush',
+    blurb: 'Muted purple. Furthest cool from aqua.',
+    bd: 0.50, speed: 0.08,
+    back: '#14121c', front: '#2c2440',
+    scale: 0.9, px: 4.4, rot: 0, shape: 'swirl', type: '4x4',
+  },
+  {
+    id: 'cobalt-sphere', name: 'Cobalt sphere',
+    blurb: 'Deep blue vignette behind the builder.',
+    bd: 0.48, speed: 0.07,
+    back: '#0e1018', front: '#1c2440',
+    scale: 0.72, px: 5.0, rot: 0, shape: 'sphere', type: '8x8',
+  },
+  {
+    id: 'purple-warp', name: 'Purple warp',
+    blurb: 'Slow violet-blue warp under dense chrome.',
+    bd: 0.50, speed: 0.09,
+    back: '#12141c', front: '#282440',
+    scale: 0.95, px: 4.4, rot: 0, shape: 'warp', type: '4x4',
+  },
+  {
+    id: 'night-indigo', name: 'Night indigo',
+    blurb: 'Ripple family, darker/slower than Guidance.',
+    bd: 0.48, speed: 0.07,
+    back: '#101218', front: '#222848',
+    scale: 0.8, px: 5.0, rot: 0, shape: 'ripple', type: '4x4',
+  },
+];
+
+/* Triads: 1 = Quiet ripple (blue); 2 + 3 = distinct aqua / purple. */
+const TRIADS = [
+  {
+    id: 'aqua-blue-purple',
+    name: 'Aqua · blue · purple',
+    blurb: 'Clearest cool split across the three covers.',
+    c1: '#243040', c2: '#1e3234', c3: '#2c2440',
+    platform: 'aqua-hush',
+    flows: 'violet-hush',
+  },
+  {
+    id: 'teal-cobalt-indigo',
+    name: 'Teal · cobalt · indigo',
+    blurb: 'All cool, mid-spectrum. Soft and even.',
+    c1: '#243040', c2: '#1a2c2e', c3: '#262a40',
+    platform: 'deep-teal',
+    flows: 'indigo-mist',
+  },
+  {
+    id: 'cyan-slate-violet',
+    name: 'Cyan · slate · violet',
+    blurb: 'Cyan warp + purple hush around locked blue.',
+    c1: '#243040', c2: '#1e3038', c3: '#282440',
+    platform: 'cyan-warp',
+    flows: 'purple-warp',
+  },
+];
+
+let P, loadErr;
+try { P = await import('https://esm.sh/@paper-design/shaders@0.0.80'); } catch (e) { loadErr = e; }
+
+const mounts = { guidance: null, platform: null, flows: null };
+const selected = {
+  platform: 'deep-teal',
+  flows: 'night-indigo',
+  triad: null,
+};
+
+const fail = (cover, e) => {
+  console.error(e);
+  cover.classList.add('failed');
+  cover.querySelector('.fb').textContent = 'shader failed: ' + (e && e.message || e);
+};
+
+function uniformsFrom(cfg) {
+  return {
+    u_fit: P.ShaderFitOptions.none,
+    u_originX: .5, u_originY: .5, u_offsetX: 0, u_offsetY: 0,
+    u_worldWidth: 0, u_worldHeight: 0,
+    u_scale: cfg.scale,
+    u_rotation: cfg.rot,
+    u_colorBack: P.getShaderColorFromString(cfg.back),
+    u_colorFront: P.getShaderColorFromString(cfg.front),
+    u_shape: P.DitheringShapes[cfg.shape],
+    u_type: P.DitheringTypes[cfg.type],
+    u_pxSize: cfg.px,
+  };
+}
+
+function applyCfg(key, cfg) {
+  const cover = document.querySelector(`[data-mount="${key}"]`);
+  if (!cover) return;
+  cover.style.setProperty('--bd', cfg.bd);
+  const m = mounts[key];
+  if (!m) return;
+  m.setUniforms(uniformsFrom(cfg));
+  m.setSpeed(reduce ? 0 : cfg.speed);
+}
+
+async function mountOne(key, cfg) {
+  const cover = document.querySelector(`[data-mount="${key}"]`);
+  if (!cover || cover.dataset.mounted) return;
+  const host = cover.querySelector('.bg');
+  if (host.offsetWidth === 0) return;
+  cover.dataset.mounted = '1';
+  if (!P) return fail(cover, loadErr);
+  try {
+    mounts[key] = new P.ShaderMount(
+      host,
+      P.ditheringFragmentShader,
+      uniformsFrom(cfg),
+      undefined,
+      reduce ? 0 : cfg.speed,
+    );
+    cover.style.setProperty('--bd', cfg.bd);
+  } catch (e) { fail(cover, e); }
+}
+
+function findPreset(list, id) {
+  return list.find(p => p.id === id);
+}
+
+function syncPressed() {
+  document.querySelectorAll('#platform-presets .preset').forEach(b => {
+    b.setAttribute('aria-pressed', String(b.dataset.id === selected.platform && !selected.triad));
+  });
+  document.querySelectorAll('#flows-presets .preset').forEach(b => {
+    b.setAttribute('aria-pressed', String(b.dataset.id === selected.flows && !selected.triad));
+  });
+  document.querySelectorAll('#triad-presets .preset').forEach(b => {
+    b.setAttribute('aria-pressed', String(b.dataset.id === selected.triad));
+  });
+  // When triad is active, still show which component presets it mapped to
+  if (selected.triad) {
+    document.querySelectorAll('#platform-presets .preset').forEach(b => {
+      if (b.dataset.id === selected.platform) b.setAttribute('aria-pressed', 'true');
+    });
+    document.querySelectorAll('#flows-presets .preset').forEach(b => {
+      if (b.dataset.id === selected.flows) b.setAttribute('aria-pressed', 'true');
+    });
+  }
+}
+
+function pickPlatform(id) {
+  selected.platform = id;
+  selected.triad = null;
+  applyCfg('platform', findPreset(PLATFORM_PRESETS, id));
+  syncPressed();
+}
+
+function pickFlows(id) {
+  selected.flows = id;
+  selected.triad = null;
+  applyCfg('flows', findPreset(FLOWS_PRESETS, id));
+  syncPressed();
+}
+
+function pickTriad(id) {
+  const t = TRIADS.find(x => x.id === id);
+  if (!t) return;
+  selected.triad = id;
+  selected.platform = t.platform;
+  selected.flows = t.flows;
+  const platformCfg = t.platformOverride || findPreset(PLATFORM_PRESETS, t.platform);
+  const flowsCfg = findPreset(FLOWS_PRESETS, t.flows);
+  applyCfg('platform', platformCfg);
+  applyCfg('flows', flowsCfg);
+  // Guidance stays locked
+  applyCfg('guidance', QUIET_RIPPLE);
+  syncPressed();
+}
+
+function renderPresetList(hostId, list, onPick, selectedId) {
+  const host = document.getElementById(hostId);
+  host.replaceChildren(...list.map(p => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'preset';
+    btn.dataset.id = p.id;
+    btn.setAttribute('aria-pressed', String(p.id === selectedId));
+    btn.style.setProperty('--p-back', p.back);
+    btn.style.setProperty('--p-front', p.front);
+    btn.innerHTML = `<span class="swatch" aria-hidden="true"></span><span><b>${p.name}</b><small>${p.blurb}</small></span>`;
+    btn.addEventListener('click', () => onPick(p.id));
+    return btn;
+  }));
+}
+
+function renderTriads() {
+  const host = document.getElementById('triad-presets');
+  host.replaceChildren(...TRIADS.map(t => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'preset';
+    btn.dataset.id = t.id;
+    btn.setAttribute('aria-pressed', String(t.id === selected.triad));
+    btn.style.setProperty('--c1', t.c1);
+    btn.style.setProperty('--c2', t.c2);
+    btn.style.setProperty('--c3', t.c3);
+    btn.innerHTML = `<span class="swatch triad" aria-hidden="true"></span><span><b>${t.name}</b><small>${t.blurb}</small></span>`;
+    btn.addEventListener('click', () => pickTriad(t.id));
+    return btn;
+  }));
+}
+
+const lists = { work: document.getElementById('list-work'), side: document.getElementById('list-side') };
+document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', String(b === btn)));
+  for (const [k, el] of Object.entries(lists)) el.hidden = k !== btn.dataset.tab;
+}));
+
+renderPresetList('platform-presets', PLATFORM_PRESETS, pickPlatform, selected.platform);
+renderPresetList('flows-presets', FLOWS_PRESETS, pickFlows, selected.flows);
+renderTriads();
+
+await mountOne('guidance', QUIET_RIPPLE);
+await mountOne('platform', findPreset(PLATFORM_PRESETS, selected.platform));
+await mountOne('flows', findPreset(FLOWS_PRESETS, selected.flows));
+// Locked picks: 2 · Deep teal, 3 · Night indigo
+pickPlatform('deep-teal');
+pickFlows('night-indigo');
+syncPressed();
+</script>
+</body>
+</html>

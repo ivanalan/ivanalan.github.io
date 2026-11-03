@@ -27,7 +27,7 @@ const readTime = isPublished ? readingTimeLabel(entry.body) : undefined;
     <header class="mb-14 flex flex-col">
       <div class="flex flex-col gap-2">
         <h1
-          class="reveal text-4xl leading-tight text-foreground md:text-5xl"
+          class="reveal text-3xl leading-tight text-foreground md:text-4xl"
           style="--reveal-index: 1"
         >
           {entry.data.title}
@@ -62,11 +62,11 @@ const readTime = isPublished ? readingTimeLabel(entry.body) : undefined;
         ) : (
           <Fragment>
             <h2>Write-up in progress</h2>
-            <p class="max-w-prose text-base text-muted-foreground">
+            <p class="text-base text-muted-foreground">
               The full case study is being written. It will cover the problem,
               the decisions that mattered, and what shipped.
             </p>
-            <div class="flex max-w-prose flex-col" aria-hidden="true">
+            <div class="flex flex-col" aria-hidden="true">
               <div class="skeleton skeleton-heading w-[32%]" />
               <div class="mt-6 flex flex-col gap-[0.8rem]">
                 <div class="skeleton skeleton-line w-[99%]" />
