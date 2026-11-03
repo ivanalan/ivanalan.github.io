@@ -24,6 +24,11 @@ const projects = defineCollection({
       coverVideo: z.string().optional(),
       coverVideoPoster: z.string().optional(),
       coverVideoClassName: z.string().optional(),
+      coverGif: z.string().optional(),
+      coverGifPoster: z.string().optional(),
+      coverBackdrop: z
+        .enum(["quiet-ripple", "deep-teal", "night-indigo"])
+        .optional(),
       order: z.number(),
       externalUrl: z.string().optional(),
     }),

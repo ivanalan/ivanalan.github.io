@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import type { WorkCard, WorkTabsProps } from "./work-tabs.types";
 import { BrandChip, MetaChip } from "@/components/BrandChip";
+import { GifCover } from "@/components/GifCover";
 import { ShaderCover } from "@/components/ShaderCover";
 import { VideoCover } from "@/components/VideoCover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -29,7 +30,14 @@ function Card({ item, index }: { item: WorkCard; index: number }) {
       style={{ "--reveal-index": index } as CSSProperties}
       className="reveal group flex flex-col gap-3 rounded-xl p-2 outline-none transition-[background-color,scale] duration-400 ease-out hover:bg-secondary focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-[0.99] active:duration-100"
     >
-      {item.coverVideo ? (
+      {item.coverGif && item.coverBackdrop ? (
+        <GifCover
+          src={item.coverGif}
+          poster={item.coverGifPoster}
+          backdrop={item.coverBackdrop}
+          className="aspect-[16/9] w-full transition-opacity duration-400 ease-out group-hover:opacity-85"
+        />
+      ) : item.coverVideo ? (
         <VideoCover
           src={item.coverVideo}
           poster={item.coverVideoPoster}

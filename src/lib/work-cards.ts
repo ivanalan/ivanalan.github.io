@@ -56,6 +56,9 @@ const toCard = async (entry: Entry, featured = false): Promise<WorkCard> => {
     coverVideo: entry.data.coverVideo,
     coverVideoPoster: entry.data.coverVideoPoster,
     coverVideoClassName: entry.data.coverVideoClassName,
+    coverGif: entry.data.coverGif,
+    coverGifPoster: entry.data.coverGifPoster,
+    coverBackdrop: entry.data.coverBackdrop,
     fetchPriority: featured ? "high" : undefined,
   };
 };

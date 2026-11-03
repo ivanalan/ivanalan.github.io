@@ -3,6 +3,8 @@ import type { IonIconName } from "@/components/IonIcon";
 
 export type CoverShader = "r5" | "qualtrics";
 
+export type CoverBackdrop = "quiet-ripple" | "deep-teal" | "night-indigo";
+
 export type MetaMark = "figma";
 
 export type WorkCardMeta = {
@@ -25,6 +27,9 @@ export type WorkCard = {
   coverVideo?: string;
   coverVideoPoster?: string;
   coverVideoClassName?: string;
+  coverGif?: string;
+  coverGifPoster?: string;
+  coverBackdrop?: CoverBackdrop;
   fetchPriority?: "high" | "low" | "auto";
 };
 
