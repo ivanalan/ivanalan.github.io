@@ -7,24 +7,23 @@ team: 1 PM, 2 dev leads, 15 developers
 year: 2024
 status: published
 category: work
-coverGif: "/ab-initio-data-platform/assets/cover.gif"
-coverGifPoster: "/ab-initio-data-platform/assets/cover-gif-poster.webp"
+coverVideo: "/ab-initio-data-platform/assets/cover.webm"
+coverVideoPoster: "/ab-initio-data-platform/assets/cover-poster.webp"
 coverBackdrop: deep-teal
 order: 2
 ---
 
 import { CaseImage } from "@/components/CaseImage";
-import { CaseVideo } from "@/components/CaseVideo";
 
 ## Outcome
 
-1. Shipped an entirely new product in **six months**, on time, as a release for a European bank.
-2. Unified a **three product** workflow into one platform.
-3. Laid the foundation for a design system: **600 variables → 150 scalable tokens**.
+1. Shipped a new product in **six months**, on time, as a customer release for a European bank.
+2. Unified a **3-product** wrangling workflow into **1** platform: find → transform → schedule.
+3. Led the design-token effort for our first design system: **600 variables → 150 scalable tokens**.
 
-## The problem: one job, three products
+## Context: one job, three products
 
-Ab Initio’s software collects, organizes, and transforms enterprise data at scale. One of the biggest user workflows is data wrangling, which takes three main steps:
+Ab Initio’s software collects, organizes, and transforms enterprise data at scale. One of the biggest workflows is data wrangling, which took three separate products:
 
 1. **Find** raw data in Metadata>Portal
 
@@ -50,77 +49,67 @@ Ab Initio’s software collects, organizes, and transforms enterprise data at sc
   alt="Control>Center Daily Jobs table listing running and completed jobs with status, elapsed time, and CPU"
 />
 
-In Ab Initio, data wrangling required users to visit three separate products to complete one task. My PM had identified three main issues with this current model:
+## The problem: fragmented, overwhelming, inconsistent
+
+After working through the products myself and talking with PM, eng leads, and adjacent teams, I framed the problems as:
 
 1. **Fragmented.** Context was lost every time users switched products.
-2. **Overwhelming.** Each product was packed with features most people never touched.
-3. **Inconsistent.** There was no design system, so there were three distinct interaction models.
+2. **Overwhelming.** Each product exposed far more than most people needed for the job.
+3. **Inconsistent.** With no design system, each product had its own interaction model.
 
-## The ask: a UX-driven MVP in six months
+This problem stung as it had already lost Ab Initio deals purely based on UX. The company needed to prove it could ship a UX-led product under real customer constraints without waiting for a multi-year rebuild.
 
-Leadership finally had room to put UX as a foundational product principle. The ask was sharp: launch a new, UX-driven MVP for one customer in six months. The team aligned on three principles:
+## My role: prove UX can win in six months, for one customer
+
+My PM owned the multi-year vision: fold eight products into one platform with shared workflows like data acquisition, masking, wrangling, and issue management. Engineering owned the architecture problems.
+
+My role was to turn that vision into concrete flows we could ship, as the sole designer with 1 PM, 2 eng leads, and about 15 developers. We aligned on three principles:
 
 1. **Unified.** Support the end-to-end workflow in one platform instead of three products.
 2. **Curated.** Tailor the experience to user goals instead of exposing every tool.
 3. **Familiar.** Make the workflow feel consistent as we folded products together.
 
-## Turning a vision into an MVP
-
-My PM led the vision work: where the platform should be in three years, which products should fold into it, and why it mattered. Instead of 8 products with their own set of tools, my PM envisioned one platform with unified workflows such as data acquisition, data masking, data wrangling, and issue management.
-
 <CaseImage
   client:load
   src="/ab-initio-data-platform/assets/lofi-wireframes.png"
   alt="Early data platform home wireframe with persona switcher, Find and Explore Data, Search Business Terms, Resolve Work Items, and Recent Activity"
+  caption="Early vision: curated workflows, not a toolbox of every feature."
 />
 
-My role was to turn the multi-year vision into concrete flows we could actually ship. I was the sole designer working with one PM, two eng leads, and about fifteen developers.
+## Making painful cuts to scope a 6 month MVP
 
-## Scoping what six months can hold
+With six months and a huge product suite behind us, scope was the real design problem. I led weekly reviews with PM and eng leads to force the hard cuts:
 
-With 6 months to build and a huge product suite of functionalities, it was essential to scope work early. I led weekly reviews to align on high-level scope decisions:
+- What is the core workflow this customer needs?
+- Which pieces of Metadata>Portal, Express>It, and Control>Center have to transfer for that workflow?
+- How bespoke should a one-customer MVP be versus a prototype of the larger vision?
 
-- What is the core workflow we need to support for this customer?
-- Which pieces of Metadata>Portal, Express>It, and Control>Center had to transfer for that workflow?
-- Since this MVP ships for one customer, how bespoke should it be versus a general-purpose prototype of the larger vision?
-
-We landed on one basic workflow: data wrangling. We ruthlessly prioritized and cut any work that wasn’t necessary for the MVP, like approval workflows or scaling for large datasets.
+We scoped to data wrangling for two primary users: analysts who transform and publish data, and consumers who browse finished outputs.
 
 <CaseImage
   client:load
   src="/ab-initio-data-platform/assets/UserFlowScoping.png"
   alt="Scoped data wrangling user flow with approval workflows and scale-only steps marked out of MVP"
   bgClassName="bg-background"
+  caption="Cutting features to meet MVP"
 />
 
 ## Navigating ambiguity without data
 
-Our organization was just starting to invest in UX, so we had no user data or research. I read documentation to understand the technical landscape, met with other teams about problems they had already solved, and had frequent 1:1s with my PM and engineering leads.
+The organization was just starting to invest in UX, so we had no user research practice and almost no direct access to end users. I learned the products from documentation, met with teams who had already solved adjacent problems, and kept tight 1:1s with my PM and eng leads. Occasional TAM feedback at milestones was the closest thing we had to customer signal.
 
-Still, that left a lot of unknowns. So I wrote out the research questions I would have asked, the hypotheses behind my assumptions, and kept moving. Writing this down made the gap in evidence visible to everyone instead of always being a tension point in discussion.
+That still left a lot of unknowns. So I wrote down the research questions I would have asked, the hypotheses behind my assumptions, and kept moving. Making the evidence gap visible stopped it from becoming a recurring fight in every review:
 
-<CaseVideo
-  client:load
-  src="/ab-initio-data-platform/assets/assumptions-doc.mp4"
-  poster="/ab-initio-data-platform/assets/assumptions-doc-poster.webp"
-  width={1112}
-  height={574}
-  title="The assumptions and unknowns doc, listing the research questions we could not ask"
-/>
+1. Walk me through the last dataset you prepared end to end. Where did you stop and wait on someone else?
+2. When you switch from Metadata>Portal to Express>It, what do you carry over by hand?
+3. What makes you trust a dataset that someone else built?
 
-## Making three products feel like one
 
-Ab Initio had no formal design system, which meant that every product had its own styles and interaction patterns. To make one unified platform, there was a parallel effort to create our first design system: Honeycomb. As part of that huge effort, I led the design tokens work: from planning, alignment, implementation, and distribution.
+## Leading the design token initiative
 
-<CaseImage
-  client:load
-  src="/ab-initio-data-platform/assets/TokensPlan.png"
-  alt="Release Path and Timeline for design tokens: map variables, review naming with AbSDK and UX, test, document, and present to developers"
-  caption="Planning the token release path with eng and UX."
-  className="mx-auto max-w-md"
-/>
+Ab Initio had no formal design system, so every product had its own styles and patterns. As part of standing up Honeycomb, our first design system, I led the design tokens effort from planning through alignment, implementation, and distribution, which took about **four months** to ship.
 
-There was already a shared color file — nearly **600 variables** with low adoption, hard to theme, and not built to scale. On a small team, developers like the flexibility of personal processes, so I talked with engineers about what they wanted automated versus what they wanted to own themselves. That framed a token set large enough for most use cases, and small enough to stay consistent.
+We started from a shared color file of nearly **600 variables** with low adoption and no path to scale, and through my leadership we created a system of **150 scalable tokens** tied to accessibility, theming, and scalability.
 
 <CaseImage
   client:load
@@ -129,44 +118,27 @@ There was already a shared color file — nearly **600 variables** with low adop
   caption="600 variables → 150 scalable tokens."
 />
 
+## Product decision: investing in a new pattern.
+
+To inspect data, there was an existing pattern where a bottom sheet showed a data table. While this was cheaper and faster, I explored a new side panel design that would was more flexible and robust. I made the call to invest in this side panel design and carried it through with eng as I found it worthwhile.
+
+<CaseImage
+  client:load
+  src="/ab-initio-data-platform/assets/bottom-sheet.png"
+  alt="Exploration: dataset details in a bottom-sheet style overlay on the wrangling workspace"
+  caption="Option A: bottom-sheet that we could’ve re-used but occluded the list context."
+/>
+
+<CaseImage
+  client:load
+  src="/ab-initio-data-platform/assets/side-panel.png"
+  alt="Shipped: dataset details in a side panel with graph preview and sample data beside the list"
+  caption="Option B: side panel we shipped that would become a universal pattern."
+/>
+
 ## Impact: three products → one
 
-We shipped a three-product workflow into one platform, on time for our customer. It was a huge success and proved the value of UX for Ab Initio, which later paved the way for a more complete platform experience.
-
-<CaseImage
-  client:load
-  src="/ab-initio-data-platform/assets/Flow1.png"
-  alt="Data Platform Q4 2023 Reporting workspace with empty Datasets and Data catalog sections"
-  caption="1. Create a wrangling workspace."
-/>
-
-<CaseImage
-  client:load
-  src="/ab-initio-data-platform/assets/Flow2.png"
-  alt="Advanced Entity Picker searching Q4 tables with six entities selected to add"
-  caption="2. Find and add datasets from the catalog (previously Metadata>Portal)."
-/>
-
-<CaseImage
-  client:load
-  src="/ab-initio-data-platform/assets/Flow3.png"
-  alt="Q4 2023 Reporting data catalog listing six datasets with row counts and last build times"
-  caption="3. Create a new dataset in context of the workspace."
-/>
-
-<CaseImage
-  client:load
-  src="/ab-initio-data-platform/assets/Flow4.png"
-  alt="Visual transform graph for Q4 2023 New Customers with Join, Compute, and Rewards nodes"
-  caption="4. Transform and enrich in the same product (previously Express>It)."
-/>
-
-<CaseImage
-  client:load
-  src="/ab-initio-data-platform/assets/Flow5.png"
-  alt="Publish Changes dialog on Schedule and Run with daily refresh settings"
-  caption="5. Publish and put it on a schedule (previously Control>Center)."
-/>
+I designed the end-to-end wrangling experience that shipped on time for the bank release. In one product, users could seamlessly complete a workflow that used to be a 3-product, fractured experience.
 
 <CaseImage
   client:load
@@ -176,6 +148,20 @@ We shipped a three-product workflow into one platform, on time for our customer.
   bgClassName="transparent"
 />
 
+We did not have adoption dashboards or CSAT for this release. What we did have:
+
+1. **Customer adoption.** At the European bank, the MVP replaced the old three-product flow.
+2. **On-time release.** Six months, shipped for a real customer - not an internal demo.
+3. **Foundation.** The tokens I led shipped in Honeycomb and carried into that broader work.
+4. **Org shift.** The MVP evolved into the Ab Initio Data Platform - the company-wide mission every team aligned on.
+
+<CaseImage
+  client:load
+  src="/ab-initio-data-platform/assets/r5-platform-home.jpg"
+  alt="AIDP Data Platform home with Data Marketplace, Business Glossary, Data Catalog, activity tasks, and Abi assistant"
+  caption="AIDP: the company-wide platform that expanded from the MVP into one shared product mission."
+/>
+
 ## Looking back
 
-Because this shipped for a specific customer, I should have treated them as a primary stakeholder from day one. I had a Technical Account Manager close to them, but I treated the customer as a consumer rather than a partner. Instead of looping them in only at major milestones, I would have brought them into the initial scoping and requirements.
+I treated the customer as a consumer instead of a partner. Next time I would bring them into scoping and requirements from day one, not only major milestones.

@@ -6,9 +6,11 @@ interface Props {
   title?: string;
   description?: string;
   type?: "website" | "article";
+  /** Skip the default reading-width shell (explore tools, etc.). */
+  fullBleed?: boolean;
 }
 
-const { title, description, type } = Astro.props;
+const { title, description, type, fullBleed = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -23,7 +25,13 @@ const { title, description, type } = Astro.props;
     >
       Skip to content
     </a>
-    <div class="mx-auto w-full max-w-4xl px-6 py-16 md:px-8 md:py-24">
+    <div
+      class={
+        fullBleed
+          ? "w-full"
+          : "mx-auto w-full max-w-4xl px-6 py-16 md:px-8 md:py-24"
+      }
+    >
       <slot />
     </div>
   </body>
