@@ -1,0 +1,84 @@
+---
+/* Shared month grid for /explore/shift-calendar. Same math as ShiftCalendar. */
+const DAYS_IN_MONTH = 31;
+const FIRST_WEEKDAY = 5;
+const WEEKDAYS = ["M", "T", "W", "T", "F", "S", "S"];
+
+const weekdayOf = (day: number) => (FIRST_WEEKDAY + day - 1) % 7;
+const isShift = (day: number) => (day - 1) % 4 === 0;
+const startsFreeWeekend = (day: number) =>
+  weekdayOf(day) === 5 &&
+  day > 1 &&
+  day + 1 <= DAYS_IN_MONTH &&
+  !isShift(day - 1) &&
+  !isShift(day) &&
+  !isShift(day + 1);
+const isFreeWeekend = (day: number) =>
+  startsFreeWeekend(day) ||
+  (weekdayOf(day) === 6 && startsFreeWeekend(day - 1));
+
+const cells: (number | null)[] = [
+  ...Array.from({ length: FIRST_WEEKDAY }, () => null),
+  ...Array.from({ length: DAYS_IN_MONTH }, (_, i) => i + 1),
+];
+const weeks = Array.from({ length: Math.ceil(cells.length / 7) }, (_, week) =>
+  Array.from({ length: 7 }, (_, day) => cells[week * 7 + day] ?? null),
+);
+
+interface Props {
+  showHeader?: boolean;
+  showLegend?: boolean;
+  /** Marks fill each cell instead of a fixed px size. */
+  fluid?: boolean;
+}
+
+const { showHeader = false, showLegend = false, fluid = false } = Astro.props;
+---
+
+{
+  showHeader && <div class="cal-header">One free weekend</div>
+}
+<div class="cal-weekdays">
+  {WEEKDAYS.map((letter) => <span>{letter}</span>)}
+</div>
+<div class="cal-weeks">
+  {
+    weeks.map((week) => (
+      <div class="cal-week">
+        {week.some((day) => day !== null && startsFreeWeekend(day)) && (
+          <div class="cal-weekend" />
+        )}
+        {week.map((day) => (
+          <span class:list={["cal-cell", fluid && "is-fluid"]}>
+            {day !== null && (
+              <span
+                class:list={[
+                  "cal-mark",
+                  fluid && "is-fluid",
+                  isShift(day) && "is-shift",
+                  isFreeWeekend(day) && "is-weekend",
+                ]}
+              >
+                {day}
+              </span>
+            )}
+          </span>
+        ))}
+      </div>
+    ))
+  }
+</div>
+{
+  showLegend && (
+    <div class="cal-legend">
+      <span>
+        <i class="swatch-shift" />
+        24h shift
+      </span>
+      <span>
+        <i class="swatch-weekend" />
+        free weekend
+      </span>
+    </div>
+  )
+}

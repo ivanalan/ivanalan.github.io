@@ -1,0 +1,359 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import ShiftCalendarExploreGrid from "@/components/ShiftCalendarExploreGrid.astro";
+
+type Chrome = "card" | "naked" | "band" | "rule";
+
+type Variant = {
+  id: string;
+  title: string;
+  note: string;
+  chrome: Chrome;
+  style: string;
+  figureClass?: string;
+  showHeader?: boolean;
+  showLegend?: boolean;
+  fluid?: boolean;
+  caption?: string;
+};
+
+const variants: Variant[] = [
+  {
+    id: "current",
+    title: "A · Current",
+    note: "Phone-widget card, max 24rem, 36px marks. What ships today.",
+    chrome: "card",
+    style:
+      "--cal-max: 24rem; --mark: 2.25rem; --mark-r: 0.875rem; --row-gap: 0.5rem; --pad-x: 1.5rem; --pad-y: 1.25rem; --card-r: 2rem;",
+  },
+  {
+    id: "prose-wide",
+    title: "B · Prose width (fixed marks)",
+    note: "Stretches to ~65ch but marks stay 36px — more air between days.",
+    chrome: "card",
+    style:
+      "--cal-max: 65ch; --mark: 2.25rem; --mark-r: 0.875rem; --row-gap: 0.5rem; --pad-x: 1.5rem; --pad-y: 1.25rem; --card-r: 2rem;",
+  },
+  {
+    id: "prose-fluid",
+    title: "C · Prose width (fluid marks)",
+    note: "Same width as B, but day marks fill each cell so stretch actually enlarges them.",
+    chrome: "card",
+    fluid: true,
+    style:
+      "--cal-max: 65ch; --mark: 2.75rem; --mark-r: 1rem; --row-gap: 0.4rem; --pad-x: 1.25rem; --pad-y: 1.25rem; --card-r: 2rem;",
+  },
+  {
+    id: "article-wide",
+    title: "D · Article width",
+    note: "Fills the case-study column like CaseImage. Fluid marks.",
+    chrome: "card",
+    fluid: true,
+    style:
+      "--cal-max: 100%; --mark: 3rem; --mark-r: 1.1rem; --row-gap: 0.5rem; --pad-x: 1.5rem; --pad-y: 1.5rem; --card-r: 2rem;",
+    figureClass: "max-w-none",
+  },
+  {
+    id: "tall",
+    title: "E · Taller marks",
+    note: "Same 24rem width, larger day cells and looser rows — more vertical weight.",
+    chrome: "card",
+    style:
+      "--cal-max: 24rem; --mark: 3.25rem; --mark-r: 1.15rem; --row-gap: 0.75rem; --pad-x: 1.5rem; --pad-y: 1.5rem; --card-r: 2rem;",
+  },
+  {
+    id: "compact",
+    title: "F · Compact denser",
+    note: "Opposite extreme: tighter marks, less padding. Reads more like a diagram.",
+    chrome: "card",
+    style:
+      "--cal-max: 20rem; --mark: 1.75rem; --mark-r: 0.6rem; --row-gap: 0.25rem; --pad-x: 1rem; --pad-y: 0.875rem; --card-r: 1.25rem;",
+  },
+  {
+    id: "naked",
+    title: "G · Naked grid",
+    note: "No card chrome. Sits in the text like a figure, not a UI widget.",
+    chrome: "naked",
+    style:
+      "--cal-max: 28rem; --mark: 2.5rem; --mark-r: 0.875rem; --row-gap: 0.5rem; --pad-x: 0; --pad-y: 0; --card-r: 0;",
+    caption: "One free weekend a month — Fri through Sun clear.",
+  },
+  {
+    id: "band",
+    title: "H · Full-bleed band",
+    note: "Secondary strip breaks out of prose. Calendar stays centered inside.",
+    chrome: "band",
+    style:
+      "--cal-max: 28rem; --mark: 2.5rem; --mark-r: 0.9rem; --row-gap: 0.5rem; --pad-x: 0; --pad-y: 0; --card-r: 0;",
+    figureClass: "max-w-none",
+  },
+  {
+    id: "editorial",
+    title: "I · Editorial + legend",
+    note: "Month-ish label and a tiny key. Feels more intentional in a case study.",
+    chrome: "card",
+    showHeader: true,
+    showLegend: true,
+    style:
+      "--cal-max: 28rem; --mark: 2.5rem; --mark-r: 0.9rem; --row-gap: 0.5rem; --pad-x: 1.5rem; --pad-y: 1.25rem; --card-r: 1.5rem;",
+    caption: "Shift every fourth day. Only one weekend survives.",
+  },
+  {
+    id: "ruled",
+    title: "J · Hairline frame",
+    note: "Border instead of filled card. Lighter on the page, still contained.",
+    chrome: "rule",
+    style:
+      "--cal-max: 28rem; --mark: 2.5rem; --mark-r: 0.9rem; --row-gap: 0.5rem; --pad-x: 1.25rem; --pad-y: 1rem; --card-r: 1.25rem;",
+  },
+  {
+    id: "wide-short",
+    title: "K · Wide + short",
+    note: "Article-wide with smaller fixed marks — horizontal, less blocky.",
+    chrome: "card",
+    style:
+      "--cal-max: 100%; --mark: 2rem; --mark-r: 0.7rem; --row-gap: 0.35rem; --pad-x: 1.5rem; --pad-y: 1rem; --card-r: 1.5rem;",
+    figureClass: "max-w-none",
+  },
+];
+
+const shellStyle = (v: Variant) =>
+  `${v.style} --shift-mark: #c11e1e; --weekend-mark: #0a6a42; border-radius: var(--card-r); padding: var(--pad-y) var(--pad-x); max-width: var(--cal-max);`;
+---
+
+<Layout title="Shift calendar explore" fullBleed>
+  <main id="main" class="mx-auto w-full max-w-4xl px-6 py-12 md:px-8 md:py-16">
+    <header class="mb-10 flex flex-col gap-2">
+      <p class="font-mono text-sm text-muted-foreground">/explore</p>
+      <h1 class="font-heading text-3xl text-foreground">
+        When are you free — layout options
+      </h1>
+      <p class="max-w-prose text-base text-muted-foreground">
+        Same month, same marks. Each block sits in a short prose sandwich so you
+        can judge how the calendar lands between case-study paragraphs.
+      </p>
+    </header>
+
+    <nav
+      class="mb-12 flex flex-wrap gap-2 border-b border-border pb-4 font-mono text-xs text-muted-foreground"
+      aria-label="Variants"
+    >
+      {
+        variants.map((v) => (
+          <a
+            href={`#${v.id}`}
+            class="rounded-md border border-border px-2 py-1 text-foreground hover:bg-secondary"
+          >
+            {v.title}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex flex-col gap-16">
+      {
+        variants.map((v) => (
+          <section id={v.id} class="scroll-mt-8">
+            <div class="mb-4 flex flex-col gap-1">
+              <h2 class="font-heading text-xl text-foreground">{v.title}</h2>
+              <p class="max-w-prose text-sm text-muted-foreground">{v.note}</p>
+            </div>
+
+            <div class="flex flex-col rounded-xl border border-border/60 px-5 py-6 md:px-8 md:py-8">
+              <p class="mx-auto max-w-prose text-base text-muted-foreground">
+                Every 4 days, a 24 hour overnight shift. The catch: a 4 day cycle
+                does not sit cleanly on a 7 day calendar. So everyone asks the
+                same question:
+              </p>
+
+              <figure
+                class:list={[
+                  "mx-auto mt-6 w-full",
+                  v.figureClass ?? "max-w-prose",
+                  v.chrome === "band" &&
+                    "-mx-5 w-[calc(100%+2.5rem)] max-w-none md:-mx-8 md:w-[calc(100%+4rem)]",
+                ]}
+              >
+                {
+                  v.chrome === "band" ? (
+                    <div class="bg-secondary px-6 py-8 md:px-10 md:py-10">
+                      <div
+                        class="cal mx-auto w-full"
+                        style={`${v.style} --shift-mark: #c11e1e; --weekend-mark: #0a6a42; max-width: var(--cal-max);`}
+                        role="img"
+                        aria-label="Month calendar: shift every fourth day, one free weekend."
+                      >
+                        <ShiftCalendarExploreGrid
+                          showHeader={v.showHeader}
+                          showLegend={v.showLegend}
+                          fluid={v.fluid}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      class:list={[
+                        "cal mx-auto w-full",
+                        v.chrome === "card" && "bg-secondary",
+                        v.chrome === "rule" && "border border-border",
+                      ]}
+                      style={shellStyle(v)}
+                      role="img"
+                      aria-label="Month calendar: shift every fourth day, one free weekend."
+                    >
+                      <ShiftCalendarExploreGrid
+                        showHeader={v.showHeader}
+                        showLegend={v.showLegend}
+                        fluid={v.fluid}
+                      />
+                    </div>
+                  )
+                }
+                {
+                  v.caption && (
+                    <figcaption class="mx-auto mt-2 max-w-prose text-center text-sm text-muted-foreground">
+                      {v.caption}
+                    </figcaption>
+                  )
+                }
+              </figure>
+
+              <p class="mx-auto mt-6 max-w-prose text-base text-muted-foreground">
+                Most apps only focus on creating a recurring schedule for
+                yourself. The real job was making “when are you free?”
+                answerable without another back and forth.
+              </p>
+            </div>
+          </section>
+        ))
+      }
+    </div>
+  </main>
+</Layout>
+
+<style is:global>
+  .cal {
+    --mark: 2.25rem;
+    --mark-r: 0.875rem;
+    --row-gap: 0.5rem;
+    --cal-max: 24rem;
+    --pad-x: 1.5rem;
+    --pad-y: 1.25rem;
+    --card-r: 2rem;
+  }
+
+  .cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  .cal-weekdays span {
+    text-align: center;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.875rem;
+    color: var(--foreground);
+  }
+
+  .cal-weeks {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--row-gap);
+  }
+
+  .cal-week {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  .cal-weekend {
+    position: absolute;
+    top: 0;
+    height: var(--mark);
+    border-radius: var(--mark-r);
+    background: var(--weekend-mark);
+    left: calc(78.5714% - (var(--mark) / 2));
+    width: calc(14.2857% + var(--mark));
+  }
+
+  .cal-week:has(.cal-mark.is-fluid) .cal-weekend {
+    /* Fluid marks fill the cell; capsule spans Sat–Sun columns with a small inset. */
+    left: calc(5 / 7 * 100% + 0.15rem);
+    width: calc(2 / 7 * 100% - 0.3rem);
+    height: 100%;
+  }
+
+  .cal-cell {
+    display: flex;
+    height: var(--mark);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cal-cell.is-fluid {
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .cal-mark {
+    position: relative;
+    display: flex;
+    width: var(--mark);
+    height: var(--mark);
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--mark-r);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.875rem;
+    color: var(--foreground);
+  }
+
+  .cal-mark.is-fluid {
+    width: 100%;
+    height: 100%;
+  }
+
+  .cal-mark.is-shift {
+    background: var(--shift-mark);
+    color: white;
+  }
+
+  .cal-mark.is-weekend {
+    color: white;
+  }
+
+  .cal-header {
+    margin-bottom: 0.75rem;
+    font-family: var(--font-heading);
+    font-size: 1.125rem;
+    color: var(--foreground);
+  }
+
+  .cal-legend {
+    margin-top: 0.875rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+  }
+
+  .cal-legend i {
+    display: inline-block;
+    width: 0.75rem;
+    height: 0.75rem;
+    margin-right: 0.4rem;
+    border-radius: 0.25rem;
+    vertical-align: -0.05em;
+  }
+
+  .cal-legend .swatch-shift {
+    background: var(--shift-mark);
+  }
+
+  .cal-legend .swatch-weekend {
+    background: var(--weekend-mark);
+  }
+</style>
