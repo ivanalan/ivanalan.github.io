@@ -27,7 +27,13 @@ const projects = defineCollection({
       coverGif: z.string().optional(),
       coverGifPoster: z.string().optional(),
       coverBackdrop: z
-        .enum(["quiet-ripple", "deep-teal", "night-indigo"])
+        .enum([
+          "quiet-ripple",
+          "deep-teal",
+          "night-indigo",
+          "pine-simplex",
+          "cobalt-warp",
+        ])
         .optional(),
       order: z.number(),
       externalUrl: z.string().optional(),

@@ -3,7 +3,12 @@ import type { IonIconName } from "@/components/IonIcon";
 
 export type CoverShader = "r5" | "qualtrics";
 
-export type CoverBackdrop = "quiet-ripple" | "deep-teal" | "night-indigo";
+export type CoverBackdrop =
+  | "quiet-ripple"
+  | "deep-teal"
+  | "night-indigo"
+  | "pine-simplex"
+  | "cobalt-warp";
 
 export type MetaMark = "figma";
 
