@@ -16,7 +16,6 @@ order: 1
 
 import { CaseImage } from "@/components/CaseImage";
 import ShiftCalendar from "@/components/ShiftCalendar.astro";
-import ShiftsLeft from "@/components/ShiftsLeft.astro";
 import ShareEmbed from "@/components/ShareEmbed.astro";
 
 <CaseImage
@@ -30,41 +29,42 @@ import ShareEmbed from "@/components/ShareEmbed.astro";
 ## Outcome
 
 1. Shipped on the [App Store](https://apps.apple.com/app/id6803777786) and [Google Play](https://play.google.com/store/apps/details?id=com.alanmatias.guardias).
-2. My first time doing app design, development, and distribution end to end.
+2. App design, development, and distribution end to end.
 3. One daily user. About 30 downloads.
 
-## “When are you free?”
+## The problem: “When are you free?”
 
-Every 4 days, my partner has a 24-hour overnight shift at the hospital. With such a physically and emotionally tiring job, those nights shape the rest of her week and month.
+Every 4 days, my partner has a 24 hour overnight shift at the hospital. The catch is the pattern: a 4 day cycle does not sit cleanly on a 7 day calendar.
 
-The catch is the pattern itself. A 4-day cycle doesn’t sit cleanly on a 7-day calendar. It isn’t as easy as saying “I always work Mondays and Thursdays,” and it’s hard to share with friends and family.
+This schedule is not as easy as saying “I always work Mondays and Thursdays,” and is hard to share with friends and family. So everyone asks the same question: “when are you free?”
 
 <ShiftCalendar />
 
-So everyone asks the same question: “when are you free?”
+## Design bet: sharing
 
-## The job wasn’t just “track my shifts”
+Most apps only focus on creating a recurring schedule for yourself. The real job was making “when are you free?” answerable without another back and forth.
 
-Creating a recurring schedule pattern for yourself only goes so far, and where most other apps stop. The real job was making “when are you free?” easily answerable without another back-and-forth.
-
-So I built sharing around a single link: if someone already has DeGuardia, it opens with the rotation pre-filled and ready to save; if they don’t, the same page still lets them export to Google Calendar, download an .ics, or grab an image.
+So, I built the product around sharing. If someone already has DeGuardia, it opens with the rotation ready to save. If they don’t, the same page still lets them export to Google Calendar, download an .ics, or download an image.
 
 <ShareEmbed />
 
-## What other apps miss
+## Designing beyond just a recurring schedule.
 
-Google Calendar and most shift trackers solve the narrow version: repeat this event every four days. The needs I kept running into went further:
+The needs I found went further, and where my app outshines other trackers/schedulers:
 
-- Counting down the shifts and days left in a brutal rotation
-- Seeing when the one free weekend a month actually falls, so you can plan rest
-- Overlaying a friend’s schedule against your own
-- Getting the rotation out of your phone and into someone else’s
+1. Counting down the shifts and days left in a brutal rotation
+2. Seeing when the one free weekend a month actually falls, so you can plan rest
+3. Overlaying a friend’s schedule against your own
 
-<ShiftsLeft />
+## My process: iterating over planning
 
-## I built the wrong MVP
+When I started, I planned a lot upfront: information architecture, requirements, edge cases, libraries. While the IA held, almost everything else changed while building.
 
-In corporate software, an MVP usually means letting users create something and see it - sharing, commenting, and other collaboration can wait. I used that same habit here: first create a rotation, then visualize it in calendars and widgets.
+With AI, reversing tech choices is cheap. So, I learned to plan foundational pieces but start developing sooner.
+
+## What I’d do differently
+
+I shipped rotation creation, then visualization in a calendar, then sharing. But this was the wrong priority, as I should have shipped “sharing” immediately. That mistake clarified how a PRD should take priority over engineering instincts to build out a robust system first, then add in sharing/collaboration.
 
 <CaseImage
   client:load
@@ -73,13 +73,3 @@ In corporate software, an MVP usually means letting users create something and s
   caption="Calendar and upcoming-shifts widgets"
   className="mx-auto max-w-xs"
 />
-
-The real MVP was the reverse: define a recurring rotation, then share or export it. Everything else was secondary. I shipped the share link late, after the app already felt “done.”
-
-Looking back, I’d put sharing (and whatever it depends on) first. That gap taught me a lot about how PMs prioritize and how this can diverge from a UX or engineering instincts.
-
-## Iterating over waiting
-
-When I started, I planned a lot upfront: information architecture, requirements, edge cases, libraries. While the IA held strong across the whole SDLC, almost everything else changed. For example, the UI stack changed from React Native Paper → NativeWind, and I found better data visualizations only while building.
-
-What mattered most was a solid enough architecture and a real MVP, not a finished plan. With AI, once-rigid choices are cheaper to reverse, so the better move is a simple prototype in front of real people, then iterate. Agonizing over the first library or chart rarely pays off as much as putting a week of shifts on someone’s phone.
