@@ -18,13 +18,13 @@ import { CaseVideo } from "@/components/CaseVideo";
 
 ## Outcome
 
-1. On track to release 3 months early, with real-world trials already running with stakeholders
-2. Turned a tech-first architecture plan into a prioritized, user-centered roadmap
-3. Protected the MVP by parking high-effort detours in a post-launch proposal
+1. Ready to ship in 9 months against a 12-month deadline.
+2. Ran a real-world trial with a major gaming brand, using Decision Flows in their store and pricing systems.
+3. Replaced a tech-first architecture plan with a prioritised, user-centred roadmap.
 
-## From tracking metrics to automating decisions
+## Context: turning real time data into automated actions
 
-Active>360 lets enterprise marketing teams track real-time customer data and define custom metrics without leaning on IT. Marketers can answer questions like: how much cellular data did customers use over the past 30 days, broken down by texting, streaming, and gaming?
+Active>360 lets enterprise marketers track real-time customer data and define custom metrics without IT. For example: track cellular data use over 30 days, by texting, streaming, and gaming.
 
 <CaseVideo
   client:load
@@ -33,10 +33,9 @@ Active>360 lets enterprise marketing teams track real-time customer data and def
   width={1208}
   height={612}
   title="Cellular data usage metric broken down by texting, streaming, and gaming"
-  caption="Cellular data use by category over the past 30 days."
 />
 
-Decision Flows was the next step: not only track that data, but automate decisions on top of it. When a customer’s cellular data falls below 5GB, offer a discount tailored to their most-used category.
+Decision Flows was next: automate actions on those metrics. For example: when a customer’s data falls below 5GB, send a discount for their top-used category.
 
 <CaseVideo
   client:load
@@ -45,18 +44,21 @@ Decision Flows was the next step: not only track that data, but automate decisio
   width={1208}
   height={612}
   title="Decision Flow offering a category-tailored discount when cellular data falls below a threshold"
-  caption="When usage drops below 5GB, send a deal for the customer’s top category."
 />
 
-## Sole designer with few resources
+## The problem: a 1-year MVP with no PRD
 
-This was my first full-time UX role. I joined a team of 20 developers led by a senior engineer, with a vague mandate to lead Decision Flows from planning through implementation.
+We had 12 months to take Decision Flows from planning to implementation. The only plan was a 15+ page software architecture doc: services and systems, but no problem framing, personas, user flows, IA, UI, or timelines.
 
-There were no user researchers, no direct users to consult, no use cases, no product manager, and no other designers on the team. The most important move I made was getting help: I set up weekly mentorship with a senior UX designer on another team and used those sessions for advice and critique.
+I was the sole designer on a team of ~20 developers led by a senior engineer. No researchers, no direct end users, no use cases, no PM, no other designers. So, I effectively became the lead designer for Decision Flows.
 
-## Turning a technical foundation into user-driven thinking
+## My role: lead planning, design, and implementation
 
-The only plan for how to get this work done was a 15+ page software architecture doc with no reference to the overall problem, personas, user flows, IA, UI, or timelines. Tasked with leading UX for this team, I took on the challenge of transforming this engineering-first implementation into a product that would meet real user needs.
+While I was initially expected to design screens, I fought for UX from the beginning. So, I earned my place as a key decision maker and made most product calls like problem framing, IA, roadmap, MVP scope, stakeholder alignment, and interaction design. My engineering lead owned architecture, work delegation, and outreach to interested customers.
+
+## From architecture doc to user-driven plan
+
+I reverse-engineered user tasks from the architecture doc and checked them with proxy users (account managers). Then I ran a workshop with the full engineering team to agree feature sets and priorities. That became a UX north star alongside the technical plan, plus an initial IA and a year-long roadmap with UX and eng dependencies.
 
 <CaseImage
   client:load
@@ -65,12 +67,6 @@ The only plan for how to get this work done was a 15+ page software architecture
   caption="The starting point: a 15+ page architecture plan with no user flows, IA, or UI."
 />
 
-I started by reverse-engineering user tasks from that doc and cross-checked them with proxy users — account managers. Then I led a workshop with our entire engineering team so we could work together and establish the main feature sets and their priorities. With this work, I was able to put together a UX north star to complement the technical architecture.
-
-## Stepping into product management
-
-With the UX north star built, I drafted an initial information architecture and was able to create more separate threads of work. With one year to launch, I stepped into product management and created a roadmap so that we could map dependencies and work efficiently.
-
 <CaseImage
   client:load
   src="/ab-initio-active-decisions/assets/roadmap.png"
@@ -78,11 +74,9 @@ With the UX north star built, I drafted an initial information architecture and 
   caption="A year-long roadmap with UX and engineering dependencies across major efforts."
 />
 
-## Stay low fidelity, ship the hard parts first
+## Design approach: low fidelity on the hard parts
 
-The project was large, the company was new to me, and the industry was unfamiliar, so I validated low-fidelity ideas early and often with my proxy users: account managers. With a tight deadline, I prioritized iterating in low fidelity on the most complex features and gave front-end engineers room to interpolate the rest.
-
-The highest-impact work was flows: a way for users to author automated logic as flow charts. It would take the most effort, and was also critical to success, so I started early and ran recurring meetings to review high-level direction, interaction design, and technical constraints.
+The company and domain were new to me, so I validated low-fi early with account managers. With a fixed deadline I spent design depth on the hardest surface: authoring automated logic as flow charts. I started that work early and ran recurring reviews on direction, interaction design, and technical constraints. Front-end engineers interpolated simpler screens.
 
 <CaseImage
   client:load
@@ -91,11 +85,11 @@ The highest-impact work was flows: a way for users to author automated logic as 
   caption="Early low-fi work for the algorithm builder."
 />
 
-## Knowing when the MVP should increase scope
+## Two MVP calls: where to slow down and where to speed up
 
-Feature creep was constant as there were no product managers; instead, technical leads ran both the software and product needs. At one point, our engineering lead (PM) pushed a testing mode where users could run an algorithm against historical data before production. But after consulting the account managers, it seemed like customers already had workable ways to test. This would have been a huge amount of work, jeopardizing the MVP, so I reframed this as a follow-up product-wide launch that would incorporate other monitoring features we had planned follow-ups for anyway.
+The engineering lead advocated for a mode where users could test an algorithm before publishing to production. However, I had talked with account managers who said customers already had workable ways to test, so I pushed back. This new testing mode would have delayed the MVP, so I reframed it as a later, product-wide monitoring launch.
 
-Our navigation was different. Active>360 had a flat IA based on our runtime architecture that added a top-level page for every feature. Keeping that model for Decision Flows was the tipping point for this mental model, and was important enough to add to the MVP scope. I redesigned our entire navigation through stakeholder feedback so it could scale, resulting in navigation based on user workflows, not a technical architecture.
+Active>360’s navigation was confusing as it mirrored its backend where we had a top-level page per feature. Keeping this IA for Decision Flows would have made the site significantly hard to navigate, so I pushed to add in another piece of work for the MVP to redesign navigation.
 
 <CaseImage
   client:load
@@ -104,8 +98,20 @@ Our navigation was different. Active>360 had a flat IA based on our runtime arch
   caption="Navigation redesigned around user workflows instead of the runtime architecture."
 />
 
+## Impact: a real workflow with a major brand.
+
+Before the funding cut, we trialled Decision Flows with a major gaming brand/console as part of their store recommendation and pricing systems. That was the closest thing we had to production proof: a real customer workflow, not an internal demo.
+
+<CaseImage
+  client:load
+  src="/ab-initio-active-decisions/assets/mac-mock.png"
+  alt="Decision Flows builder showing a GameStore recommendation and pricing flow: catalog, eligibility, scoring, sort, offers, and three output choices"
+  caption="Trial flow: recommend and price GameStore titles from gaming and browsing scores."
+  bgClassName="transparent"
+/>
+
 ## What I’d do differently
 
-Funding was cut before launch, so the early schedule and stakeholder appetite never became a shipped release. Still, the work changed how I operate: do more than “design screens,” even when that is the expectation. My work to turn this technical project into a user-driven product was valued by our team, even when it was an unexpected and new process.
+This project changed how I operate: do more than “design screens,” even when that is the expectation. My work to turn this technical project into a user-driven product was valued by our team, even when it was an unexpected and new process.
 
-However, I would also have protected low-fidelity exploration longer. Direction moved faster than it needed to, as I was worried about my roadmap, and a few more cheap iterations before locking flows would have helped.
+I would also have protected low-fidelity exploration longer. Direction moved faster than it needed to, as I was worried about my roadmap, and a few more cheap iterations before locking flows would have helped.
