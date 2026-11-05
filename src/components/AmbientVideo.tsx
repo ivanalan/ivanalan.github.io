@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils"
 
 type AmbientVideoProps = {
   src: string
+  /** HEVC-with-alpha for Safari / iOS (WebKit drops WebM alpha). Listed first. */
+  hevcSrc?: string
   poster?: string
   title?: string
   width?: number
@@ -22,6 +24,7 @@ type AmbientVideoProps = {
  *  still. Playback starts on hydration so reduced motion can hold the still. */
 export function AmbientVideo({
   src,
+  hevcSrc,
   poster,
   title,
   width,
@@ -74,7 +77,7 @@ export function AmbientVideo({
     <div className={cn("relative overflow-hidden", className)}>
       <video
         ref={ref}
-        src={src}
+        src={hevcSrc ? undefined : src}
         poster={poster}
         title={decorative ? undefined : title}
         width={width}
@@ -90,7 +93,14 @@ export function AmbientVideo({
           videoClassName,
           !playing && poster && "invisible",
         )}
-      />
+      >
+        {hevcSrc ? (
+          <>
+            <source src={hevcSrc} type='video/mp4; codecs="hvc1"' />
+            <source src={src} type="video/webm" />
+          </>
+        ) : null}
+      </video>
       {!playing && poster ? (
         <img
           src={poster}

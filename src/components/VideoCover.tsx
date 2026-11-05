@@ -6,6 +6,11 @@ import {
 import type { CoverBackdrop } from "@/components/work-tabs.types"
 import { cn } from "@/lib/utils"
 
+/** Sibling HEVC-with-alpha for Safari / iOS Chrome (WebKit ignores WebM alpha). */
+function hevcSibling(src: string) {
+  return src.endsWith(".webm") ? src.replace(/\.webm$/, "-hevc.mp4") : undefined
+}
+
 /** Card cover: ambient clip cropped to the frame. Optional dither sits behind
  *  transparent WebM/alpha posters. */
 export function VideoCover({
@@ -35,6 +40,7 @@ export function VideoCover({
       {backdrop ? <CoverDither backdrop={backdrop} /> : null}
       <AmbientVideo
         src={src}
+        hevcSrc={hevcSibling(src)}
         poster={poster}
         width={1280}
         height={720}
