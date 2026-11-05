@@ -160,14 +160,21 @@ function CoverPreview({
         />
       </div>
       <video
-        src={src}
         poster={poster}
         muted
         loop
         playsInline
         autoPlay
         className="relative size-full object-cover"
-      />
+      >
+        {src.endsWith(".webm") ? (
+          <source
+            src={src.replace(/\.webm$/, "-hevc.mp4")}
+            type='video/mp4; codecs="hvc1"'
+          />
+        ) : null}
+        <source src={src} type={src.endsWith(".webm") ? "video/webm" : undefined} />
+      </video>
     </div>
   )
 }
