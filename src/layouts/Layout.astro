@@ -1,5 +1,6 @@
 ---
 import DocumentHead from "@/components/DocumentHead.astro";
+import { HeaderArt } from "@/components/HeaderArt";
 import "@/styles/global.css";
 
 interface Props {
@@ -8,9 +9,17 @@ interface Props {
   type?: "website" | "article";
   /** Skip the default reading-width shell (explore tools, etc.). */
   fullBleed?: boolean;
+  /** Dithered warp band behind the top of the page (home pages). */
+  headerArt?: boolean;
 }
 
-const { title, description, type, fullBleed = false } = Astro.props;
+const {
+  title,
+  description,
+  type,
+  fullBleed = false,
+  headerArt = false,
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -18,7 +27,8 @@ const { title, description, type, fullBleed = false } = Astro.props;
   <head>
     <DocumentHead title={title} description={description} type={type} />
   </head>
-  <body>
+  <body class={headerArt ? "relative" : undefined}>
+    {headerArt && <HeaderArt client:load />}
     <a
       href="#main"
       class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-muted focus:px-3 focus:py-2"

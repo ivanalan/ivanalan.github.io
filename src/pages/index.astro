@@ -7,7 +7,7 @@ import { getWorkCards } from "@/lib/work-cards";
 const { work, sideProjects } = await getWorkCards();
 ---
 
-<Layout>
+<Layout headerArt>
   <main id="main" class="flex flex-col gap-8">
     <SiteIntro />
     <WorkTabs client:load work={work} sideProjects={sideProjects} />

@@ -1,0 +1,16 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "explorations",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "4391", "--bind", "127.0.0.1"],
+      "port": 4391
+    },
+    {
+      "name": "site",
+      "port": 4321,
+      "url": "http://localhost:4321"
+    }
+  ]
+}
