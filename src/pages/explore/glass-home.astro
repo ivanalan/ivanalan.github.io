@@ -1,0 +1,13 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { GlassHomeExplorer } from "@/components/GlassHomeExplorer";
+import { getWorkCards } from "@/lib/work-cards";
+
+const { work, sideProjects } = await getWorkCards();
+---
+
+<Layout title="Glass home explore" headerArt>
+  <main id="main" class="flex flex-col gap-8">
+    <GlassHomeExplorer client:only="react" work={work} sideProjects={sideProjects} />
+  </main>
+</Layout>

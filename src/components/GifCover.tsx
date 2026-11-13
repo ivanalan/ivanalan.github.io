@@ -14,11 +14,14 @@ export function GifCover({
   poster,
   backdrop,
   className,
+  mediaClassName,
 }: {
   src: string
   poster?: string
   backdrop: CoverBackdrop
   className?: string
+  /** Applied to the foreground GIF/poster only (not the dither). */
+  mediaClassName?: string
 }) {
   const [animated, setAnimated] = useState(false)
   const preset = COVER_BACKDROPS[backdrop]
@@ -44,7 +47,7 @@ export function GifCover({
         src={showGif ? src : poster}
         alt=""
         aria-hidden="true"
-        className="absolute inset-0 size-full object-cover"
+        className={cn("absolute inset-0 size-full object-cover", mediaClassName)}
       />
     </div>
   )

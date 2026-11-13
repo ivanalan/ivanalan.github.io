@@ -1,0 +1,11 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { GridGlassExplorer } from "@/components/GridGlassExplorer";
+import { getWorkCards } from "@/lib/work-cards";
+
+const { work, sideProjects } = await getWorkCards();
+---
+
+<Layout title="Grid glass explore" fullBleed>
+  <GridGlassExplorer client:only="react" work={work} sideProjects={sideProjects} />
+</Layout>

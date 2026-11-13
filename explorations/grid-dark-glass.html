@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dark grid · liquid glass · Alan Matias</title>
+<!-- Static mock. Real iteration: npm run dev → /explore/grid-glass -->
+<link rel="stylesheet" href="../node_modules/@fontsource-variable/fustat/index.css" />
+<link rel="stylesheet" href="../node_modules/@fontsource/gentium-book-basic/400.css" />
+<style>
+  :root {
+    --font-heading: "Gentium Book Basic", ui-serif, Georgia, "Times New Roman", serif;
+    --font-sans: "Fustat Variable", ui-sans-serif, system-ui, sans-serif;
+    --background: oklch(18.561% .00161 197.742);
+    --surface: oklch(24.705% .01511 285.224);
+    --foreground: oklch(96.946% .00318 15.308);
+    --muted-foreground: oklch(76.092% .01027 273.305);
+    --border: oklch(.919 0 0 / 8%);
+    --ring: oklch(.638 .177 252.2);
+    --ease: cubic-bezier(.16, 1, .3, 1);
+    --cover-radius: .875rem;
+    --glass-bg: rgba(255, 255, 255, .07);
+    --glass-bg-strong: rgba(255, 255, 255, .12);
+    --glass-border: rgba(255, 255, 255, .18);
+    --glass-highlight: rgba(255, 255, 255, .28);
+    --glass-shadow: 0 8px 28px -16px rgba(0, 0, 0, .55);
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; }
+  html {
+    font-family: var(--font-sans);
+    font-size: 93.75%;
+    -webkit-text-size-adjust: 100%;
+    scrollbar-gutter: stable;
+  }
+  @media (min-width: 768px) { html { font-size: 100%; } }
+  body {
+    background:
+      radial-gradient(90% 55% at 12% -10%, rgba(90, 140, 220, .14), transparent 55%),
+      radial-gradient(70% 45% at 90% 0%, rgba(120, 90, 180, .08), transparent 50%),
+      var(--background);
+    color: var(--foreground);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100dvh;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+  /* ---------- liquid glass primitive ---------- */
+  .glass {
+    background: linear-gradient(
+      165deg,
+      rgba(255, 255, 255, .14) 0%,
+      var(--glass-bg) 38%,
+      rgba(255, 255, 255, .04) 100%
+    );
+    -webkit-backdrop-filter: blur(22px) saturate(1.65);
+    backdrop-filter: blur(22px) saturate(1.65);
+    box-shadow:
+      inset 0 1px 0 var(--glass-highlight),
+      inset 0 0 0 1px var(--glass-border),
+      inset 0 -12px 28px -20px rgba(255, 255, 255, .08),
+      var(--glass-shadow);
+  }
+
+  .shell {
+    width: min(1080px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 72px 0 96px;
+  }
+
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    max-width: 40rem;
+    margin-bottom: 2rem;
+  }
+  .name {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+  .role { color: var(--muted-foreground); font-size: 1rem; }
+  .bio {
+    margin-top: .25rem;
+    color: var(--foreground);
+    font-size: 1rem;
+    line-height: 1.7;
+    text-wrap: pretty;
+  }
+
+  /* ---------- glass tabs ---------- */
+  .tabs { display: flex; flex-direction: column; gap: 1.25rem; }
+  .tablist {
+    position: relative;
+    display: inline-flex;
+    width: fit-content;
+    gap: 2px;
+    padding: 4px;
+    border-radius: 999px;
+  }
+  .tablist .ind {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 0;
+    width: var(--w, 0);
+    translate: var(--x, 0) 0;
+    border-radius: 999px;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, .22),
+      rgba(255, 255, 255, .08)
+    );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .35),
+      inset 0 0 0 1px rgba(255, 255, 255, .16),
+      0 6px 16px -10px rgba(0, 0, 0, .5);
+    transition: translate .45s var(--ease), width .45s var(--ease);
+    pointer-events: none;
+  }
+  .tab {
+    position: relative;
+    z-index: 1;
+    border: 0;
+    background: transparent;
+    color: rgba(244, 242, 238, .62);
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: .9rem;
+    transition: color .3s;
+  }
+  .tab:hover { color: rgba(244, 242, 238, .9); }
+  .tab[aria-selected="true"] { color: #fff; }
+  .tab:active { scale: .97; transition: scale .1s; }
+  .panel[hidden] { display: none; }
+
+  /* ---------- cards + glass chips ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem 1.25rem;
+  }
+  @media (min-width: 760px) {
+    .grid { grid-template-columns: 1fr 1fr; }
+    .grid .card.span-2 { grid-column: 1 / -1; }
+    .grid .card.span-2 .cover { aspect-ratio: 21 / 9; }
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    border-radius: calc(var(--cover-radius) + .3rem);
+    padding: .5rem;
+    outline: none;
+    transition: background-color .35s var(--ease), scale .2s;
+  }
+  .card:hover { background: rgba(255, 255, 255, .04); }
+  .card:active { scale: .99; }
+
+  .cover {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    border-radius: var(--cover-radius);
+    background: var(--surface);
+    position: relative;
+    overflow: hidden;
+    transition: opacity .35s var(--ease);
+  }
+  .card:hover .cover { opacity: .9; }
+  .cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .1);
+    pointer-events: none;
+  }
+
+  .chips { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .28rem .55rem;
+    border-radius: 999px;
+    font-size: .8125rem;
+    line-height: 1.2;
+    color: rgba(244, 242, 238, .9);
+    background: linear-gradient(
+      165deg,
+      rgba(255, 255, 255, .16) 0%,
+      rgba(255, 255, 255, .06) 45%,
+      rgba(255, 255, 255, .03) 100%
+    );
+    -webkit-backdrop-filter: blur(14px) saturate(1.5);
+    backdrop-filter: blur(14px) saturate(1.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, .28),
+      inset 0 0 0 1px rgba(255, 255, 255, .14),
+      0 4px 12px -8px rgba(0, 0, 0, .45);
+  }
+
+  .card h2 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: 1.25rem;
+    line-height: 1.35;
+    text-wrap: balance;
+  }
+  .card.span-2 h2 { font-size: clamp(1.35rem, 2.2vw, 1.65rem); }
+  .card .st {
+    color: var(--muted-foreground);
+    font-size: 1rem;
+    text-wrap: pretty;
+  }
+
+  .note {
+    margin-top: 3rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted-foreground);
+    font-size: .85rem;
+  }
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="intro">
+    <div>
+      <h1 class="name">Alan Matias</h1>
+      <p class="role">Designer and engineer</p>
+    </div>
+    <p class="bio">
+      3+ years shipping products, from scrappy work at Ab Initio to scale at
+      Qualtrics. My computer science background shows up in how I think about
+      systems, ship code, and measure analytics.
+    </p>
+  </header>
+
+  <div class="tabs">
+    <div class="tablist glass" role="tablist" aria-label="Work collections">
+      <span class="ind" aria-hidden="true"></span>
+      <button class="tab" role="tab" id="tab-work" aria-controls="panel-work" aria-selected="true" type="button">Work</button>
+      <button class="tab" role="tab" id="tab-side" aria-controls="panel-side" aria-selected="false" type="button">Side projects</button>
+    </div>
+
+    <div class="panel" role="tabpanel" id="panel-work" aria-labelledby="tab-work">
+      <div class="grid" id="work-grid"></div>
+    </div>
+    <div class="panel" role="tabpanel" id="panel-side" aria-labelledby="tab-side" hidden>
+      <div class="grid" id="side-grid"></div>
+    </div>
+  </div>
+
+  <p class="note">Dark 2-col grid — Qualtrics spans row 1; Ab Initio pair on row 2. Liquid glass on tabs + chips.</p>
+</main>
+
+<script>
+  const WORK = [
+    {
+      title: "Increasing guidance usage by 600% for 250k MAU",
+      subtitle: "Replacing Expert Review with guidance survey builders actually use.",
+      company: "Qualtrics",
+      meta: ["Designer", "2026"],
+      still: "../src/projects/survey-building-guidance/assets/cover-poster.webp",
+      href: "/work/survey-building-guidance",
+      span: 2,
+    },
+    {
+      title: "Launching a 0→1 platform in 6 months",
+      subtitle: "Unifying three products into one data-wrangling platform.",
+      company: "Ab Initio",
+      meta: ["Designer", "2024"],
+      still: "../src/projects/ab-initio-data-platform/assets/cover-poster.webp",
+      href: "/work/ab-initio-data-platform",
+    },
+    {
+      title: "Leading a 1-year MVP without PM, users, or research",
+      subtitle: "Automating marketing decisions on real-time customer metrics.",
+      company: "Ab Initio",
+      meta: ["Designer", "2023"],
+      still: "../src/projects/ab-initio-active-decisions/assets/cover-poster.webp",
+      href: "/work/ab-initio-active-decisions",
+    },
+  ];
+
+  const SIDE = [
+    {
+      title: "DeGuardia",
+      subtitle: "Shift scheduling for medical rotations.",
+      company: null,
+      meta: ["App development", "30 downloads", "2026"],
+      still: "../src/projects/guardias/assets/cover-poster.webp",
+      href: "/work/guardias",
+    },
+    {
+      title: "Table Layout Switcher",
+      subtitle: "Swap Figma table layouts without rebuilding.",
+      company: null,
+      meta: ["Figma plugin", "2025"],
+      still: "../src/projects/table-layout-switcher/assets/cover-poster.webp",
+      href: "/work/table-layout-switcher",
+    },
+  ];
+
+  function chips(p) {
+    const parts = [];
+    if (p.company) parts.push(`<span class="chip">${p.company}</span>`);
+    for (const m of p.meta) parts.push(`<span class="chip">${m}</span>`);
+    return `<div class="chips">${parts.join("")}</div>`;
+  }
+
+  function card(p) {
+    return `
+      <a class="card${p.span === 2 ? " span-2" : ""}" href="${p.href}">
+        <div class="cover" aria-hidden="true">
+          <img src="${p.still}" alt="" loading="lazy" width="1280" height="720" />
+        </div>
+        <div class="body">
+          ${chips(p)}
+          <h2>${p.title}</h2>
+          <p class="st">${p.subtitle}</p>
+        </div>
+      </a>`;
+  }
+
+  document.getElementById("work-grid").innerHTML = WORK.map(card).join("");
+  document.getElementById("side-grid").innerHTML = SIDE.map(card).join("");
+
+  const tablist = document.querySelector(".tablist");
+  const ind = tablist.querySelector(".ind");
+  const tabs = [...tablist.querySelectorAll(".tab")];
+  const panels = {
+    work: document.getElementById("panel-work"),
+    side: document.getElementById("panel-side"),
+  };
+
+  function moveInd(tab) {
+    const listBox = tablist.getBoundingClientRect();
+    const box = tab.getBoundingClientRect();
+    ind.style.setProperty("--x", `${box.left - listBox.left - 4}px`);
+    ind.style.setProperty("--w", `${box.width}px`);
+  }
+
+  function select(name) {
+    tabs.forEach((t) => {
+      const on = t.id === `tab-${name}`;
+      t.setAttribute("aria-selected", String(on));
+      if (on) moveInd(t);
+    });
+    panels.work.hidden = name !== "work";
+    panels.side.hidden = name !== "side";
+  }
+
+  tabs.forEach((t) => {
+    t.addEventListener("click", () => select(t.id === "tab-work" ? "work" : "side"));
+  });
+
+  select("work");
+  addEventListener("resize", () => {
+    const active = tabs.find((t) => t.getAttribute("aria-selected") === "true");
+    if (active) moveInd(active);
+  });
+</script>
+</body>
+</html>
