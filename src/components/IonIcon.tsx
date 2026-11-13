@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-/** Subset of Ionicons used in React (WorkTabs). Bodies from @iconify-json/ion. */
+/** Subset of Ionicons used in React. Bodies from @iconify-json/ion. */
 const icons = {
   person: (
     <path

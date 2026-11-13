@@ -1,7 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import SiteIntro from "@/components/SiteIntro.astro";
-import { WorkTabs } from "@/components/WorkTabs";
+import { GlassHomeExplorer } from "@/components/GlassHomeExplorer";
 import { getWorkCards } from "@/lib/work-cards";
 
 const { work, sideProjects } = await getWorkCards();
@@ -9,12 +8,11 @@ const { work, sideProjects } = await getWorkCards();
 
 <Layout headerArt>
   <main id="main" class="flex flex-col gap-8">
-    <SiteIntro />
-    <WorkTabs
-      client:load
+    <GlassHomeExplorer
+      client:only="react"
       work={work}
       sideProjects={sideProjects}
-      defaultTab="side-projects"
+      defaultTab="play"
     />
   </main>
 </Layout>

@@ -37,9 +37,3 @@ export type WorkCard = {
   coverBackdrop?: CoverBackdrop;
   fetchPriority?: "high" | "low" | "auto";
 };
-
-export type WorkTabsProps = {
-  work: WorkCard[];
-  sideProjects: WorkCard[];
-  defaultTab?: "work" | "side-projects";
-};

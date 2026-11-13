@@ -3,6 +3,7 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/fustat";
 @import "@fontsource/gentium-book-basic";
+@import "@fontsource/permanent-marker/400.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -18,6 +19,7 @@
   --font-heading: "Gentium Book Basic", ui-serif, Georgia, "Times New Roman",
     serif;
   --font-sans: "Fustat Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-hand: "Permanent Marker", ui-rounded, "Segoe Print", cursive;
   --text-base--line-height: 1.5;
   --color-background: var(--background);
   --color-secondary: var(--secondary);
