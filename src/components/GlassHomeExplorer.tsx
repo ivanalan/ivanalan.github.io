@@ -32,7 +32,7 @@ const EMAIL = "10alanm@gmail.com";
 
 /** Same interactive chrome as GlassBackLink, sized for icon + label pills. */
 const glassActionClass =
-  "inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-sm text-foreground outline-none transition-[background-color,transform] duration-300 ease-out hover:bg-white/18 focus-visible:bg-white/18 focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-[0.96] active:duration-100";
+  "inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-sm text-foreground outline-none transition-[background-color,transform] duration-300 ease-out hover:scale-[0.98] hover:bg-white/18 focus-visible:bg-white/18 focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-[0.96] active:bg-white/28 active:duration-100";
 
 type TabId = "work" | "play" | "about";
 
@@ -49,7 +49,7 @@ const TABS: { id: TabId; label: string }[] = [
 ];
 
 const BIO =
-  "3+ years shipping products, from scrappy work at Ab Initio to scale at Qualtrics. My computer science background shows up in how I think about systems, ship code, and measure analytics.";
+  "3+ years shipping products, from scrappy work at Ab Initio to scale at Qualtrics. My computer science background shows in how I tackle complex systems, ship code, and measure analytics.";
 
 /** Depth under the page chrome bio — outcomes, not a second intro. */
 const ABOUT_COPY = [
@@ -323,17 +323,22 @@ function AboutPolaroid() {
 
   return (
     <figure
-      className="w-[16.5rem] shrink-0 -rotate-6 bg-white p-3 pb-4 shadow-[0_18px_40px_-12px_rgba(0,0,0,0.55),0_2px_8px_-2px_rgba(0,0,0,0.2)] sm:w-[19rem]"
+      className="polaroid-frame w-[16.5rem] shrink-0 bg-white p-3 pb-4 shadow-[0_18px_40px_-12px_rgba(0,0,0,0.55),0_2px_8px_-2px_rgba(0,0,0,0.2)] sm:w-[19rem]"
       aria-label={caption}
     >
-      <div className="aspect-[3/2] overflow-hidden bg-zinc-200">
+      <div className="relative aspect-[3/2] overflow-hidden bg-zinc-200">
         <img
           src={polaroidPhoto}
           alt=""
-          className="size-full object-cover object-center"
+          className="polaroid-image size-full object-cover object-center"
+        />
+        {/* Instant fog: milky overlay clears so the print “develops.” */}
+        <div
+          aria-hidden="true"
+          className="polaroid-fog pointer-events-none absolute inset-0 bg-[#f4f0e8]"
         />
       </div>
-      <figcaption className="mt-3.5 mb-1 px-0.5 text-center font-hand text-[1.05rem] leading-snug text-zinc-800 sm:text-[1.15rem]">
+      <figcaption className="polaroid-caption mt-3.5 mb-1 px-0.5 text-center font-hand text-[1.05rem] leading-snug text-zinc-800 sm:text-[1.15rem]">
         {caption}
       </figcaption>
     </figure>
@@ -441,7 +446,7 @@ function AboutActions({
         <button
           type="button"
           onClick={() => void copyEmail()}
-          className={cn(glassActionClass, "cursor-pointer")}
+          className={cn(glassActionClass, "relative cursor-pointer")}
           aria-label={copied ? "Email copied" : `Copy email ${EMAIL}`}
         >
           {copied ? (
@@ -449,7 +454,14 @@ function AboutActions({
           ) : (
             <CopyIcon className="size-4" aria-hidden="true" strokeWidth={2} />
           )}
-          {copied ? "Copied" : EMAIL}
+          <span className="relative">
+            <span className={copied ? "invisible" : undefined}>{EMAIL}</span>
+            {copied ? (
+              <span className="absolute inset-0 flex items-center justify-center">
+                Copied
+              </span>
+            ) : null}
+          </span>
         </button>
       </GlassShell>
     </div>

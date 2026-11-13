@@ -190,6 +190,39 @@
   }
 }
 
+/* Instant-style develop: fog clears, print fades in, caption follows.
+   Opacity only — no filter/paint thrash. Marketing/delight cadence. */
+@keyframes polaroid-fog-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes polaroid-print-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes polaroid-caption-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.polaroid-frame {
+  transform: rotate(-6deg);
+}
+
 @media (prefers-reduced-motion: no-preference) {
   /* Every bar shares one delay, so the sweep crosses them together. */
   .skeleton {
@@ -216,6 +249,19 @@
     .case-study > * {
       --reveal-index: calc(3 + sibling-index());
     }
+  }
+
+  .polaroid-fog {
+    animation: polaroid-fog-out 1.8s cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+
+  .polaroid-image {
+    animation: polaroid-print-in 1.6s cubic-bezier(0.23, 1, 0.32, 1) both;
+  }
+
+  .polaroid-caption {
+    animation: polaroid-caption-in 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.95s
+      both;
   }
 }
 

@@ -43,7 +43,7 @@ export function GlassBackLink({ href = "/", className }: Props) {
       >
         <a
           href={href}
-          className="inline-flex size-11 items-center justify-center rounded-full text-foreground outline-none transition-[background-color,transform] duration-300 ease-out hover:bg-white/18 focus-visible:bg-white/18 focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-[0.96] active:duration-100"
+          className="inline-flex size-11 items-center justify-center rounded-full text-foreground outline-none transition-[background-color,transform] duration-300 ease-out hover:scale-[0.98] hover:bg-white/18 focus-visible:bg-white/18 focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-[0.96] active:bg-white/28 active:duration-100"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
