@@ -190,7 +190,7 @@
   }
 }
 
-/* Instant-style develop: fog clears, print fades in, caption follows.
+/* Instant-style develop: fog clears, print + caption fade in together.
    Opacity only — no filter/paint thrash. Marketing/delight cadence. */
 @keyframes polaroid-fog-out {
   from {
@@ -202,15 +202,6 @@
 }
 
 @keyframes polaroid-print-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes polaroid-caption-in {
   from {
     opacity: 0;
   }
@@ -255,13 +246,9 @@
     animation: polaroid-fog-out 1.8s cubic-bezier(0.23, 1, 0.32, 1) both;
   }
 
-  .polaroid-image {
-    animation: polaroid-print-in 1.6s cubic-bezier(0.23, 1, 0.32, 1) both;
-  }
-
+  .polaroid-image,
   .polaroid-caption {
-    animation: polaroid-caption-in 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.95s
-      both;
+    animation: polaroid-print-in 1.6s cubic-bezier(0.23, 1, 0.32, 1) both;
   }
 }
 

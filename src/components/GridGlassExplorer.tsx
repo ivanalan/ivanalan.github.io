@@ -160,7 +160,7 @@ const BIO_P2 =
  */
 const ABOUT_COPY = [
   "3+ years shipping products, from scrappy work at Ab Initio to scale at Qualtrics. My computer science background shows up in how I think about systems, ship code, and measure analytics.",
-  "I design in Figma, iterate in Cursor, and measure impact in Amplitude. Lately that meant redesigning Guidance & Errors so more people actually use it (10% → 40% MAU on Survey Builder). Before Qualtrics I was often the sole designer on eng-heavy teams, including a data-platform MVP and our first design tokens in code.",
+  "I design in Figma, iterate in Cursor, and measure impact in Amplitude. Lately that meant redesigning Guidance & Errors so total usage events rose 600%, with MAU from 10% → 35% on Survey Builder. Before Qualtrics I was often the sole designer on eng-heavy teams, including a data-platform MVP and our first design tokens in code.",
 ] as const;
 
 const CHROME_OPTIONS: { id: Chrome; label: string }[] = [
