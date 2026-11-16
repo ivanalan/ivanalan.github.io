@@ -1,6 +1,6 @@
 # Alan Matias
 
-Design engineer portfolio at [alanmatias.com](https://alanmatias.com).
+UX designer portfolio at [alanmatias.com](https://alanmatias.com).
 
 Static Astro site, dark-only, deployed to GitHub Pages. The DeGuardia app legal pages stay at `/guardias/privacy.html` and `/guardias/terms.html`.
 
