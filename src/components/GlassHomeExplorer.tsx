@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useId,
   useRef,
   useState,
@@ -136,6 +137,47 @@ const chipOnGlassClass =
 
 const CARD_REVEAL_OFFSET = 4;
 
+/** False on the server and the first client paint; true after hydrate. */
+function useHydrated() {
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+  return hydrated;
+}
+
+const glassShellLayoutStyle = {
+  display: "inline-flex",
+  width: "fit-content",
+  maxWidth: "fit-content",
+  flex: "0 0 auto",
+} as const;
+
+/** CSS stand-in so SSR/no-JS still show tabs and chips before LiquidGlass mounts. */
+function GlassShellFallback({
+  children,
+  className,
+  radius,
+}: {
+  children: ReactNode;
+  className?: string;
+  radius: number;
+}) {
+  return (
+    <div
+      className={cn("w-fit max-w-fit", className)}
+      style={{
+        ...glassShellLayoutStyle,
+        borderRadius: radius,
+        background: "rgba(255,255,255,0.14)",
+        border: "1px solid rgba(255,255,255,0.42)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 function GlassShell({
   children,
   backdropRef,
@@ -147,6 +189,16 @@ function GlassShell({
   className?: string;
   radius?: number;
 }) {
+  const hydrated = useHydrated();
+
+  if (!hydrated) {
+    return (
+      <GlassShellFallback className={className} radius={radius}>
+        {children}
+      </GlassShellFallback>
+    );
+  }
+
   return (
     <LiquidGlass
       backdropRef={backdropRef}
@@ -160,12 +212,7 @@ function GlassShell({
       glassColor="rgba(255,255,255,0.14)"
       borderColor="rgba(255,255,255,0.42)"
       className={cn("w-fit max-w-fit", className)}
-      style={{
-        display: "inline-flex",
-        width: "fit-content",
-        maxWidth: "fit-content",
-        flex: "0 0 auto",
-      }}
+      style={glassShellLayoutStyle}
       reveal="immediate"
     >
       {children}
