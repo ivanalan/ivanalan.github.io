@@ -54,7 +54,7 @@ const BIO =
 
 /** Depth under the page chrome bio — outcomes, not a second intro. */
 const ABOUT_COPY = [
-  "I've focused on making complex workflows, data at scale, and powerful tools feel simple.",
+  "I've focused on making complex workflows, technical concepts, and powerful tools feel simple.",
   "At Ab Initio I led the design of our first high-performance data platform from 0→1. At Qualtrics I simplified survey builder guidance: usage events up 600%, MAU 10% → 35%.",
 ] as const;
 

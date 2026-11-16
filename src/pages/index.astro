@@ -6,7 +6,7 @@ import { getWorkCards } from "@/lib/work-cards";
 const { work, sideProjects } = await getWorkCards();
 ---
 
-<Layout headerArt>
+<Layout headerArt image="/og.png">
   <main id="main" class="flex flex-col gap-8">
     <GlassHomeExplorer client:load work={work} sideProjects={sideProjects} />
   </main>

@@ -7,6 +7,7 @@ interface Props {
   title?: string;
   description?: string;
   type?: "website" | "article";
+  image?: string;
   /** Skip the default reading-width shell (explore tools, etc.). */
   fullBleed?: boolean;
   /** Dithered warp band behind the top of the page (home pages). */
@@ -17,6 +18,7 @@ const {
   title,
   description,
   type,
+  image,
   fullBleed = false,
   headerArt = false,
 } = Astro.props;
@@ -25,7 +27,7 @@ const {
 <!doctype html>
 <html lang="en" class="dark">
   <head>
-    <DocumentHead title={title} description={description} type={type} />
+    <DocumentHead title={title} description={description} type={type} image={image} />
   </head>
   <body class={headerArt ? "relative" : undefined}>
     {headerArt && <HeaderArt client:load />}
