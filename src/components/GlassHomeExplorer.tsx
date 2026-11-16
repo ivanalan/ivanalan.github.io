@@ -53,8 +53,8 @@ const BIO =
 
 /** Depth under the page chrome bio — outcomes, not a second intro. */
 const ABOUT_COPY = [
-  "I've focused on making complex workflows, unstructured data, and powerful tools feel simple.",
-  "At Ab Initio I led the design of our first high-performance data platform from 0→1. At Qualtrics I simplified complex survey builder guidance that increased usage by 600%.",
+  "I've focused on making complex workflows, data at scale, and powerful tools feel simple.",
+  "At Ab Initio I led the design of our first high-performance data platform from 0→1. At Qualtrics I simplified survey builder guidance: usage events up 600%, MAU 10% → 35%.",
 ] as const;
 
 const EXPERIENCE = [
@@ -319,11 +319,11 @@ function Card({ item, index }: { item: WorkCard; index: number }) {
 }
 
 function AboutPolaroid() {
-  const caption = "Alan at Arches";
+  const caption = "Arches National Park!";
 
   return (
     <figure
-      className="polaroid-frame w-[16.5rem] shrink-0 bg-white p-3 pb-4 shadow-[0_18px_40px_-12px_rgba(0,0,0,0.55),0_2px_8px_-2px_rgba(0,0,0,0.2)] sm:w-[19rem]"
+      className="polaroid-frame w-[16.5rem] shrink-0 self-center bg-white p-3 pb-4 shadow-[0_18px_40px_-12px_rgba(0,0,0,0.55),0_2px_8px_-2px_rgba(0,0,0,0.2)] sm:w-[19rem] sm:self-auto"
       aria-label={caption}
     >
       <div className="relative aspect-[3/2] overflow-hidden bg-zinc-200">
