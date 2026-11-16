@@ -46,16 +46,22 @@ export function ShaderCover({
   variant: CoverShader;
   className?: string;
 }) {
+  const [mounted, setMounted] = useState(false);
   const [animated, setAnimated] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
     const sync = () => setAnimated(!query.matches);
 
     sync();
     query.addEventListener("change", sync);
     return () => query.removeEventListener("change", sync);
-  }, []);
+  }, [mounted]);
 
   const logo = LOGOS[variant];
   const cover = COVERS[variant];
@@ -69,12 +75,14 @@ export function ShaderCover({
         background: `linear-gradient(160deg, ${cover.colorBack}, ${cover.colors!.join(", ")})`,
       }}
     >
-      <GrainGradient
-        {...cover}
-        noise={0.3}
-        speed={animated ? cover.speed : 0}
-        style={SHADER_STYLE}
-      />
+      {mounted ? (
+        <GrainGradient
+          {...cover}
+          noise={0.3}
+          speed={animated ? cover.speed : 0}
+          style={SHADER_STYLE}
+        />
+      ) : null}
       <img
         src={logo.src}
         alt=""

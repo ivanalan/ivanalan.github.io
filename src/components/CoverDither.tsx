@@ -79,19 +79,28 @@ export const COVER_BACKDROPS: Record<CoverBackdrop, BackdropPreset> = {
 
 const SHADER_STYLE = { position: "absolute", inset: 0 } as const
 
-/** Absolute dither layer for transparent covers. Freezes under reduced motion. */
+/** Absolute dither layer for transparent covers. Freezes under reduced motion.
+ *  Shader mounts after hydrate so SSR can keep a solid colorBack fallback. */
 export function CoverDither({ backdrop }: { backdrop: CoverBackdrop }) {
+  const [mounted, setMounted] = useState(false)
   const [animated, setAnimated] = useState(false)
   const preset = COVER_BACKDROPS[backdrop]
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
     const query = window.matchMedia("(prefers-reduced-motion: reduce)")
     const sync = () => setAnimated(!query.matches)
 
     sync()
     query.addEventListener("change", sync)
     return () => query.removeEventListener("change", sync)
-  }, [])
+  }, [mounted])
+
+  if (!mounted) return null
 
   return (
     <div className="absolute inset-0" style={{ opacity: preset.strength }}>

@@ -8,6 +8,6 @@ const { work, sideProjects } = await getWorkCards();
 
 <Layout headerArt>
   <main id="main" class="flex flex-col gap-8">
-    <GlassHomeExplorer client:only="react" work={work} sideProjects={sideProjects} />
+    <GlassHomeExplorer client:load work={work} sideProjects={sideProjects} />
   </main>
 </Layout>

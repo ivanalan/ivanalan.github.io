@@ -9,7 +9,7 @@ const { work, sideProjects } = await getWorkCards();
 <Layout headerArt>
   <main id="main" class="flex flex-col gap-8">
     <GlassHomeExplorer
-      client:only="react"
+      client:load
       work={work}
       sideProjects={sideProjects}
       defaultTab="play"

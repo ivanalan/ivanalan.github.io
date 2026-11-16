@@ -1,8 +1,8 @@
 export const site = {
   name: "Alan Matias",
-  role: "Designer and engineer",
-  jobTitle: "Design Engineer",
+  role: "UX Designer",
+  jobTitle: "UX Designer",
   description:
-    "Design engineer at Qualtrics. I design with Figma, iterate in Cursor, and measure impact using Amplitude.",
+    "UX designer at Qualtrics. I design with Figma, iterate in Cursor, and measure impact using Amplitude.",
   url: "https://alanmatias.com",
 } as const;
