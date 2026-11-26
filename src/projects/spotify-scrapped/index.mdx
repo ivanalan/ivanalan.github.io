@@ -1,0 +1,67 @@
+---
+title: "Spotify Scrapped"
+subtitle: An anti-Wrapped for songs that got ghosted.
+projectType: "APIs and databases"
+role: Designer and engineer
+team: Just me
+year: 2026
+status: published
+category: side-project 
+metrics: "90k views"
+coverVideo: "/spotify-scrapped/assets/cover.webm"
+coverVideoPoster: "/spotify-scrapped/assets/cover-poster.webp"
+coverBackdrop: night-indigo
+order: 1
+externalUrl: https://myscrapped.com
+---
+
+import { CaseImage } from "@/components/CaseImage";
+
+## Outcome
+
+1. Shipped [myscrapped.com](https://myscrapped.com): a Spotify anti-Wrapped for songs and artists that got ghosted.
+2. Created an automated email system to notify users when they were off the waitlist.
+3. Hacked around Spotify’s API by storing user data on a secure database, scaling a limited API restriction.
+
+## The problem: My liked songs are full of junk
+
+When I listen to music, I put on my liked songs and hit shuffle. More often than not, I’m skipping songs that I don’t listen to anymore, songs that are outdated, or songs that I outgrew.
+
+I wanted a way to prune these songs.
+
+## Design explorations: what qualifies as a song I should remove?
+
+How do you quantify a “bad” song? I began by analyzing songs I always skip. However, I also ended up exploring different themes like total play times, artists with only one song saved, and all time favorites I haven’t listened to.
+
+<CaseImage
+  client:load
+  src="/spotify-scrapped/assets/scrapped-plus.png"
+  alt="Scrapped Plus scatter plot of lifetime skip rate vs appearances, with Pursuit Of Happiness (Nightmare) by Kid Cudi selected at 78% lifetime skip rate"
+  bgClassName="bg-[#0b0a12]"
+/>
+
+And thus, Spotify Scrapped was born. The idea was that instead of showing you all your top themes, a user could log in and see the opposite: all of their worst themes.
+
+## Technical limitation: Spotify’s API
+
+Spotify limits API usage to 5 users, who must be registered on your API. To scale this to the public, I came up with a waitlist. Users enter their email, it gets stored on a database, rotated with the last seat, and an email is sent giving them a link to sign into the experience.
+
+<CaseImage
+  client:load
+  src="/spotify-scrapped/assets/waitlist.png"
+  alt="2026 Scrapped waitlist gate: anti-Wrapped tagline, email field, and Join waitlist"
+  bgClassName="bg-[#0b0a12]"
+/>
+
+The best part is that once the user signs in once, they can always see their story as they are sent a new email with a link to their story using their previous data to populate — without needing an API seat.
+
+## Try it out!
+
+The live site is at [myscrapped.com](https://myscrapped.com). Enter your email on the waitlist and expect an email invite!
+
+<CaseImage
+  client:load
+  src="/spotify-scrapped/assets/story-strip.png"
+  alt="Five Scrapped story phones: brand open, ghosted songs, artist left on read, all-star setlist, and share finale"
+  bgClassName="bg-[#0b0a12]"
+/>

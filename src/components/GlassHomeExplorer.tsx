@@ -50,12 +50,12 @@ const TABS: { id: TabId; label: string }[] = [
 ];
 
 const BIO =
-  "3+ years shipping products, from scrappy work at Ab Initio to scale at Qualtrics. My computer science background shows in how I tackle complex systems, ship code, and measure analytics.";
+  "3.5+ years shipping products, from scrappy work at Ab Initio to scale at Qualtrics. My computer science background shows in how I tackle complex systems, ship code, and measure analytics.";
 
 /** Depth under the page chrome bio — outcomes, not a second intro. */
 const ABOUT_COPY = [
   "I've focused on making complex workflows, technical concepts, and powerful tools feel simple.",
-  "At Ab Initio I led the design of our first high-performance data platform from 0→1. At Qualtrics I simplified survey builder guidance: usage events up 600%, MAU 10% → 35%.",
+  "At Ab Initio I led the design of our first high-performance data platform from 0→1. At Qualtrics, I simplified our powerful survey builder - increasing usage by 600%.",
 ] as const;
 
 const EXPERIENCE = [
@@ -354,7 +354,15 @@ function Card({ item, index }: { item: WorkCard; index: number }) {
             ))}
           </div>
         ) : null}
-        <h2 className="font-heading text-work-title text-foreground">
+        <h2 className="flex items-center gap-2 font-heading text-work-title text-foreground">
+          {item.titleMark ? (
+            <img
+              src={item.titleMark}
+              alt=""
+              className="size-6 shrink-0 rounded-[0.35rem] object-contain"
+              aria-hidden="true"
+            />
+          ) : null}
           {item.title}
         </h2>
         {item.subtitle ? (
