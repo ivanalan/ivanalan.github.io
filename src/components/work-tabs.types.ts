@@ -10,7 +10,7 @@ export type CoverBackdrop =
   | "pine-simplex"
   | "cobalt-warp";
 
-export type MetaMark = "figma";
+export type MetaMark = "figma" | "spotify";
 
 export type WorkCardMeta = {
   label: string;
@@ -22,6 +22,8 @@ export type WorkCard = {
   href: string;
   title: string;
   subtitle?: string;
+  /** App/product mark shown left of the card title. */
+  titleMark?: string;
   companyBrand?: CompanyBrand;
   meta: WorkCardMeta[];
   status: "placeholder" | "published";

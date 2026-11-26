@@ -364,10 +364,18 @@ function Card({
       <div className="flex flex-col gap-1.5 px-3 pt-2.5 pb-3">
         <h2
           className={cn(
-            "font-heading text-work-title text-foreground",
+            "flex items-center gap-2 font-heading text-work-title text-foreground",
             wide && "md:text-[1.4rem]",
           )}
         >
+          {item.titleMark ? (
+            <img
+              src={item.titleMark}
+              alt=""
+              className="size-6 shrink-0 rounded-[0.35rem] object-contain"
+              aria-hidden="true"
+            />
+          ) : null}
           {item.title}
         </h2>
         {item.subtitle ? (

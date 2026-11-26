@@ -1,5 +1,6 @@
 import abInitioLogo from "@/icons/AbInitioLogo.svg?url";
 import figmaLogo from "@/icons/figma.svg?url";
+import spotifyLogo from "@/icons/spotify.svg?url";
 import xmMarkColor from "@/icons/xmMarkColor.svg?url";
 import { IonIcon, type IonIconName } from "@/components/IonIcon";
 import type { MetaMark } from "@/components/work-tabs.types";
@@ -7,6 +8,7 @@ import { cn } from "@/lib/utils";
 
 const marks: Record<MetaMark, { src: string; className: string }> = {
   figma: { src: figmaLogo, className: "h-3 w-auto" },
+  spotify: { src: spotifyLogo, className: "size-3" },
 };
 
 const brands = {

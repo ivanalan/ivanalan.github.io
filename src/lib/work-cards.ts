@@ -1,9 +1,18 @@
 import { companyToBrand } from "@/components/BrandChip";
 import type { WorkCard, WorkCardMeta } from "@/components/work-tabs.types";
+import deguardiaMark from "@/icons/deguardia.png?url";
+import scrappedMark from "@/icons/scrapped.png?url";
+import tableLayoutSwitcherMark from "@/icons/table-layout-switcher.png?url";
 import { getImage } from "astro:assets";
 import { getCollection } from "astro:content";
 
 type Entry = Awaited<ReturnType<typeof getCollection<"projects">>>[number];
+
+const titleMarks: Record<string, string> = {
+  guardias: deguardiaMark,
+  "table-layout-switcher": tableLayoutSwitcherMark,
+  "spotify-scrapped": scrappedMark,
+};
 
 function cardMeta(entry: Entry, omitCompany: boolean): WorkCardMeta[] {
   const isSideProject = entry.data.category === "side-project";
@@ -17,6 +26,8 @@ function cardMeta(entry: Entry, omitCompany: boolean): WorkCardMeta[] {
       items.push({ label: entry.data.projectType, icon: "logo-apple" });
     } else if (entry.id === "table-layout-switcher") {
       items.push({ label: entry.data.projectType, mark: "figma" });
+    } else if (entry.id === "spotify-scrapped") {
+      items.push({ label: entry.data.projectType, mark: "spotify" });
     } else {
       items.push({ label: entry.data.projectType });
     }
@@ -46,6 +57,7 @@ const toCard = async (entry: Entry, featured = false): Promise<WorkCard> => {
     href: `/work/${entry.id}`,
     title: entry.data.title,
     subtitle: entry.data.subtitle,
+    titleMark: titleMarks[entry.id],
     companyBrand,
     meta: cardMeta(entry, companyBrand !== undefined),
     status: entry.data.status,
